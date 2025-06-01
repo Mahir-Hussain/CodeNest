@@ -12,7 +12,7 @@ class LoginSystem(Database):
         try:
             self.cursor.execute(
                 "INSERT INTO users (email, password) VALUES (%s, %s)",
-                (self.email, self.password),
+                (self.email, hash(self.password)),
             )
             self.connection.commit()
             print("User created successfully!")
