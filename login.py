@@ -3,14 +3,16 @@ from database import Database
 
 
 class LoginSystem(Database):
-    def __init__(self):
+    def __init__(self, email, password):
         super().__init__()
+        self.email = email
+        self.password = password
 
-    def create_user(self, email="gmaaa", password="no email"):
+    def create_user(self):
         try:
             self.cursor.execute(
                 "INSERT INTO users (email, password) VALUES (%s, %s)",
-                (email, password),
+                (self.email, self.password),
             )
             self.connection.commit()
             print("User created successfully!")
