@@ -6,11 +6,11 @@ class LoginSystem(Database):
     def __init__(self):
         super().__init__()
 
-    def create_user(self, id=3, password="passwo", email="no email"):
+    def create_user(self, email="gmaaa", password="no email"):
         try:
             self.cursor.execute(
-                "INSERT INTO users (id, email, password) VALUES (%s, %s, %s)",
-                (id, password, email),
+                "INSERT INTO users (email, password) VALUES (%s, %s)",
+                (email, password),
             )
             self.connection.commit()
             print("User created successfully!")
