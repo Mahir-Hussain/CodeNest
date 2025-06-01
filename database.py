@@ -26,26 +26,7 @@ class Database:
         except Exception as e:
             print(f"Error connecting to database: {e}")
 
-    def execute_query(self, query, params=None):
-        try:
-            cursor = self.connection.cursor()
-            if params:
-                cursor.execute(query, params)
-            else:
-                cursor.execute(query)
-            try:
-                result = cursor.fetchall()
-            except psycopg2.ProgrammingError:
-                result = None  # e.g., for INSERT statements
-            self.connection.commit()
-            cursor.close()
-            return result
-        except Exception as e:
-            print(f"Error executing query: {e}")
-
     def close(self):
         if self.connection:
             self.connection.close()
             print("Database connection closed.")
-
-
