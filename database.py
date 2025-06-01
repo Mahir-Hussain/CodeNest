@@ -10,7 +10,7 @@ class Database:
         self.DB_password = database_password
         self.DB_host = host
         self.DB_port = port
-        self.connection = self.connect()
+        self.connect()
 
     def connect(self):
         try:
@@ -21,6 +21,7 @@ class Database:
                 host=self.DB_host,
                 port=self.DB_port,
             )
+            self.cursor = self.connection.cursor()
             print("Database connection established.")
         except Exception as e:
             print(f"Error connecting to database: {e}")
@@ -46,3 +47,14 @@ class Database:
         if self.connection:
             self.connection.close()
             print("Database connection closed.")
+
+    def create_user(self, id=1, password="pass", email="no email"):
+        try:
+            self.cursor.execute(
+                "INSERT INTO users (id, email, password) VALUES (%s, %s, %s)",
+                (id, password, email),
+            )
+            self.connection.commit()
+            print("User created successfully!")
+        except psycopg2.IntegrityError as e:
+            print(f"Error: {e}")
