@@ -6,5 +6,6 @@ from login import LoginSystem
 if __name__ == "__main__":
     os.system("cls")
     db = Database()
-    db.create_user()
+    p = LoginSystem()
+    p.create_user()
     db.close()

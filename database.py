@@ -48,13 +48,4 @@ class Database:
             self.connection.close()
             print("Database connection closed.")
 
-    def create_user(self, id=1, password="pass", email="no email"):
-        try:
-            self.cursor.execute(
-                "INSERT INTO users (id, email, password) VALUES (%s, %s, %s)",
-                (id, password, email),
-            )
-            self.connection.commit()
-            print("User created successfully!")
-        except psycopg2.IntegrityError as e:
-            print(f"Error: {e}")
+
