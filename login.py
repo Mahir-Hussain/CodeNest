@@ -1,5 +1,6 @@
 import psycopg2
 from database import Database
+import hashlib
 
 
 class LoginSystem(Database):
@@ -12,7 +13,7 @@ class LoginSystem(Database):
         try:
             self.cursor.execute(
                 "INSERT INTO users (email, password) VALUES (%s, %s)",
-                (self.email, hash(self.password)),
+                (self.email, hashlib.sha256(self.password.encode()).hexdigest()),
             )
             self.connection.commit()
             print("User created successfully!")
