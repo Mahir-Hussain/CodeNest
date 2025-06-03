@@ -24,3 +24,26 @@ class Snippets(Database):
             print("Snippet created successfully!")
         except psycopg2.IntegrityError as e:
             print(f"Error: {e}")
+
+    def get_snippets(self):
+        try:
+            self.cursor.execute(
+                "SELECT title, content, language, favourite FROM code_snippets WHERE user_id = %s",
+                (self.user_id,),
+            )
+            snippets = self.cursor.fetchall()
+            return snippets
+        except psycopg2.Error as e:
+            print(f"Error fetching snippets: {e}")
+            return []
+
+    def delete_snippet(self, snippet_id):
+        try:
+            self.cursor.execute(
+                "DELETE FROM code_snippets WHERE id = %s AND user_id = %s",
+                (snippet_id, self.user_id),
+            )
+            self.connection.commit()
+            print("Snippet deleted successfully!")
+        except psycopg2.IntegrityError as e:
+            print(f"Error: {e}")
