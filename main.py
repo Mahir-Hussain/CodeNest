@@ -1,20 +1,13 @@
-from database import Database
-from login import LoginSystem
-from snippets import Snippets
+# from database import Database
+# from login import LoginSystem
+# from snippets import Snippets
+from fastapi import FastAPI
 
 
 if __name__ == "__main__":
-    # db = Database()
+    app = FastAPI()
 
-    # p = LoginSystem("emailtoday", "password123")
-    # p.create_user()
-    # p.authenticate()
-    # db.close()
+    app.get("/")
 
-    a = Snippets()
-    a.create_snippet()
-    # a.delete_snippet(1)
-    for title, content, language, favourite in a.get_snippets():
-        print(
-            f"Title: {title}, Content: {content}, Language: {language}, Favourite: {favourite}"
-        )
+    async def root():
+        return {"message": "Hello World"}
