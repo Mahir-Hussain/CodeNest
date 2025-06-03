@@ -26,10 +26,14 @@ class LoginSystem(Database):
 
     def authenticate(self):
         self.cursor.execute(
-            "SELECT email, password FROM users WHERE email = %s AND password = %s",
-            (self.email, self.password),
+            "SELECT id, password FROM users WHERE email = %s", (self.email,)
         )
-        if self.cursor.fetchone():
-            print("Login successful")
+        result = self.cursor.fetchone()
+        if result:
+            userid, hashed_pw = result
+            if hashed_pw == self.password:
+                return userid
+            else:
+                print("Incorrect login detials-")
         else:
-            print("Incorrect details")
+            print("User not found")
