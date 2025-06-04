@@ -6,8 +6,8 @@ from fastapi import FastAPI
 
 app = FastAPI()
 d = Database()
-l = LoginSystem("gm", "arjun")
-# l.create_user()
+l = LoginSystem("GeorgeJoseph@gmail.com", "arjun")
+
 
 
 @app.get("/")
