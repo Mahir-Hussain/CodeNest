@@ -1,29 +1,45 @@
 from fastapi import FastAPI
+from pydantic import BaseModel
+from login import LoginSystem
+from snippets import Snippets
 
 
-class routes:
-    def __init__(self):
-        self.app = FastAPI()
-
-    def run(self):
-        @self.app.get("/")
-        def read_root():
-            return {"message": "Welcome to the Code Snippets API"}
-
-        @self.app.get("/snippets")
-        def get_snippets():
-            return {"snippets": []}
-
-        @self.app.post("/snippets")
-        def create_snippet(snippet: dict):
-            return {"message": "Snippet created successfully", "snippet": snippet}
-
-        @self.app.delete("/snippets/{snippet_id}")
-        def delete_snippet(snippet_id: int):
-            return {"message": f"Snippet {snippet_id} deleted successfully"}
-
-        return self.app
+class LoginData(BaseModel):
+    username: str
+    password: str
 
 
-api_instance = routes()
-app = api_instance.run()
+app = FastAPI()
+
+
+# Route for login
+@app.post("/login")
+async def login(credentials: LoginData):
+    l = LoginSystem(credentials.username, credentials.password)
+    user_id = l.authenticate()
+    if user_id:
+        return {"message": "Login successful", "user_id": user_id}
+    else:
+        return {"error": "Invalid login details"}
+
+
+app.post("/create_user")
+
+
+async def create_user(credentials: LoginData):
+    l = LoginSystem(credentials.username, credentials.password)
+    try:
+        l.create_user()
+        return {"message": "User created successfully"}
+    except Exception as e:
+        return {"error": str(e)}
+
+
+@app.get("/get_snippets")
+async def get_snippets(user_id=12):
+    snippets = Snippets(user_id)
+    try:
+        user_snippets = snippets.get_snippets()
+        return {"snippets": user_snippets}
+    except Exception as e:
+        return {"error": str(e)}

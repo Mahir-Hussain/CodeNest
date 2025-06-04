@@ -2,13 +2,11 @@ from database import Database
 import psycopg2
 from login import LoginSystem
 
-p = LoginSystem("emailtoday", "password123")
-
 
 class Snippets(Database):
-    def __init__(self):
+    def __init__(self, userid):
         super().__init__()
-        self.user_id = p.authenticate()
+        self.user_id = userid
 
     def create_snippet(self):
         title = ""
