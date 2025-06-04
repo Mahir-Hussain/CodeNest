@@ -1,6 +1,6 @@
-from backend.database import Database
+from database import Database
 import psycopg2
-from backend.login import LoginSystem
+from login import LoginSystem
 
 
 class Snippets(Database):
