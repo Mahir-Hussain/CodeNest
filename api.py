@@ -25,10 +25,10 @@ async def login(credentials: LoginData):
 
 @app.post("/create_user")
 async def create_user(credentials: LoginData):
-    l = LoginSystem(credentials.email, credentials.password)
+    login = LoginSystem(credentials.email, credentials.password)
     try:
-        l.create_user()
-        return {"message": "User created successfully"}
+        login.create_user()
+        return {"message": "User created successfully"} # Need to go to /login after user be create
     except Exception as e:
         return {"error": str(e)}
 
