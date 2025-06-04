@@ -1,6 +1,6 @@
-from database import Database
-from login import LoginSystem
-from snippets import Snippets
+from backend.database import Database
+from backend.login import LoginSystem
+from backend.snippets import Snippets
 from fastapi import FastAPI
 
 

@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from pydantic import BaseModel
-from login import LoginSystem
-from snippets import Snippets
+from backend.login import LoginSystem
+from backend.snippets import Snippets
 
 
 class LoginData(BaseModel):

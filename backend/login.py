@@ -1,5 +1,5 @@
 import psycopg2
-from database import Database
+from backend.database import Database
 import hashlib
 
 
