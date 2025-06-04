@@ -1,13 +1,23 @@
-# from database import Database
-# from login import LoginSystem
-# from snippets import Snippets
+from database import Database
+from login import LoginSystem
+from snippets import Snippets
 from fastapi import FastAPI
 
 
-if __name__ == "__main__":
-    app = FastAPI()
 
-    app.get("/")
+app = FastAPI()
+d = Database()
+l = LoginSystem("gm", "arjun")
+#l.create_user()
 
-    async def root():
-        return {"message": "Hello World"}
+
+
+@app.get("/")
+async def root():
+    return {"Hello World"}
+
+@app.get("/login")
+async def login():
+    return l.authenticate()
+    
+#@app.get("")

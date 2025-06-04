@@ -15,8 +15,8 @@ class LoginSystem(Database):
     def create_user(self):
         try:
             self.cursor.execute(
-                "INSERT INTO users (email, password) VALUES (%s, %s)",
-                (self.email, self.password),
+                "INSERT INTO users (id, email, password) VALUES (%s, %s, %s)",
+                ("14", self.email, self.password),
             ),
 
             self.connection.commit()
@@ -34,6 +34,6 @@ class LoginSystem(Database):
             if hashed_pw == self.password:
                 return userid
             else:
-                print("Incorrect login detials-")
+                print("Incorrect login details-")
         else:
             print("User not found")
