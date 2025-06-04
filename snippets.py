@@ -8,10 +8,7 @@ class Snippets(Database):
         super().__init__()
         self.user_id = userid
 
-    def create_snippet(self):
-        title = ""
-        content = ""
-        language = "python"
+    def create_snippet(self, title=None, content=None, language="python"):
 
         try:
             self.cursor.execute(

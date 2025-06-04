@@ -41,3 +41,12 @@ async def get_snippets(user_id=12):
         return {"snippets": user_snippets}
     except Exception as e:
         return {"error": str(e)}
+
+@app.post("/create_snippet")
+async def create_snippet(user_id: int, title: str, content: str, language: str = "python"):
+    snippets = Snippets(user_id)
+    try:
+        snippets.create_snippet(title, content, language)
+        return {"message": "Snippet created successfully"}
+    except Exception as e:
+        return {"error": str(e)}
