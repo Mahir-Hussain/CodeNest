@@ -16,7 +16,7 @@ class LoginSystem(Database):
         try:
             self.cursor.execute(
                 "INSERT INTO users (id, email, password) VALUES (%s, %s, %s)",
-                ("14", self.email, self.password),
+                ("15", self.email, self.password),
             ),
 
             self.connection.commit()
@@ -37,3 +37,14 @@ class LoginSystem(Database):
                 print("Incorrect login details-")
         else:
             print("User not found")
+
+    def delete_user(self, email:str):
+        try:
+            self.cursor.execute(
+                "DELETE FROM users WHERE email = %s", (self.email,)
+            )
+            self.connection.commit()
+            print("User successfully deleted")
+        except psycopg2.IntegrityError as e:
+            print(f"Error {e}")
+
