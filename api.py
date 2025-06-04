@@ -5,7 +5,7 @@ from snippets import Snippets
 
 
 class LoginData(BaseModel):
-    username: str
+    email: str
     password: str
 
 
@@ -15,7 +15,7 @@ app = FastAPI()
 # Route for login
 @app.post("/login")
 async def login(credentials: LoginData):
-    l = LoginSystem(credentials.username, credentials.password)
+    l = LoginSystem(credentials.email, credentials.password)
     user_id = l.authenticate()
     if user_id:
         return {"message": "Login successful", "user_id": user_id}
@@ -23,11 +23,9 @@ async def login(credentials: LoginData):
         return {"error": "Invalid login details"}
 
 
-app.post("/create_user")
-
-
+@app.post("/create_user")
 async def create_user(credentials: LoginData):
-    l = LoginSystem(credentials.username, credentials.password)
+    l = LoginSystem(credentials.email, credentials.password)
     try:
         l.create_user()
         return {"message": "User created successfully"}

@@ -21,6 +21,7 @@ class Snippets(Database):
             self.connection.commit()
             print("Snippet created successfully!")
         except psycopg2.IntegrityError as e:
+            self.connection.rollback()
             print(f"Error: {e}")
 
     def get_snippets(self):
@@ -32,6 +33,7 @@ class Snippets(Database):
             snippets = self.cursor.fetchall()
             return snippets
         except psycopg2.Error as e:
+            self.connection.rollback()
             print(f"Error fetching snippets: {e}")
             return []
 
@@ -44,4 +46,5 @@ class Snippets(Database):
             self.connection.commit()
             print("Snippet deleted successfully!")
         except psycopg2.IntegrityError as e:
+            self.connection.rollback()
             print(f"Error: {e}")
