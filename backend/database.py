@@ -1,5 +1,5 @@
 import psycopg2
-from secret import database_password
+from backend.secret import database_password
 
 
 class Database:
