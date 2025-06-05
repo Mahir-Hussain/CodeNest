@@ -47,3 +47,4 @@ class LoginSystem(Database):
             print("User successfully deleted")
         except psycopg2.IntegrityError as e:
             print(f"Error {e}")
+

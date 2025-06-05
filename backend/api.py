@@ -8,11 +8,15 @@ class LoginData(BaseModel):
     email: str
     password: str
 
+class SnippetData(BaseModel):
+    title: str = None
+    content: str
+    language: str = None
+
 
 app = FastAPI()
 
 
-# Route for login
 @app.post("/login")
 async def login(credentials: LoginData):
     l = LoginSystem(credentials.email, credentials.password)
@@ -34,7 +38,7 @@ async def create_user(credentials: LoginData):
 
 
 @app.get("/get_snippets")
-async def get_snippets(user_id=12):
+async def get_snippets(user_id=12): # Need to pass user_id from frontend
     snippets = Snippets(user_id)
     try:
         user_snippets = snippets.get_snippets()
@@ -43,10 +47,10 @@ async def get_snippets(user_id=12):
         return {"error": str(e)}
 
 @app.post("/create_snippet")
-async def create_snippet(user_id: int, title: str, content: str, language: str = "python"):
+async def create_snippet(data: SnippetData, user_id=12):  # Need to pass user_id from frontend
     snippets = Snippets(user_id)
     try:
-        snippets.create_snippet(title, content, language)
+        snippets.create_snippet(data.title, data.content, data.language)
         return {"message": "Snippet created successfully"}
     except Exception as e:
         return {"error": str(e)}
