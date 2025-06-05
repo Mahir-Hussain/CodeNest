@@ -15,8 +15,8 @@ class LoginSystem(Database):
     def create_user(self):
         try:
             self.cursor.execute(
-                "INSERT INTO users (id, email, password) VALUES (%s, %s, %s)",
-                ("15", self.email, self.password),
+                "INSERT INTO users (email, password) VALUES (%s, %s)",
+                (self.email, self.password),
             ),
 
             self.connection.commit()
@@ -47,4 +47,3 @@ class LoginSystem(Database):
             print("User successfully deleted")
         except psycopg2.IntegrityError as e:
             print(f"Error {e}")
-
