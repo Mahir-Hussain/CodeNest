@@ -40,8 +40,17 @@ class LoginSystem(Database):
     def delete_user(self, email):
         try:
             self.cursor.execute("DELETE FROM users WHERE email = %s", (email,))
-            self.connection.commit()
-            print("User successfully deleted")
+
+            # Check how many rows were affected
+            if self.cursor.rowcount > 0:
+                self.connection.commit()
+                return {"success": True, "message": "User successfully deleted"}
+            else:
+                return {"success": False, "error": "User not found"}
+
         except psycopg2.IntegrityError as e:
             self.connection.rollback()
-            print(f"Error {e}")
+            return {"success": False, "error": str(e)}
+        except psycopg2.Error as e:
+            self.connection.rollback()
+            return {"success": False, "error": str(e)}
