@@ -1,12 +1,13 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
-from backend.login import LoginSystem
 from backend.snippets import Snippets
+from backend.login import LoginSystem
 
 
 class LoginData(BaseModel):
     email: str
     password: str
+
 
 class SnippetData(BaseModel):
     title: str = None
@@ -15,47 +16,60 @@ class SnippetData(BaseModel):
 
 
 app = FastAPI()
-
+loginSystem = LoginSystem()
 print("Running CodeNest API")
+
 
 @app.get("/")
 async def root():
     return {"message": "Welcome to the CodeNest API"}
 
+
 @app.post("/login")
 async def login(credentials: LoginData):
-    l = LoginSystem(credentials.email, credentials.password)
-    user_id = l.authenticate()
+    user_id = loginSystem.authenticate(credentials.email, credentials.password)
     if user_id:
         return {"message": "Login successful", "user_id": user_id}
     else:
-        return {"error": "Invalid login details"}
+        raise HTTPException(status_code=401, detail="Invalid login details")
 
 
 @app.post("/create_user")
 async def create_user(credentials: LoginData):
-    login = LoginSystem(credentials.email, credentials.password)
-    try:
-        login.create_user()
-        return {"message": "User created successfully"} # Need to go to /login after user be create
-    except Exception as e:
-        return {"error": str(e)}
+    result = loginSystem.create_user(credentials.email, credentials.password)
+    if result.get("success"):
+        return {"message": "User created successfully"}
+    else:
+        raise HTTPException(
+            status_code=400, detail=result.get("error", "Failed to create user")
+        )
 
 
-@app.get("/get_snippets")
-async def get_snippets(user_id):
+@app.get("/get_snippets/{user_id}")
+async def get_snippets(user_id: int):
     snippets = Snippets(user_id)
     try:
         user_snippets = snippets.get_snippets()
         return {"snippets": user_snippets}
     except Exception as e:
-        return {"error": str(e)}
+        raise HTTPException(status_code=500, detail=str(e))
 
-@app.post("/create_snippet")
-async def create_snippet(data: SnippetData, user_id): 
+
+@app.post("/create_snippet/{user_id}")
+async def create_snippet(user_id: int, data: SnippetData):
     snippets = Snippets(user_id)
-    try:
-        snippets.create_snippet(data.title, data.content, data.language)
-        return {"message": "Snippet created successfully"}
-    except Exception as e:
-        return {"error": str(e)}
+    result = snippets.create_snippet(data.title, data.content, data.language)
+    if result["success"]:
+        return result
+    else:
+        raise HTTPException(status_code=400, detail=result["error"])
+
+
+@app.delete("/delete_snippet/{user_id}/{snippet_id}")
+async def delete_snippet(user_id: int, snippet_id: int):
+    snippets = Snippets(user_id)
+    result = snippets.delete_snippet(snippet_id)
+    if result["success"]:
+        return result
+    else:
+        raise HTTPException(status_code=400, detail=result["error"])

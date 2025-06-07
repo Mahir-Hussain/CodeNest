@@ -1,6 +1,5 @@
 from backend.database import Database
 import psycopg2
-from backend.login import LoginSystem
 
 
 class Snippets(Database):
@@ -8,23 +7,24 @@ class Snippets(Database):
         super().__init__()
         self.user_id = userid
 
-    def create_snippet(self, title=None, content=None, language="python"):
-
+    def create_snippet(
+        self, title=None, content=None, language=None
+    ):  # Detect later w/ ai
         try:
             self.cursor.execute(
                 "INSERT INTO code_snippets (title, content, language, user_id) VALUES (%s, %s, %s, %s)",
                 (title, content, language, self.user_id),
             )
             self.connection.commit()
-            print("Snippet created successfully!")
+            return {"success": True, "message": "Snippet created successfully!"}
         except psycopg2.IntegrityError as e:
             self.connection.rollback()
-            print(f"Error: {e}")
+            return {"success": False, "error": str(e)}
 
     def get_snippets(self):
         try:
             self.cursor.execute(
-                "SELECT title, content, language, favourite FROM code_snippets WHERE user_id = %s",
+                "SELECT id, title, content, language, favourite FROM code_snippets WHERE user_id = %s",
                 (self.user_id,),
             )
             snippets = self.cursor.fetchall()
@@ -41,7 +41,7 @@ class Snippets(Database):
                 (snippet_id, self.user_id),
             )
             self.connection.commit()
-            print("Snippet deleted successfully!")
+            return {"success": True, "message": "Snippet deleted successfully!"}
         except psycopg2.IntegrityError as e:
             self.connection.rollback()
-            print(f"Error: {e}")
+            return {"success": False, "error": str(e)}
