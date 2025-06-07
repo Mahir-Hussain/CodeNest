@@ -44,6 +44,15 @@ async def create_user(credentials: LoginData):
             status_code=400, detail=result.get("error", "Failed to create user")
         )
 
+@app.delete("/delete_user")
+async def delete_user(email: str):
+    result = loginSystem.delete_user(email)
+    if result.get("success"):
+        return {"message": "User deleted successfully"}
+    else:
+        raise HTTPException(
+            status_code=400, detail=result.get("error", "Failed to delete user")
+        )
 
 @app.get("/get_snippets/{user_id}")
 async def get_snippets(user_id: int):
@@ -73,3 +82,5 @@ async def delete_snippet(user_id: int, snippet_id: int):
         return result
     else:
         raise HTTPException(status_code=400, detail=result["error"])
+    
+
