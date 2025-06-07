@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from pydantic import BaseModel
-from login import LoginSystem
-from snippets import Snippets
+from backend.login import LoginSystem
+from backend.snippets import Snippets
 
 
 class LoginData(BaseModel):
@@ -16,6 +16,9 @@ class SnippetData(BaseModel):
 
 app = FastAPI()
 
+@app.get("/")
+async def root():
+    return {"message": "Welcome to the CodeNest API"}
 
 @app.post("/login")
 async def login(credentials: LoginData):
@@ -38,7 +41,7 @@ async def create_user(credentials: LoginData):
 
 
 @app.get("/get_snippets")
-async def get_snippets(user_id=12): # Need to pass user_id from frontend
+async def get_snippets(user_id):
     snippets = Snippets(user_id)
     try:
         user_snippets = snippets.get_snippets()
@@ -47,7 +50,7 @@ async def get_snippets(user_id=12): # Need to pass user_id from frontend
         return {"error": str(e)}
 
 @app.post("/create_snippet")
-async def create_snippet(data: SnippetData, user_id=12):  # Need to pass user_id from frontend
+async def create_snippet(data: SnippetData, user_id): 
     snippets = Snippets(user_id)
     try:
         snippets.create_snippet(data.title, data.content, data.language)
