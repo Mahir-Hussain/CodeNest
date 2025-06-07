@@ -16,6 +16,8 @@ class SnippetData(BaseModel):
 
 app = FastAPI()
 
+print("Running CodeNest API")
+
 @app.get("/")
 async def root():
     return {"message": "Welcome to the CodeNest API"}
