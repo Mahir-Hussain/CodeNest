@@ -1,0 +1,99 @@
+.container {
+  max-width: 600px;
+  margin: 80px auto;
+  padding: 1.5rem;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-family: sans-serif;
+  background-color: white;
+}
+
+.fetch-button {
+  background-color: #007bff;
+  color: white;
+  padding: 8px 8px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-top: 5px;
+}
+
+.snippet-card {
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 15px;
+  margin-bottom: 20px;
+  background-color: #f9f9f9;
+}
+
+.snippet-details summary {
+  cursor: pointer;
+  color: #666;
+  margin-bottom: 10px;
+}
+
+.snippet-details pre {
+  font-size: 12px;
+  color: #888;
+}
+
+.snippet-title {
+  color: #333;
+  margin-top: 0;
+  border-bottom: 2px solid #007bff;
+  padding-bottom: 5px;
+}
+
+.snippet-description {
+  color: #666;
+  font-style: italic;
+  margin-bottom: 15px;
+}
+
+.snippet-language {
+  display: inline-block;
+  background-color: #e9ecef;
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 12px;
+  color: #495057;
+  margin-bottom: 10px;
+}
+
+.snippet-code {
+  background-color: #2d3748;
+  color: #e2e8f0;
+  padding: 15px;
+  border-radius: 6px;
+  overflow: auto;
+  font-size: 14px;
+  line-height: 1.5;
+  margin: 10px 0;
+}
+
+.snippet-meta {
+  font-size: 12px;
+  color: #888;
+  margin-top: 10px;
+}
+
+.snippet-id {
+  margin-left: 15px;
+}
+
+.no-snippets {
+  text-align: center;
+  padding: 40px;
+  color: #666;
+  font-size: 16px;
+}
+
+.back-button {
+  padding: 8px 16px;
+  background-color: #6c757d;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-top: 20px;
+}

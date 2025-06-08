@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import './Snippets.css';
 
 function Snippets() {
     const navigate = useNavigate();
@@ -40,148 +41,69 @@ function Snippets() {
     }
 
     return (
-        <div style={{ padding: '20px', fontFamily: 'Arial, sans-serif' }}>
+        <div className="container">
             <h2>Code Snippets</h2>
             <form onSubmit={getSnippets}>
-                <button 
-                    type="submit" 
-                    style={{
-                        padding: '10px 20px',
-                        backgroundColor: '#007bff',
-                        color: 'white',
-                        border: 'none',
-                        borderRadius: '5px',
-                        cursor: 'pointer',
-                        marginBottom: '20px'
-                    }}
-                >
-                    Fetch Snippets
-                </button>
+              <button type="submit" className="fetch-button">
+                Fetch Snippets
+              </button>
             </form>
-
-            {/* Display fetched snippets */}
+        
             <div>
-                <p>Debug Info: Snippets array length: {snippets.length}</p>
-                <p>Snippets state: {JSON.stringify(snippets)}</p>
+              <p>Debug Info: Snippets array length: {snippets.length}</p>
+              <p>Snippets state: {JSON.stringify(snippets)}</p>
+        
+              {snippets.length > 0 ? (
+                snippets.map((snippet, index) => (
+                  <div key={index}>
+                    <details className="snippet-details">
+                      <summary>Raw Data (click to expand)</summary>
+                      <pre>{JSON.stringify(snippet, null, 2)}</pre>
+                    </details>
+              
+                    <h3 className="snippet-title">
+                      {snippet.title || snippet.name || `Snippet ${index + 1}`}
+                    </h3>
+              
+                    {(snippet.description || snippet.desc) && (
+                      <p className="snippet-description">
+                        {snippet.description || snippet.desc}
+                      </p>
+                    )}
+    
+                    {(snippet.language || snippet.lang) && (
+                      <div className="snippet-language">
+                        {snippet.language || snippet.lang}
+                      </div>
+                    )}
+    
+                    <pre className="snippet-code">
+                      <code>
+                        {snippet.code || snippet.content || snippet.snippet || JSON.stringify(snippet, null, 2)}
+                      </code>
+                    </pre>
                 
-                {snippets.length > 0 ? (
-                    snippets.map((snippet, index) => {
-                        console.log(`Rendering snippet ${index}:`, snippet);
-                        return (
-                            <div 
-                                key={index} 
-                                style={{
-                                    border: '1px solid #ddd',
-                                    borderRadius: '8px',
-                                    padding: '15px',
-                                    marginBottom: '20px',
-                                    backgroundColor: '#f9f9f9'
-                                }}
-                            >
-                                {/* Debug: Show raw snippet data */}
-                                <details style={{ marginBottom: '10px' }}>
-                                    <summary style={{ cursor: 'pointer', color: '#666' }}>
-                                        Raw Data (click to expand)
-                                    </summary>
-                                    <pre style={{ fontSize: '12px', color: '#888' }}>
-                                        {JSON.stringify(snippet, null, 2)}
-                                    </pre>
-                                </details>
-                                
-                                {/* Snippet Title */}
-                                <h3 style={{ 
-                                    color: '#333', 
-                                    marginTop: '0',
-                                    borderBottom: '2px solid #007bff',
-                                    paddingBottom: '5px'
-                                }}>
-                                    {snippet.title || snippet.name || `Snippet ${index + 1}`}
-                                </h3>
-                                
-                                {/* Snippet Description */}
-                                {(snippet.description || snippet.desc) && (
-                                    <p style={{ 
-                                        color: '#666', 
-                                        fontStyle: 'italic',
-                                        marginBottom: '15px'
-                                    }}>
-                                        {snippet.description || snippet.desc}
-                                    </p>
-                                )}
-                                
-                                {/* Language Tag */}
-                                {(snippet.language || snippet.lang) && (
-                                    <div style={{
-                                        display: 'inline-block',
-                                        backgroundColor: '#e9ecef',
-                                        padding: '4px 8px',
-                                        borderRadius: '12px',
-                                        fontSize: '12px',
-                                        color: '#495057',
-                                        marginBottom: '10px'
-                                    }}>
-                                        {snippet.language || snippet.lang}
-                                    </div>
-                                )}
-                                
-                                {/* Code Block */}
-                                <pre style={{
-                                    backgroundColor: '#2d3748',
-                                    color: '#e2e8f0',
-                                    padding: '15px',
-                                    borderRadius: '6px',
-                                    overflow: 'auto',
-                                    fontSize: '14px',
-                                    lineHeight: '1.5',
-                                    margin: '10px 0'
-                                }}>
-                                    <code>
-                                        {snippet.code || snippet.content || snippet.snippet || JSON.stringify(snippet, null, 2)}
-                                    </code>
-                                </pre>
-                                
-                                {/* Additional metadata */}
-                                <div style={{ 
-                                    fontSize: '12px', 
-                                    color: '#888',
-                                    marginTop: '10px'
-                                }}>
-                                    {(snippet.created_at || snippet.date_created) && (
-                                        <span>Created: {new Date(snippet.created_at || snippet.date_created).toLocaleDateString()}</span>
-                                    )}
-                                    {snippet.id && (
-                                        <span style={{ marginLeft: '15px' }}>ID: {snippet.id}</span>
-                                    )}
-                                </div>
-                            </div>
-                        );
-                    })
-                ) : (
-                    <div style={{
-                        textAlign: 'center',
-                        padding: '40px',
-                        color: '#666',
-                        fontSize: '16px'
-                    }}>
-                        No snippets found. Click "Fetch Snippets" to load your code snippets.
+                    <div className="snippet-meta">
+                      {(snippet.created_at || snippet.date_created) && (
+                        <span>
+                          Created: {new Date(snippet.created_at || snippet.date_created).toLocaleDateString()}
+                        </span>
+                      )}
+                      {snippet.id && (
+                        <span className="snippet-id">ID: {snippet.id}</span>
+                      )}
                     </div>
-                )}
+                  </div>
+                ))
+              ) : (
+                <div className="no-snippets">
+                  No snippets found. Click "Fetch Snippets" to load your code snippets.
+                </div>
+              )}
             </div>
-            
-            {/* Back button */}
-            <button 
-                onClick={() => navigate('/')} 
-                style={{
-                    padding: '8px 16px',
-                    backgroundColor: '#6c757d',
-                    color: 'white',
-                    border: 'none',
-                    borderRadius: '5px',
-                    cursor: 'pointer',
-                    marginTop: '20px'
-                }}
-            >
-                Back to Home
+        
+            <button onClick={() => navigate('/')} className="back-button">
+              Back to Home
             </button>
         </div>
     );
