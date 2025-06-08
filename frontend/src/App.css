@@ -1,6 +1,6 @@
 /* App.css */
 
-.loginContainer {
+.loginContainer{
   max-width: 300px;
   margin: 100px auto;
   padding: 1rem;
@@ -9,6 +9,17 @@
   text-align: center;
   font-family: sans-serif;
 }
+
+.signupContainer{
+  max-width: 300px;
+  margin: 100px auto;
+  padding: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  text-align: center;
+  font-family: sans-serif;
+}
+
 
 .form {
   display: flex;
