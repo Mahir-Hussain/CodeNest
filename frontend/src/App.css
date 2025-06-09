@@ -1,5 +1,18 @@
 /* App.css */
 
+.signupContainer {
+  max-width: 220px;        /* smaller width than login */
+  margin: 20px auto 100px; /* smaller top margin, keep bottom spacing */
+  padding: 0.75rem;        /* less padding for a compact feel */
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  text-align: center;
+  font-family: sans-serif;
+  background-color: #f9f9f9; /* optional slight background difference */
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1); /* subtle shadow for depth */
+}
+
+
 .loginContainer{
   max-width: 300px;
   margin: 100px auto;
