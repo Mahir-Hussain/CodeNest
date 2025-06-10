@@ -65,7 +65,7 @@ return (
     </div>
 
   <div className="loginContainer">
-    <h1>Login</h1>
+
     <form className="form" onSubmit={submitDetails}>
       <input
         type="email"

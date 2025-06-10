@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './Snippets.css';
 
@@ -6,6 +6,17 @@ function Snippets() {
     const navigate = useNavigate();
     const [snippets, setSnippets] = useState([]);
     const userid = 15; // Replace this with dynamic id later
+    const [isDark, setIsDark] = useState(false);
+
+    useEffect(() => {
+        if (isDark) {
+          document.body.style.backgroundColor = '#0d1117';
+          document.body.style.color = '#f0f6fc';
+        } else {
+          document.body.style.backgroundColor = '#ffffff';
+          document.body.style.color = '#24292f';
+        }
+      }, [isDark]);
 
     async function getSnippets(e) {
         e.preventDefault();
@@ -41,6 +52,16 @@ function Snippets() {
     }
 
     return (
+      <div className={`app ${isDark ? 'dark' : 'light'}`}>
+        <button 
+            className="theme-toggle" 
+            onClick={() => setIsDark(!isDark)}
+            aria-label="Toggle theme"
+        >
+            {isDark ? '☀️' : '🌙'}
+        </button>
+
+
         <div className="container">
             <h2>Code Snippets</h2>
             <form onSubmit={getSnippets}>
@@ -106,6 +127,7 @@ function Snippets() {
               Back to Home
             </button>
         </div>
+      </div>
     );
 }
 
