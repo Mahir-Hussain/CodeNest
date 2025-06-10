@@ -1,60 +1,221 @@
-/* App.css */
-
-.signupContainer {
-  max-width: 220px;        /* smaller width than login */
-  margin: 20px auto 100px; /* smaller top margin, keep bottom spacing */
-  padding: 0.75rem;        /* less padding for a compact feel */
-  border: 1px solid #ccc;
-  border-radius: 8px;
-  text-align: center;
-  font-family: sans-serif;
-  background-color: #f9f9f9; /* optional slight background difference */
-  box-shadow: 0 2px 6px rgba(0,0,0,0.1); /* subtle shadow for depth */
+/* Root variables for theming (Light Mode Defaults) */
+:root {
+  --bg-light: #ffffff;
+  --bg-dark: #0d1117;
+  --text-light: #24292f;
+  --text-dark: #f0f6fc;
+  --subtext-light: #656d76;
+  --subtext-dark: #8b949e;
+  --border-light: #d1d9e0;
+  --border-dark: #30363d;
+  --input-bg-light: #f6f8fa;
+  --input-bg-dark: #0d1117;
+  --input-text-light: #24292f;
+  --input-text-dark: #f0f6fc;
+  --placeholder-light: #656d76;
+  --placeholder-dark: #8b949e;
+  --btn-bg: #1f883d;
+  --btn-border: rgba(31, 136, 61, 0.2);
+  --btn-hover: #1a7f37;
+  --btn-active: #176f2c;
 }
 
+/* Global reset */
+body {
+  margin: 0;
+  padding: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+  background-color: var(--bg-light);
+  color: var(--text-light);
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
 
-.loginContainer{
+/* App container for theme management - now primarily controls base light/dark */
+.app {
+  background-color: var(--bg-light);
+  color: var(--text-light);
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+.app.dark {
+  background-color: var(--bg-dark);
+  color: var(--text-dark);
+}
+
+/* --- THEME-SPECIFIC STYLES --- */
+
+/* Theme toggle */
+.theme-toggle {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  width: 40px;
+  height: 40px;
+  border: 1px solid var(--border-light);
+  border-radius: 50%;
+  background: transparent;
+  font-size: 18px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+  z-index: 1000;
+  color: inherit;
+}
+.theme-toggle:hover {
+  background-color: rgba(0,0,0,0.05);
+}
+.app.dark .theme-toggle {
+  border-color: var(--border-dark);
+}
+.app.dark .theme-toggle:hover {
+  background-color: rgba(255,255,255,0.1);
+}
+
+/* Welcome header */
+.welcome-header {
+  text-align: center;
+  margin: 40px auto 30px;
+  max-width: 400px;
+}
+.welcome-header h1 {
+  font-size: 32px;
+  font-weight: 600;
+  margin: 0 0 8px;
+  letter-spacing: -0.5px;
+  color: inherit;
+}
+.welcome-header p {
+  font-size: 16px;
+  font-weight: 300;
+  margin: 0;
+  color: var(--subtext-light);
+  transition: color 0.3s ease;
+}
+.app.dark .welcome-header p {
+  color: var(--subtext-dark);
+}
+
+/* Login form */
+.loginContainer {
   max-width: 300px;
-  margin: 100px auto;
-  padding: 1rem;
-  border: 1px solid #ccc;
-  border-radius: 8px;
+  margin: 40px auto 20px;
+  padding: 20px;
+  border: 1px solid var(--border-light);
+  border-radius: 6px;
+  background-color: var(--bg-light);
+  transition: background-color 0.3s ease, border-color 0.3s ease;
+}
+.app.dark .loginContainer {
+  background-color: var(--bg-dark);
+  border-color: var(--border-dark);
+}
+.loginContainer h1 {
+  font-size: 24px;
+  font-weight: 300;
   text-align: center;
-  font-family: sans-serif;
+  color: inherit;
+  margin: 0 0 20px;
+  letter-spacing: -0.5px;
 }
 
-.signupContainer{
-  max-width: 300px;
-  margin: 100px auto;
-  padding: 1rem;
-  border: 1px solid #ccc;
-  border-radius: 8px;
-  text-align: center;
-  font-family: sans-serif;
-}
-
-
+/* Form styles */
 .form {
   display: flex;
   flex-direction: column;
-  gap: 1rem;
+  gap: 15px;
 }
-
 .form input {
-  padding: 8px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
+  padding: 8px 12px;
+  font-size: 14px;
+  border: 1px solid var(--border-light);
+  border-radius: 6px;
+  background-color: var(--input-bg-light);
+  color: var(--input-text-light);
+  transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+}
+.form input::placeholder {
+  color: var(--placeholder-light);
+  transition: color 0.2s ease;
+}
+.form input:focus {
+  outline: none;
+  border-color: #0969da;
+  box-shadow: 0 0 0 3px rgba(9, 105, 218, 0.1);
+  background-color: #fff;
+}
+.app.dark .form input {
+  background-color: var(--input-bg-dark);
+  border-color: var(--border-dark);
+  color: var(--input-text-dark);
+}
+.app.dark .form input::placeholder {
+  color: var(--placeholder-dark);
+}
+.app.dark .form input:focus {
+  background-color: var(--input-bg-dark);
+  box-shadow: 0 0 0 3px rgba(9, 105, 218, 0.2);
 }
 
 .form button {
-  padding: 10px;
-  background-color: #007bff;
-  color: white;
-  border: none;
-  border-radius: 4px;
+  padding: 8px 16px;
+  font-size: 14px;
+  font-weight: 500;
+  color: #fff;
+  background-color: var(--btn-bg);
+  border: 1px solid var(--btn-border);
+  border-radius: 6px;
   cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+.form button:hover {
+  background-color: var(--btn-hover);
+}
+.form button:active {
+  background-color: var(--btn-active);
+  box-shadow: inset 0 1px 0 rgba(0, 0, 0, 0.125);
 }
 
-.form button:hover {
-  background-color: #0056b3;
+/* Signup prompt */
+.signupContainer {
+  max-width: 300px;
+  margin: 20px auto 40px;
+  padding: 20px;
+  border: 1px solid var(--border-light);
+  border-radius: 6px;
+  background-color: var(--bg-light);
+  text-align: center;
+  transition: background-color 0.3s ease, border-color 0.3s ease;
+}
+.app.dark .signupContainer {
+  background-color: var(--bg-dark);
+  border-color: var(--border-dark);
+}
+.signupContainer h6 {
+  font-size: 14px;
+  font-weight: 400;
+  color: inherit;
+  margin: 0 0 15px;
+}
+.signupContainer button {
+  padding: 8px 16px;
+  font-size: 14px;
+  font-weight: 500;
+  background: transparent;
+  border: 1px solid var(--border-light);
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease; /* Ensure all relevant properties transition */
+  color: inherit; /* This will inherit from the app's text color */
+}
+.signupContainer button:hover {
+  background-color: rgba(0,0,0,0.05);
+}
+
+.app.dark .signupContainer button {
+  border-color: var(--border-dark); /* Explicitly set dark border */
+  color: var(--text-dark); /* Explicitly set dark text color for the button if it's not inheriting correctly */
+}
+.app.dark .signupContainer button:hover {
+  background-color: rgba(255,255,255,0.1);
 }

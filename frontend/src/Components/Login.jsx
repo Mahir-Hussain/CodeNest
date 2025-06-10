@@ -1,10 +1,21 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 function Login(){
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [isDark, setIsDark] = useState(false);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    if (isDark) {
+      document.body.style.backgroundColor = '#0d1117';
+      document.body.style.color = '#f0f6fc';
+    } else {
+      document.body.style.backgroundColor = '#ffffff';
+      document.body.style.color = '#24292f';
+    }
+  }, [isDark]);
 
   async function submitDetails(e){
     e.preventDefault();
@@ -39,7 +50,20 @@ function Login(){
   }
 
 return (
-  <>
+  <div className={`app ${isDark ? 'dark' : 'light'}`}>
+    <button 
+      className="theme-toggle" 
+      onClick={() => setIsDark(!isDark)}
+      aria-label="Toggle theme"
+    >
+      {isDark ? '☀️' : '🌙'}
+    </button>
+
+    <div className="welcome-header">
+      <h1>Welcome to CodeNest</h1>
+      <p>Sign in to your account to continue</p>
+    </div>
+
   <div className="loginContainer">
     <h1>Login</h1>
     <form className="form" onSubmit={submitDetails}>
@@ -63,36 +87,12 @@ return (
     </form>
   </div>
 
-  <div className='signupContainer'>
-    <h6>No account?</h6>
-    <button type="button" onClick={() => navigate("/Signup")}>Sign Up</button>
+    <div className='signupContainer'>
+      <h6>No account?</h6>
+      <button type="button" onClick={() => navigate("/Signup")}>Sign Up</button>
+    </div>
   </div>
-  </>
 );
-
-  // return (
-  //   <div className="loginContainer">
-  //     <h1>Login</h1>
-  //     <form className="form" onSubmit={submitDetails}> 
-  //       <input 
-  //         type="email" 
-  //         placeholder="Email" 
-  //         value={email} 
-  //         onChange={(e) => setEmail(e.target.value)} 
-  //         required
-  //       />
-  //       <input 
-  //         type="password" 
-  //         placeholder="Password" 
-  //         value={password} 
-  //         onChange={(e) => setPassword(e.target.value)} 
-  //         required
-  //       />
-  //       <button type="submit">Login</button>
-  //       <button type="button" onClick={() => navigate("/Signup")}>Sign Up</button>
-  //     </form>
-  //   </div>
-  // );
 }
 
 export default Login;
