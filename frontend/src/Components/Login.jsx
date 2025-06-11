@@ -17,37 +17,46 @@ function Login(){
     }
   }, [isDark]);
 
-  async function submitDetails(e){
-    e.preventDefault();
+async function submitDetails(e) {
+  e.preventDefault();
+  console.log("submit");
 
-    try{
-      const response = await fetch("http://localhost:8000/login", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({email, password}),
-      });
-      
-      if (!response.ok){
-        throw new Error("HTTP error");
-      }
+  try {
+    const response = await fetch("http://localhost:8000/login", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ email: email.trim(), password: password.trim() }),
+    });
 
-      const result = await response.text();
-      console.log(result);
-      
-      if(result.includes("Login successful")){
-        alert("Login successful!");
-        navigate("/snippets"); // Only navigate on successful login
-      } else {
-        alert("Login failed - invalid credentials");
-      }
-
-    } catch(error){
-      console.error(error);
-      alert("Login failed, try again");
+    if (!response.ok) {
+      // Server responded with error status like 400, 500 etc
+      const errorText = await response.text();
+      console.error("HTTP error response:", errorText);
+      alert("Login failed: server error");
+      return;
     }
+
+    const result = await response.json();
+    console.log("Login API result:", result);
+
+    if (result && result.success && result.token) {
+      console.log("Login success");
+      localStorage.setItem("authToken", result.token);
+      localStorage.setItem("userId", result.userid);
+
+      alert("Login successful!");
+      navigate("/snippets", { replace: true }); // prevents "Back" to login
+    } else {
+      alert(result.error || "Login failed - invalid credentials");
+    }
+  } catch (error) {
+    console.error("Fetch/login error:", error);
+    alert("Login failed, please try again.");
   }
+}
+
 
 return (
   <div className={`app ${isDark ? 'dark' : 'light'}`}>

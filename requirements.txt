@@ -1,3 +1,5 @@
 psycopg2
 uvicorn
 fastapi[standard]
+pyjwt
+google-genai

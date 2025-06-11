@@ -5,8 +5,17 @@ import './Snippets.css';
 function Snippets() {
     const navigate = useNavigate();
     const [snippets, setSnippets] = useState([]);
-    const userid = 15; // Replace this with dynamic id later
     const [isDark, setIsDark] = useState(false);
+
+    const userId = parseInt(localStorage.getItem('userId'), 10);
+
+    // Redirect if not logged in
+    useEffect(() => {
+        if (!userId || isNaN(userId)) {
+            alert("You must be logged in to view snippets.");
+            navigate('/');
+        }
+    }, [userId, navigate]);
 
     useEffect(() => {
         if (isDark) {
@@ -16,37 +25,35 @@ function Snippets() {
           document.body.style.backgroundColor = '#ffffff';
           document.body.style.color = '#24292f';
         }
-      }, [isDark]);
+    }, [isDark]);
 
     async function getSnippets(e) {
         e.preventDefault();
 
+        if (!userId || isNaN(userId)) {
+            alert("Invalid user ID. Please login again.");
+            return;
+        }
+
         try {
-            console.log("Fetching snippets for userid:", userid);
+            console.log("Fetching snippets for userId:", userId);
             
-            const response = await fetch(`http://localhost:8000/get_snippets/17`, {
+            const response = await fetch(`http://localhost:8000/get_snippets/${userId}`, {
                 method: "GET",
                 headers: {
                     "Content-Type": "application/json",
                 },
             });
 
-            console.log("Response status:", response.status);
-            console.log("Response ok:", response.ok);
-
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
 
             const data = await response.json();
-            console.log("Raw data received:", data);
-            console.log("Data type:", typeof data);
-            console.log("Is array?", Array.isArray(data));
-            console.log("Data length:", data?.length);
-            
-            setSnippets(data);
+            // Handle your response shape here
+            const snippetsArray = Array.isArray(data) ? data : data.snippets || [];
+            setSnippets(snippetsArray);
         } catch (error) {
-            console.error("Full error:", error);
             alert(`Failed to fetch snippets: ${error.message}`);
         }
     }
@@ -61,7 +68,6 @@ function Snippets() {
             {isDark ? '☀️' : '🌙'}
         </button>
 
-
         <div className="container">
             <h2>Code Snippets</h2>
             <form onSubmit={getSnippets}>
@@ -71,7 +77,6 @@ function Snippets() {
             </form>
         
             <div>
-              <p>Debug Info: Snippets array length: {snippets.length}</p>
               <p>Snippets state: {JSON.stringify(snippets)}</p>
         
               {snippets.length > 0 ? (

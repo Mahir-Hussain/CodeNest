@@ -27,11 +27,13 @@ async def root():
 
 @app.post("/login")
 async def login(credentials: LoginData):
-    user_id = loginSystem.authenticate(credentials.email, credentials.password)
-    if user_id:
-        return {"message": "Login successful", "user_id": user_id}
+    result = loginSystem.authenticate(credentials.email, credentials.password)
+    if result.get("success"):
+        return result
     else:
-        raise HTTPException(status_code=401, detail="Invalid login details")
+        raise HTTPException(
+            status_code=401, detail=result.get("error", "Invalid login details")
+        )
 
 
 @app.post("/create_user")
@@ -44,6 +46,7 @@ async def create_user(credentials: LoginData):
             status_code=400, detail=result.get("error", "Failed to create user")
         )
 
+
 @app.delete("/delete_user")
 async def delete_user(email: str):
     result = loginSystem.delete_user(email)
@@ -53,6 +56,7 @@ async def delete_user(email: str):
         raise HTTPException(
             status_code=400, detail=result.get("error", "Failed to delete user")
         )
+
 
 @app.get("/get_snippets/{user_id}")
 async def get_snippets(user_id: int):
@@ -82,5 +86,3 @@ async def delete_snippet(user_id: int, snippet_id: int):
         return result
     else:
         raise HTTPException(status_code=400, detail=result["error"])
-    
-
