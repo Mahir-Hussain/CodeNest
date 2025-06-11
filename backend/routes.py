@@ -1,7 +1,7 @@
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 from backend.snippets import Snippets
-from backend.login import LoginSystem
+from backend.auth.login import LoginSystem
 
 
 class LoginData(BaseModel):

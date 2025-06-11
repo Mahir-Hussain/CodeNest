@@ -1,10 +1,10 @@
 from fastapi.middleware.cors import CORSMiddleware
-import backend.api as api
+import backend.routes as routes
 import uvicorn
 import subprocess
 import threading
 
-api.app.add_middleware(
+routes.app.add_middleware(
     CORSMiddleware,
     allow_origins=["http://localhost:3000"],  # React dev server
     allow_credentials=True,

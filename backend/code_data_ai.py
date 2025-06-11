@@ -1,5 +1,5 @@
 from google import genai
-from secret import ai_key
+from backend.auth.secret import ai_key
 
 client = genai.Client(
     api_key=ai_key

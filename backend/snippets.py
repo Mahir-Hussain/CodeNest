@@ -1,5 +1,5 @@
-from backend.database import Database
-from backend.jwtAuth import jwtAuth, require_auth
+from backend.auth.database import Database
+from backend.auth.jwtAuth import jwtAuth, require_auth
 import psycopg2
 
 
