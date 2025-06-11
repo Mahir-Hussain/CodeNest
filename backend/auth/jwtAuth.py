@@ -1,7 +1,7 @@
 import jwt
 from datetime import datetime, timedelta, timezone
 from functools import wraps
-from backend.secret import jwt_secret
+from backend.auth.secret import jwt_secret
 
 
 class jwtAuth:
