@@ -8,6 +8,13 @@ function Login(){
   const navigate = useNavigate();
 
   useEffect(() => {
+    const token = localStorage.getItem("authToken");
+    if (token) {
+      navigate("/snippets", { replace: true });
+    }
+  }, [navigate]);
+
+  useEffect(() => {
     if (isDark) {
       document.body.style.backgroundColor = '#0d1117';
       document.body.style.color = '#f0f6fc';

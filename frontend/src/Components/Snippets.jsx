@@ -9,6 +9,12 @@ function Snippets() {
 
     const userId = parseInt(localStorage.getItem('userId'), 10);
 
+    function logout() {
+        localStorage.removeItem('authToken');
+        localStorage.removeItem('userId');
+        navigate('/', {replace: true});  
+    } 
+
     // Redirect if not logged in
     useEffect(() => {
         if (!userId || isNaN(userId)) {
@@ -128,8 +134,8 @@ function Snippets() {
               )}
             </div>
         
-            <button onClick={() => navigate('/')} className="back-button">
-              Back to Home
+            <button onClick={logout} className="back-button">
+              Logout
             </button>
         </div>
       </div>
