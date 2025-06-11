@@ -14,7 +14,7 @@ routes.app.add_middleware(
 
 
 def run_fastapi():
-    uvicorn.run("backend.api:app", host="127.0.0.1", port=8000, reload=True)
+    uvicorn.run("backend.routes:app", host="127.0.0.1", port=8000, reload=True)
 
 
 def run_react():
