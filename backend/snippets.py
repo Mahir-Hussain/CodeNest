@@ -69,7 +69,7 @@ class Snippets(Database):
         """
         try:
             self.cursor.execute(
-                "SELECT id, title, content, language, favourite FROM code_snippets WHERE user_id = %s",
+                "SELECT id, title, content, language, favourite, created_at FROM code_snippets WHERE user_id = %s",
                 (self.user_id,),
             )
             snippets = self.cursor.fetchall()

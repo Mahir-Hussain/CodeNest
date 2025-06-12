@@ -1,19 +1,31 @@
 // src/App.jsx
+import React from 'react';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Login from './Components/Login';
 import SignUp from './Components/Signup';
 import Snippets from './Components/Snippets';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import './App.css'; 
+import ProtectedRoute from './Components/ProtectedRoute';
+import { ThemeProvider } from './Components/ThemeContext';
+import './App.css';
 
 function App() {
   return (
-    <Router>
-      <Routes>
-        <Route path="/" element={<Login />} />
-        <Route path="/Signup" element={<SignUp />} />
-        <Route path="/snippets" element={<Snippets />} />
-      </Routes>
-    </Router>
+    <ThemeProvider>
+      <Router>
+        <Routes>
+          <Route path="/" element={<Login />} />
+          <Route path="/Signup" element={<SignUp />} />
+          <Route
+            path="/snippets"
+            element={
+              <ProtectedRoute>
+                <Snippets />
+              </ProtectedRoute>
+            }
+          />
+        </Routes>
+      </Router>
+    </ThemeProvider>
   );
 }
 

@@ -101,8 +101,7 @@ async def get_snippets(user_id: int):
     """
     snippets = Snippets(user_id)
     try:
-        user_snippets = snippets.get_snippets()
-        return {"snippets": user_snippets}
+        return snippets.get_snippets()  # ✅ Return as-is
     except Exception as error:
         raise HTTPException(status_code=500, detail=str(error))
 
