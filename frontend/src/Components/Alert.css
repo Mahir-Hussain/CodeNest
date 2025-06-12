@@ -1,0 +1,22 @@
+.custom-alert {
+  position: fixed;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #24292f;
+  color: #f0f6fc;
+  padding: 16px 32px;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+.close-btn {
+  background: transparent;
+  border: none;
+  color: #f0f6fc;
+  font-size: 1.5rem;
+  cursor: pointer;
+}

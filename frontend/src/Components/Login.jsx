@@ -1,9 +1,11 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import Alert from './Alert'; 
 
 function Login(){
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [alertMessage, setAlertMessage] = useState("");
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -30,7 +32,7 @@ async function submitDetails(e) {
       // Server responded with error status like 400, 500 etc
       const errorText = await response.text();
       console.error("HTTP error response:", errorText);
-      alert("Login failed: server error");
+      setAlertMessage("Login failed: server error");
       return;
     }
 
@@ -42,20 +44,23 @@ async function submitDetails(e) {
       localStorage.setItem("authToken", result.token);
       localStorage.setItem("userId", result.userid);
 
-      alert("Login successful!");
-      navigate("/snippets", { replace: true }); // prevents "Back" to login
+      setAlertMessage("Login successful!");
+      setTimeout(() => {
+        navigate("/snippets", { replace: true });
+      }, 1000);
     } else {
-      alert(result.error || "Login failed - invalid credentials");
+      setAlertMessage(result.error || "Login failed - invalid credentials");
     }
   } catch (error) {
     console.error("Fetch/login error:", error);
-    alert("Login failed, please try again.");
+    setAlertMessage("Login failed, please try again.");
   }
 }
 
 
 return (
   <>
+    <Alert message={alertMessage} onClose={() => setAlertMessage("")} />
     <div className="welcome-header">
       <h1>Welcome to CodeNest</h1>
       <p>Sign in to your account to continue</p>
