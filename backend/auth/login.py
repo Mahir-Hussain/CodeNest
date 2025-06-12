@@ -6,59 +6,97 @@ from backend.auth.jwtAuth import jwtAuth
 
 class LoginSystem(Database):
     def __init__(self):
+        """
+        Sets up the database connection and initializes JWT authentication.
+        """
         super().__init__()
         self.jwtAuth = jwtAuth()
 
     def hash_password(self, password):
+        """
+        Hash a password using SHA-256.
+
+        Requires:
+            password (str): The plain text password to hash.
+
+        Returns:
+            str: The hashed password as a hexadecimal string.
+        """
         return hashlib.sha256(password.encode()).hexdigest()
 
     def create_user(self, email, password):
+        """
+        Create a new user in the database.
+
+        Requires:
+            email (str): The user's email address.
+            password (str): The user's plain text password.
+
+        Returns:
+            dict: Success status and message or error.
+        """
         try:
             self.cursor.execute(
                 "INSERT INTO users (email, password) VALUES (%s, %s)",
                 (email, self.hash_password(password)),
-            ),
-
+            )
             self.connection.commit()
             return {"success": True, "message": "User created successfully!"}
-        except psycopg2.IntegrityError as e:
+        except psycopg2.IntegrityError as error:
             self.connection.rollback()
-            return {"success": False, "error": str(e)}
+            return {"success": False, "error": str(error)}
 
     def authenticate(self, email, password):
+        """
+        Authenticate a user by email and password.
+
+        Requires:
+            email (str): The user's email address.
+            password (str): The user's plain text password.
+
+        Returns:
+            dict: Success status, message, JWT token, and user ID if successful; otherwise, error.
+        """
         try:
             self.cursor.execute(
                 "SELECT id, password FROM users WHERE email = %s", (email,)
             )
             result = self.cursor.fetchone()
             if result:
-                userid, hashed_pw = result
+                user_id, hashed_pw = result
                 if hashed_pw == self.hash_password(password):
-                    token = self.jwtAuth.generate_token(userid)
+                    token = self.jwtAuth.generate_token(user_id)
                     return {
                         "success": True,
                         "message": "Login Successful",
                         "token": token,
-                        "userid": userid,
+                        "userid": user_id,
                     }
                 else:
-                    print("Incorrect login details-")  # Remove this in production
+                    # Incorrect password
                     return {"success": False}
             else:
-                print("User not found")  # Remove this in production
+                # User not found
                 return {"success": False}
-        except psycopg2.Error as e:
-            return {"success": False, "error": f"database error {e}"}
-
-        except psycopg2.IntegrityError as e:
+        except psycopg2.Error as error:
+            return {"success": False, "error": f"Database error: {error}"}
+        except psycopg2.IntegrityError as error:
             self.connection.rollback()
-            return {"success": False, "error": str(e)}
-        except psycopg2.Error as e:
+            return {"success": False, "error": str(error)}
+        except psycopg2.Error as error:
             self.connection.rollback()
-            return {"success": False, "error": str(e)}
+            return {"success": False, "error": str(error)}
 
     def get_user_from_token(self, token):
-        """Get user information from JWT token"""
+        """
+        Get user information from a JWT token.
+
+        Requires:
+            token (str): The JWT token to verify and extract user information.
+
+        Returns:
+            dict: Success status and user info if successful; otherwise, error.
+        """
         token_result = self.jwtAuth.verify_token(token)
         if token_result["success"]:
             try:
@@ -74,7 +112,7 @@ class LoginSystem(Database):
                     }
                 else:
                     return {"success": False, "error": "User not found"}
-            except psycopg2.Error as e:
-                return {"success": False, "error": f"Database error: {str(e)}"}
+            except psycopg2.Error as error:
+                return {"success": False, "error": f"Database error: {str(error)}"}
         else:
             return token_result

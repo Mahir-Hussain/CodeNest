@@ -15,18 +15,36 @@ OR:
 """
 
 
-def get_title(userCode: str):
-    default = "Give me a short title for this code. Do not deviate."
+def get_title(user_code: str):
+    """
+    Generate a short title for the provided code using Gemini AI.
+
+    Requires:
+        user_code (str): The code snippet for which a title is to be generated.
+
+    Returns:
+        response: The AI-generated response containing a short title for the code.
+    """
+    prompt = "Give me a short title for this code. Do not deviate."
     response = client.models.generate_content(
         model="gemini-2.0-flash",
-        contents=f"{default}, [{userCode}]",
+        contents=f"{prompt}, [{user_code}]",
     )
     return response
 
 
-def get_language(userCode: str):
-    default = "In one word, tell me what programming language the user is using. Do not deviate."
+def get_language(user_code: str):
+    """
+    Identify the programming language of the provided code using Gemini AI.
+
+    Requires:
+        user_code (str): The code snippet whose programming language is to be identified.
+
+    Returns:
+        response: The AI-generated response containing the programming language in one word.
+    """
+    prompt = "In one word, tell me what programming language the user is using. Do not deviate."
     response = client.models.generate_content(
-        model="gemini-2.0-flash", contents=f"{default}, [{userCode}]"
+        model="gemini-2.0-flash", contents=f"{prompt}, [{user_code}]"
     )
     return response
