@@ -1,9 +1,5 @@
 from google import genai
-from backend.auth.secret import ai_key
-
-client = genai.Client(
-    api_key=ai_key
-)  # Get your key from https://ai.google.dev/gemini-api/docs
+from auth.secret import ai_key
 
 """
 PLAN:
@@ -15,36 +11,69 @@ OR:
 """
 
 
-def get_title(user_code: str):
-    """
-    Generate a short title for the provided code using Gemini AI.
+class CodeDataAI:
+    def __init__(self):
+        """
+        Initializes the CodeDataAI class with a Gemini AI client.
+        """
+        self.client = genai.Client(api_key=ai_key)
+        self.model = "gemini-2.0-flash"
 
-    Requires:
-        user_code (str): The code snippet for which a title is to be generated.
+    def get_title(self, user_code: str):
+        """
+        Generate a short title for the provided code using Gemini AI.
 
-    Returns:
-        response: The AI-generated response containing a short title for the code.
-    """
-    prompt = "Give me a short title for this code. Do not deviate."
-    response = client.models.generate_content(
-        model="gemini-2.0-flash",
-        contents=f"{prompt}, [{user_code}]",
-    )
-    return response
+        Requires:
+            user_code (str): The code snippet for which a title is to be generated.
+
+        Returns:
+            response: The AI-generated response containing a short title for the code.
+        """
+        prompt = "Give me a short title for this code. Do not deviate."
+        response = self.client.models.generate_content(
+            model=self.model,
+            contents=f"{prompt}, [{user_code}]",
+        )
+        return response.text
+
+    def get_language(self, user_code: str):
+        """
+        Identify the programming language of the provided code using Gemini AI.
+
+        Requires:
+            user_code (str): The code snippet whose programming language is to be identified.
+
+        Returns:
+            response: The AI-generated response containing the programming language in one word.
+        """
+        prompt = "In one word, tell me what programming language the user is using. Do not deviate."
+        response = self.client.models.generate_content(
+            model=self.model, contents=f"{prompt}, [{user_code}]"
+        )
+        return response.text
+
+    def get_tags(self, user_code: str):
+        """
+        Generate tags for the provided code using Gemini AI.
+
+        Requires:
+            user_code (str): The code snippet for which tags are to be generated.
+
+        Returns:
+            response: The AI-generated response containing tags for the code.
+        """
+        prompt = """Generate up to 3 tags for this code. Do not deviate. 
+                    In the style of a comma-separated list. E.g #tag1, #tag2, #tag3.
+                    You do not need 3 tags, you can return 1 or 2 if you want."""
+        response = self.client.models.generate_content(
+            model=self.model, contents=f"{prompt}, [{user_code}]"
+        )
+        return response.text
 
 
-def get_language(user_code: str):
-    """
-    Identify the programming language of the provided code using Gemini AI.
+ai = CodeDataAI()
 
-    Requires:
-        user_code (str): The code snippet whose programming language is to be identified.
-
-    Returns:
-        response: The AI-generated response containing the programming language in one word.
-    """
-    prompt = "In one word, tell me what programming language the user is using. Do not deviate."
-    response = client.models.generate_content(
-        model="gemini-2.0-flash", contents=f"{prompt}, [{user_code}]"
-    )
-    return response
+tags = ai.get_tags("def hello_world():\n    print('Hello, world!')")
+title = ai.get_title("def hello_world():\n    print('Hello, world!')")
+language = ai.get_language("def hello_world():\n    print('Hello, world!')")
+print(f"Tags: {tags}", title, language)
