@@ -4,7 +4,6 @@ import { useNavigate } from 'react-router-dom';
 function Login(){
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [isDark, setIsDark] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -13,16 +12,6 @@ function Login(){
       navigate("/snippets", { replace: true });
     }
   }, [navigate]);
-
-  useEffect(() => {
-    if (isDark) {
-      document.body.style.backgroundColor = '#0d1117';
-      document.body.style.color = '#f0f6fc';
-    } else {
-      document.body.style.backgroundColor = '#ffffff';
-      document.body.style.color = '#24292f';
-    }
-  }, [isDark]);
 
 async function submitDetails(e) {
   e.preventDefault();
@@ -66,15 +55,7 @@ async function submitDetails(e) {
 
 
 return (
-  <div className={`app ${isDark ? 'dark' : 'light'}`}>
-    <button 
-      className="theme-toggle" 
-      onClick={() => setIsDark(!isDark)}
-      aria-label="Toggle theme"
-    >
-      {isDark ? '☀️' : '🌙'}
-    </button>
-
+  <>
     <div className="welcome-header">
       <h1>Welcome to CodeNest</h1>
       <p>Sign in to your account to continue</p>
@@ -107,7 +88,7 @@ return (
       <h6>No account?</h6>
       <button type="button" onClick={() => navigate("/Signup")}>Sign Up</button>
     </div>
-  </div>
+  </>
 );
 }
 
