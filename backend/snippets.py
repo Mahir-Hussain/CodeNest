@@ -15,36 +15,36 @@ class Snippets(Database):
         self.user_id = user_id
         self.jwt_auth = jwtAuth()
 
-    async def enrich_snippet(
-        self, snippet_id, content, title, language, tags
-    ):  # Broken
-        # ai = CodeDataAI()
-        try:
-            # Only get missing fields
-            if title == "Untitled Snippet" and language and tags is None:
-                data = await ai.get_all_data(content)
-                title = data["title"]
-                language = data["language"]
-                tags = data["tags"]
-            if title == "Untitled Snippet" or title is None:
-                title = await ai.get_title(content)
-            if language is None:
-                language = await ai.get_language(content)
-            if tags is None:
-                tags = await ai.get_tags(content)
+    # async def enrich_snippet(
+    #     self, snippet_id, content, title, language, tags
+    # ):  # Broken
+    #     # ai = CodeDataAI()
+    #     try:
+    #         # Only get missing fields
+    #         if title == "Untitled Snippet" and language and tags is None:
+    #             data = await ai.get_all_data(content)
+    #             title = data["title"]
+    #             language = data["language"]
+    #             tags = data["tags"]
+    #         if title == "Untitled Snippet" or title is None:
+    #             title = await ai.get_title(content)
+    #         if language is None:
+    #             language = await ai.get_language(content)
+    #         if tags is None:
+    #             tags = await ai.get_tags(content)
 
-            self.cursor.execute(
-                """
-                UPDATE code_snippets
-                SET title = %s, language = %s, tags = %s
-                WHERE id = %s AND user_id = %s
-                """,
-                (title, language, tags, snippet_id, self.user_id),
-            )
-            self.connection.commit()
-        except Exception as e:
-            self.connection.rollback()
-            print(f"[Enrichment Error] {e}")
+    #         self.cursor.execute(
+    #             """
+    #             UPDATE code_snippets
+    #             SET title = %s, language = %s, tags = %s
+    #             WHERE id = %s AND user_id = %s
+    #             """,
+    #             (title, language, tags, snippet_id, self.user_id),
+    #         )
+    #         self.connection.commit()
+    #     except Exception as e:
+    #         self.connection.rollback()
+    #         print(f"[Enrichment Error] {e}")
 
     def authenticate(self, token):
         """
