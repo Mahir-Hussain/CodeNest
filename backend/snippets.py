@@ -33,7 +33,9 @@ class Snippets(Database):
             return token_result
 
     @require_auth
-    def create_snippet(self, title=None, content=None, language=None):
+    def create_snippet(
+        self, title=None, content=None, language=None, favourite=False, tags=None
+    ):
         """
         Create a new code snippet for the authenticated user.
 
@@ -47,8 +49,15 @@ class Snippets(Database):
         """
         try:
             self.cursor.execute(
-                "INSERT INTO code_snippets (title, content, language, user_id) VALUES (%s, %s, %s, %s)",
-                (title, content, language, self.user_id),
+                "INSERT INTO code_snippets (title, content, language, user_id, favourite, tags) VALUES (%s, %s, %s, %s, %s, %s)",
+                (
+                    title,
+                    content,
+                    language,
+                    self.user_id,
+                    favourite,
+                    tags,
+                ),
             )
             self.connection.commit()
             return {"success": True, "message": "Snippet created successfully!"}

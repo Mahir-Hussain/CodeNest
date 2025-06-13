@@ -13,6 +13,8 @@ class SnippetData(BaseModel):
     title: str = None
     content: str
     language: str = None
+    favourite: bool = False
+    tags: list[str] = []
 
 
 app = FastAPI()
@@ -119,7 +121,9 @@ async def create_snippet(user_id: int, data: SnippetData):
         dict: Success message if snippet is created, otherwise raises HTTPException.
     """
     snippets = Snippets(user_id)
-    result = snippets.create_snippet(data.title, data.content, data.language)
+    result = snippets.create_snippet(
+        data.title, data.content, data.language, data.favourite, data.tags
+    )
     if result["success"]:
         return result
     else:
