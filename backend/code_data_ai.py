@@ -1,5 +1,5 @@
 from google import genai
-from auth.secret import ai_key
+from backend.auth.secret import ai_key
 import asyncio
 
 """
