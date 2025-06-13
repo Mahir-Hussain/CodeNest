@@ -188,7 +188,7 @@ body {
   cursor: pointer;
   font-weight: bold;
   transition: background-color 0.2s;
-  margin-left: 24px;
+  margin-left: -10px;
 }
 
 .new-snippet-button:hover {

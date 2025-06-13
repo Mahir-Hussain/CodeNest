@@ -89,9 +89,9 @@ export default function Snippets() {
       <main className="main">
         <header className="topbar">
           <input type="text" className="search-input" placeholder="Search snippets..." />
+          <button className="new-snippet-button">New Snippet</button>
           <span className="date-created">Date Created</span>
           <span className="sort-arrow">▲▼</span>
-          <button className="new-snippet-button">New Snippet</button>
           <div className="profile-icon">
             <FaUserCircle size={32} />
           </div>
