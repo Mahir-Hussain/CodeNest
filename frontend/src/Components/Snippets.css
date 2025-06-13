@@ -172,6 +172,7 @@ body {
   background-color: var(--search-input-bg-light);
   color: var(--input-text-light);
   font-size: 1em;
+  margin-right: 20px;
 }
 
 .search-input::placeholder {
