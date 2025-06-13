@@ -9,6 +9,7 @@ export default function Snippets() {
   const [snippets, setSnippets] = useState([]);
   const [alertMessage, setAlertMessage] = useState("");
   const [loading, setLoading] = useState(true);
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
 
   if (!userId || isNaN(userId)) {
     setAlertMessage("You must be logged in to view snippets.");
@@ -52,7 +53,15 @@ export default function Snippets() {
 
   return (
     <div className="app">
-      <aside className="sidebar">
+      <aside className={`sidebar${sidebarCollapsed ? " collapsed" : ""}`}>
+        <button
+          className="collapse-sidebar-btn"
+          onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
+          aria-label={sidebarCollapsed ? "Expand sidebar" : "Collapse sidebar"}>
+          <span className="collapse-icon">  
+          {sidebarCollapsed ? "→" : "←"}
+          </span>
+        </button>
         <div className="sidebar-title">All Snippets</div>
 
         <div className="sidebar-nav">
