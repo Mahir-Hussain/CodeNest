@@ -147,36 +147,13 @@ body {
 
 .topbar {
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-start;
   align-items: center;
   margin-bottom: 25px;
   background-color: var(--bg-light);
   padding: 10px 0;
 }
 
-.topbar-left {
-  display: flex;
-  align-items: center;
-}
-
-.view-mode {
-  display: flex;
-  gap: 10px;
-  margin-right: 20px;
-  color: var(--subtext-light);
-}
-
-.view-mode .icon {
-  font-size: 1.2em;
-  cursor: pointer;
-}
-
-.sort-by {
-  display: flex;
-  align-items: center;
-  color: var(--subtext-light);
-  cursor: pointer;
-}
 
 .sort-text {
   margin-right: 5px;
@@ -184,17 +161,17 @@ body {
 
 .sort-arrow {
   font-size: 0.8em;
+  margin-left: 6px;
 }
 
 .search-input {
-  flex-grow: 1;
+  width: 600px;
   padding: 10px 15px;
   border: 1px solid var(--search-input-border-light);
   border-radius: 8px;
   background-color: var(--search-input-bg-light);
   color: var(--input-text-light);
   font-size: 1em;
-  margin: 0 20px;
 }
 
 .search-input::placeholder {
@@ -210,18 +187,13 @@ body {
   cursor: pointer;
   font-weight: bold;
   transition: background-color 0.2s;
+  margin-left: 24px;
 }
 
 .new-snippet-button:hover {
   background-color: var(--btn-hover);
 }
 
-.topbar-right {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  color: var(--subtext-light);
-}
 
 .snippet-grid {
   display: grid;
@@ -325,4 +297,12 @@ body {
   margin-top: 50px;
   font-size: 1.2em;
   grid-column: 1 / -1;
+}
+
+.profile-icon {
+  margin-left: auto;
+  display:flex;
+  align-items: center;
+  color: #0f1011;
+  cursor: pointer;
 }

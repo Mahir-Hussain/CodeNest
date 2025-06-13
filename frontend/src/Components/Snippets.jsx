@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Navigate } from 'react-router-dom';
+import { FaUserCircle } from "react-icons/fa";
 import './Snippets.css';
 import Alert from './Alert'; 
 
@@ -87,19 +88,12 @@ export default function Snippets() {
 
       <main className="main">
         <header className="topbar">
-          <div className="topbar-left">
-            <div className="view-mode">
-              <span className="icon">≡</span>
-              <span className="icon"></span>
-            </div>
-            <div className="sort-by">
-            </div>
-          </div>
           <input type="text" className="search-input" placeholder="Search snippets..." />
-          <div className="topbar-right">
-            <span className="date-created">Date Created</span>
-            <span className="sort-arrow">▲▼</span>
-            <button className="new-snippet-button">New Snippet</button>
+          <span className="date-created">Date Created</span>
+          <span className="sort-arrow">▲▼</span>
+          <button className="new-snippet-button">New Snippet</button>
+          <div className="profile-icon">
+            <FaUserCircle size={32} />
           </div>
         </header>
 
