@@ -1,0 +1,150 @@
+/* Container for the settings page */
+.settings-container {
+  max-width: 480px;
+  margin: 40px auto;
+  padding: 30px 25px;
+  background-color: var(--bg-color, #fff);
+  border-radius: 10px;
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+  color: var(--text-color, #222);
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* Heading */
+.settings-container h2 {
+  text-align: center;
+  margin-bottom: 25px;
+  font-weight: 700;
+  font-size: 1.8rem;
+}
+
+/* Form group */
+.settings-container form > div {
+  margin-bottom: 18px;
+}
+
+/* Labels */
+.settings-container label {
+  display: block;
+  margin-bottom: 6px;
+  font-weight: 600;
+  font-size: 1rem;
+}
+
+/* Input fields */
+.settings-container input[type="email"],
+.settings-container input[type="password"] {
+  width: 100%;
+  padding: 10px 12px;
+  font-size: 1rem;
+  border: 1.5px solid #ccc;
+  border-radius: 6px;
+  box-sizing: border-box;
+  transition: border-color 0.3s ease;
+}
+
+.settings-container input[type="email"]:focus,
+.settings-container input[type="password"]:focus {
+  outline: none;
+  border-color: #4f46e5; /* Indigo */
+}
+
+/* Submit button */
+.settings-container button[type="submit"] {
+  background-color: #4f46e5;
+  color: white;
+  font-weight: 700;
+  padding: 12px 0;
+  width: 100%;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 1.1rem;
+  transition: background-color 0.3s ease;
+}
+
+.settings-container button[type="submit"]:hover {
+  background-color: #3730a3;
+}
+
+/* Alert message */
+.settings-container .alert {
+  margin-top: 15px;
+  padding: 12px 15px;
+  border-radius: 6px;
+  font-weight: 600;
+  background-color: #fee2e2; /* light red */
+  color: #b91c1c; /* red */
+}
+
+/* Theme toggle wrapper */
+.theme-toggle {
+  display: flex;
+  align-items: center;
+  margin-bottom: 25px;
+}
+
+/* Switch container */
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 50px;
+  height: 24px;
+}
+
+/* Hide default checkbox */
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+/* The slider background */
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background-color: #ccc;
+  transition: 0.4s;
+  border-radius: 24px;
+}
+
+/* The circle knob */
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 18px;
+  width: 18px;
+  left: 3px;
+  bottom: 3px;
+  background-color: white;
+  transition: 0.4s;
+  border-radius: 50%;
+}
+
+/* When checked (dark mode on) */
+.switch input:checked + .slider {
+  background-color: #4f46e5;
+}
+
+/* Move the knob when checked */
+.switch input:checked + .slider:before {
+  transform: translateX(26px);
+}
+
+/* Rounded slider */
+.slider.round {
+  border-radius: 24px;
+}
+
+.slider.round:before {
+  border-radius: 50%;
+}
+
+/* Text next to toggle */
+.theme-toggle span {
+  margin-left: 12px;
+  font-weight: 600;
+  font-size: 1rem;
+  user-select: none;
+}

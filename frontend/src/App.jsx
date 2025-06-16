@@ -6,6 +6,7 @@ import SignUp from './Components/Signup';
 import Snippets from './Components/Snippets';
 import ProtectedRoute from './Components/ProtectedRoute';
 import { ThemeProvider } from './Components/ThemeContext';
+import Settings from './Components/Settings';
 import './App.css';
 
 function App() {
@@ -23,6 +24,14 @@ function App() {
               </ProtectedRoute>
             }
           />
+          <Route
+            path="/settings"
+            element={
+              <ProtectedRoute>
+                <Settings />
+              </ProtectedRoute>
+            } />
+          <Route path="*" element={<Login />} />
         </Routes>
       </Router>
     </ThemeProvider>
