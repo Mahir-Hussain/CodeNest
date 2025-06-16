@@ -1,7 +1,7 @@
 import { useState, useEffect, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Alert from './Alert';
-import ThemeContext from './ThemeContext';
+import ThemeContext from './services/ThemeContext';
 import './Settings.css';
 
 function Settings() {

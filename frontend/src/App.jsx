@@ -4,8 +4,8 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Login from './Components/Login';
 import SignUp from './Components/Signup';
 import Snippets from './Components/Snippets';
-import ProtectedRoute from './Components/ProtectedRoute';
-import { ThemeProvider } from './Components/ThemeContext';
+import ProtectedRoute from './Components/services/ProtectedRoute';
+import { ThemeProvider } from './Components/services/ThemeContext';
 import Settings from './Components/Settings';
 import './App.css';
 
