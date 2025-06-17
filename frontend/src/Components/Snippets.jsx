@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Navigate } from 'react-router-dom';
 import { FaUserCircle } from "react-icons/fa";
+import { Link } from 'react-router-dom';
 import './Snippets.css';
 import Alert from './Alert'; 
 
@@ -93,6 +94,13 @@ export default function Snippets() {
 
           <p className="filter-heading">Date</p>
         </div>
+
+        <div style={{ flexGrow: 1 }} />
+
+        <Link to="/settings" className="nav-item settings-nav">
+          <span className="nav-icon" role="img" aria-label="Settings">⚙️</span>
+          Settings
+        </Link>
       </aside>
 
       <main className="main">

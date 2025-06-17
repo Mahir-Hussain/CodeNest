@@ -104,6 +104,20 @@ body {
   margin-bottom: 30px;
 }
 
+.settings-nav {
+  margin-top: 10px;
+  margin-bottom: 0;
+  color: var(--subtext-light);
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+}
+
+.settings-nav:hover {
+  background-color: var(--nav-item-active-bg-light);
+  color: var(--text-light);
+}
+
 .nav-item {
   display: flex;
   align-items: center;
