@@ -14,6 +14,7 @@ class Snippets(Database):
         super().__init__()
         self.user_id = user_id
         self.jwt_auth = jwtAuth()
+        self.ai_usage = False  # Set to True if AI usage is enabled
 
     # async def enrich_snippet(
     #     self, snippet_id, content, title, language, tags
@@ -63,6 +64,29 @@ class Snippets(Database):
         else:
             return token_result
 
+    def run_ai_enrichment(self, content, title=None, language=None, tags=None):
+        """
+        Run AI enrichment on the content of the snippet.
+
+        Requires:
+            content (str): The code/content to be enriched.
+
+        Returns:
+            None: This method modifies the snippet in the database.
+        """
+        # Placeholder for AI enrichment logic
+        # This could involve calling an AI service to get title, tags, language, etc.
+        if title and language and tags is None:
+            # Run ai.get_data
+            pass
+        elif language is None:
+            # Run ai.get_language
+            pass
+        elif tags is None:
+            # Run ai.get_tags
+            pass
+        return {"title": title, "tags": tags, "language": language}
+
     @require_auth
     def create_snippet(
         self, title=None, content=None, language=None, favourite=False, tags=None
@@ -78,6 +102,12 @@ class Snippets(Database):
         Returns:
             dict: Success status and message or error.
         """
+        if self.ai_usage:  # If user wants AI
+            ai_data = self.run_ai_enrichment(content)
+            title = ai_data["title"]
+            language = ai_data["language"]
+            tags = ai_data["tags"]
+
         try:
             self.cursor.execute(
                 "INSERT INTO code_snippets (title, content, language, user_id, favourite, tags) VALUES (%s, %s, %s, %s, %s, %s)",
