@@ -1,93 +1,49 @@
-import { useState, useEffect } from 'react';
-import { Navigate } from 'react-router-dom';
-import './Snippets.css';
+import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
-export default function Snippets() {
-  const userId = parseInt(localStorage.getItem('userId'), 10);
-  const [snippets, setSnippets] = useState([]);
-  const [loading, setLoading] = useState(true);
+function SignUp() {
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
+    const navigate = useNavigate();
 
-  // Route‐guard
-  if (!userId || isNaN(userId)) {
-    window.alert("You must be logged in to view snippets.");
-    return <Navigate to="/" replace />;
-  }
 
-  useEffect(() => {
-    (async () => {
-      try {
-        const resp = await fetch(`http://localhost:8000/get_snippets/${userId}`);
-        if (!resp.ok) throw new Error(`Status ${resp.status}`);
-        const data = await resp.json();
-        console.log("API response:", data);
-
-        // if your backend returned { success: true, snippets: [ rows... ] }
-        if (data.success && Array.isArray(data.snippets)) {
-          const mapped = data.snippets.map(
-            ([id, title, content, language, favourite, created_at]) => ({
-              id,
-              title,
-              content,
-              language,
-              favourite,
-              created_at,
-            })
-          );
-          setSnippets(mapped);
-        } else {
-          console.warn("Unexpected payload shape:", data);
-          setSnippets([]);
+    async function signUp(e){
+        e.preventDefault();
+        
+        try{
+            const response = await fetch("http://localhost:8000/create_user", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({email, password}),
+            });
+            if (!response.ok){
+                throw new Error("HTTP error");
+            }
+            const result = await response.text();
+            console.log(result);
+            if(result.includes("User created successfully")){
+                alert("Account created");
+                navigate("/");
+            }
+        }catch (error){
+            console.log(error);
+            alert("Account creation failed, try again");
         }
-      } catch (err) {
-        console.error("Error fetching snippets:", err);
-        window.alert("Error fetching snippets. See console.");
-      } finally {
-        setLoading(false);
-      }
-    })();
-  }, [userId]);
-
-  if (loading) {
-    return <div className="loading">Loading snippets…</div>;
-  }
-
-  return (
-    <div className="app">
-      <aside className="sidebar">
-        {/* …sidebar/nav/filters… */}
-      </aside>
-
-      <main className="main">
-        {/* …topbar with search & New Snippet button… */}
-
-        <section className="snippet-grid">
-          {snippets.length > 0 ? (
-            snippets.map((s) => (
-              <div className="snippet-card" key={s.id}>
-                <div className="card-header">
-                  <h4>{s.title}</h4>
-                  <span className="lang">{s.language}</span>
-                </div>
-                <pre className="card-code">
-                  <code>{s.content}</code>
-                </pre>
-                <div className="card-footer">
-                  <span>ID: {s.id}</span>
-                  <span>
-                    {new Date(s.created_at).toLocaleDateString(undefined, {
-                      year: 'numeric',
-                      month: 'short',
-                      day: 'numeric',
-                    })}
-                  </span>
-                </div>
-              </div>
-            ))
-          ) : (
-            <div className="no-snippets">No snippets found.</div>
-          )}
-        </section>
-      </main>
-    </div>
-  );
+    }
+    return (
+    <>
+        <div className="signupContainer">
+          <h1>Sign Up</h1>
+          <form className="form" onSubmit={signUp}>
+            <input type="email" placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} />
+            <input type="password" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} />
+            <button type="submit">Create Account</button>
+          </form>
+        </div>
+    </>
+    );
 }
+
+export default SignUp;
