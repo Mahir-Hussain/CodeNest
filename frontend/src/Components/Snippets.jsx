@@ -11,6 +11,7 @@ export default function Snippets() {
   const [alertMessage, setAlertMessage] = useState("");
   const [loading, setLoading] = useState(true);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const [profileMenu, setProfileMenu] = useState(false);
 
   if (!userId || isNaN(userId)) {
     setAlertMessage("You must be logged in to view snippets.");
@@ -109,8 +110,30 @@ export default function Snippets() {
           <button className="new-snippet-button">New Snippet</button>
           <span className="date-created">Date Created</span>
           <span className="sort-arrow">▲▼</span>
-          <div className="profile-icon">
+          <div style={{ flex: 1 }} />
+          <div className="profile-wrapper" style={{ position: 'relative' }}>
+          <div 
+            className="profile-icon"
+            onClick={() => setProfileMenu(!profileMenu)}
+            onBlur={() => setTimeout(() => setProfileMenu(false), 200)}
+            style={{ cursor: 'pointer' }}>
             <FaUserCircle size={32} />
+          </div>
+          {profileMenu && (
+            <div className="profile-menu">
+              <Link to="/settings" className="profile-menu-item">Account Settings</Link>
+              <button
+                className='profile-menu-item'
+                onClick={() => {
+                  localStorage.removeItem('userId');
+                  localStorage.removeItem('authToken');
+                  setAlertMessage("You have been logged out.");
+                  window.location.href = '/';
+                }}
+                >
+                Logout</button>
+            </div>
+          )}
           </div>
         </header>
 

@@ -1,4 +1,4 @@
-from google import genai
+import google.generativeai as genai
 import asyncio
 
 from backend.auth.secret import ai_key
