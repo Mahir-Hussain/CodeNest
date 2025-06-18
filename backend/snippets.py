@@ -1,118 +1,90 @@
+import psycopg2
+import asyncio
+from concurrent.futures import ThreadPoolExecutor
+
 from backend.auth.database import Database
 from backend.auth.jwtAuth import jwtAuth, require_auth
-import psycopg2
+from backend.code_data_ai import CodeDataAI
 
 
 class Snippets(Database):
-    def __init__(self, user_id):
-        """
-        Initialize the Snippets class for a specific user.
+    executor = ThreadPoolExecutor()  # Shared across instances
+    event_loop = None  # Set from FastAPI at app startup
 
-        Requires:
-            user_id (int): The ID of the user for whom snippets are managed.
-        """
+    def __init__(self, user_id):
         super().__init__()
         self.user_id = user_id
         self.jwt_auth = jwtAuth()
-        self.ai_usage = False  # Set to True if AI usage is enabled
-
-    # async def enrich_snippet(
-    #     self, snippet_id, content, title, language, tags
-    # ):  # Broken
-    #     # ai = CodeDataAI()
-    #     try:
-    #         # Only get missing fields
-    #         if title == "Untitled Snippet" and language and tags is None:
-    #             data = await ai.get_all_data(content)
-    #             title = data["title"]
-    #             language = data["language"]
-    #             tags = data["tags"]
-    #         if title == "Untitled Snippet" or title is None:
-    #             title = await ai.get_title(content)
-    #         if language is None:
-    #             language = await ai.get_language(content)
-    #         if tags is None:
-    #             tags = await ai.get_tags(content)
-
-    #         self.cursor.execute(
-    #             """
-    #             UPDATE code_snippets
-    #             SET title = %s, language = %s, tags = %s
-    #             WHERE id = %s AND user_id = %s
-    #             """,
-    #             (title, language, tags, snippet_id, self.user_id),
-    #         )
-    #         self.connection.commit()
-    #     except Exception as e:
-    #         self.connection.rollback()
-    #         print(f"[Enrichment Error] {e}")
+        self.ai_usage = True  # Enable this based on user preference
 
     def authenticate(self, token):
-        """
-        Authenticate a user using a JWT token and set the user_id.
-
-        Requires:
-            token (str): The JWT token to verify.
-
-        Returns:
-            dict: Result of authentication with success status and user_id if successful.
-        """
         token_result = self.jwt_auth.verify_token(token)
         if token_result["success"]:
             self.user_id = token_result["user_id"]
             return {"success": True, "user_id": self.user_id}
+        return token_result
+
+    async def run_ai_enrichment(self, content, title=None, language=None, tags=None):
+        ai = CodeDataAI()
+        if title == "Untitled Snippet" and language == "" and tags == []:
+            print("running uheiufhne")
+            data = await ai.get_all_data(content)
+            title = data["title"]
+            language = data["language"]
+            tags = data["tags"]
+
+        if title == "" or title == "Untitled Snippet":
+            print("title is None, running AI for title")
+            title = await ai.get_title(content)
+
+        if language == "":
+            language = await ai.get_language(content)
+
+        if tags == []:
+            tags = await ai.get_tags(content)
+
+        return {
+            "title": title or "Untitled Snippet",
+            "language": language,
+            "tags": tags,
+        }
+
+    def run_ai_enrichment_and_update(self, snippet_id, content, title, language, tags):
+        async def inner():
+            print("inner() called for AI enrichment")
+            enriched = await self.run_ai_enrichment(content, title, language, tags)
+            try:
+                self.cursor.execute(
+                    "UPDATE code_snippets SET title = %s, language = %s, tags = %s WHERE id = %s",
+                    (
+                        enriched["title"],
+                        enriched["language"],
+                        enriched["tags"],
+                        snippet_id,
+                    ),
+                )
+                print(enriched["title"], enriched["language"], enriched["tags"])
+                self.connection.commit()
+            except Exception as e:
+                self.connection.rollback()
+                print(f"AI enrichment DB update failed: {e}")
+
+        if Snippets.event_loop:
+            asyncio.run_coroutine_threadsafe(inner(), Snippets.event_loop)
         else:
-            return token_result
-
-    def run_ai_enrichment(self, content, title=None, language=None, tags=None):
-        """
-        Run AI enrichment on the content of the snippet.
-
-        Requires:
-            content (str): The code/content to be enriched.
-
-        Returns:
-            None: This method modifies the snippet in the database.
-        """
-        # Placeholder for AI enrichment logic
-        # This could involve calling an AI service to get title, tags, language, etc.
-        if title and language and tags is None:
-            # Run ai.get_data
-            pass
-        elif language is None:
-            # Run ai.get_language
-            pass
-        elif tags is None:
-            # Run ai.get_tags
-            pass
-        return {"title": title, "tags": tags, "language": language}
+            print("⚠️ No event loop available for background enrichment")
 
     @require_auth
     def create_snippet(
         self, title=None, content=None, language=None, favourite=False, tags=None
     ):
-        """
-        Create a new code snippet for the authenticated user.
-
-        Requires:
-            title (str, optional): The title of the snippet.
-            content (str, optional): The code/content of the snippet.
-            language (str, optional): The programming language of the snippet.
-
-        Returns:
-            dict: Success status and message or error.
-        """
-        if self.ai_usage:  # If user wants AI
-            ai_data = self.run_ai_enrichment(content)
-            title = ai_data["title"]
-            language = ai_data["language"]
-            tags = ai_data["tags"]
-
+        new_title = title if title else "Untitled Snippet"
+        print("create_snippet called with title:", new_title)
         try:
             self.cursor.execute(
-                "INSERT INTO code_snippets (title, content, language, user_id, favourite, tags) VALUES (%s, %s, %s, %s, %s, %s)",
+                "INSERT INTO code_snippets (title, content, language, user_id, favourite, tags) VALUES (%s, %s, %s, %s, %s, %s) RETURNING id",
                 (
-                    title,
+                    new_title,
                     content,
                     language,
                     self.user_id,
@@ -120,7 +92,20 @@ class Snippets(Database):
                     tags,
                 ),
             )
+            snippet_id = self.cursor.fetchone()[0]
             self.connection.commit()
+
+            if self.ai_usage:
+                print("if self.ai_usage:")
+                Snippets.executor.submit(
+                    self.run_ai_enrichment_and_update,
+                    snippet_id,
+                    content,
+                    title,
+                    language,
+                    tags,
+                )
+
             return {"success": True, "message": "Snippet created successfully!"}
         except psycopg2.IntegrityError as error:
             self.connection.rollback()
@@ -128,15 +113,6 @@ class Snippets(Database):
 
     @require_auth
     def get_snippets(self):
-        """
-        Retrieve all code snippets for the authenticated user.
-
-        Requires:
-            None (uses self.user_id)
-
-        Returns:
-            dict: Success status and list of snippets or error.
-        """
         try:
             self.cursor.execute(
                 "SELECT id, title, content, language, favourite, created_at FROM code_snippets WHERE user_id = %s",
@@ -150,15 +126,6 @@ class Snippets(Database):
 
     @require_auth
     def delete_snippet(self, snippet_id):
-        """
-        Delete a code snippet by its ID for the authenticated user.
-
-        Requires:
-            snippet_id (int): The ID of the snippet to delete.
-
-        Returns:
-            dict: Success status and message or error.
-        """
         try:
             self.cursor.execute(
                 "DELETE FROM code_snippets WHERE id = %s AND user_id = %s",

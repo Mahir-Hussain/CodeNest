@@ -1,6 +1,7 @@
 from google import genai
-from backend.auth.secret import ai_key
 import asyncio
+
+from backend.auth.secret import ai_key
 
 """
 PLAN:
@@ -93,13 +94,3 @@ class CodeDataAI:
             return {
                 "error": f"An error occurred while processing the request: {str(e)}"
             }
-
-
-async def main():
-    ai = CodeDataAI()
-    code = "def hello_world():\n    print('Hello, world!')"
-    data = await ai.get_all_data(code)
-    print(data["title"], data["tags"], data["language"])
-
-
-asyncio.run(main())

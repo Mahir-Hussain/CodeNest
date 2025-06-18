@@ -1,6 +1,7 @@
 import psycopg2
-from backend.auth.database import Database
 import hashlib
+
+from backend.auth.database import Database
 from backend.auth.jwtAuth import jwtAuth
 
 

@@ -2,6 +2,8 @@ from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 from backend.snippets import Snippets
 from backend.auth.login import LoginSystem
+import asyncio
+from contextlib import asynccontextmanager
 
 
 class LoginData(BaseModel):
@@ -17,7 +19,14 @@ class SnippetData(BaseModel):
     tags: list[str] = []
 
 
-app = FastAPI()
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    Snippets.event_loop = asyncio.get_running_loop()
+    yield
+    Snippets.executor.shutdown(wait=False)
+
+
+app = FastAPI(lifespan=lifespan)
 login_system = LoginSystem()
 print("Running CodeNest API")
 
