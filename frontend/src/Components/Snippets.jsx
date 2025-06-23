@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { Navigate } from 'react-router-dom';
 import { FaUserCircle } from "react-icons/fa";
 import { Link } from 'react-router-dom';
-import './Snippets.css';
+import './css/Snippets.css';
 import Alert from './Alert'; 
 
 export default function Snippets() {

@@ -2,7 +2,7 @@ import { useState, useEffect, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Alert from './Alert';
 import ThemeContext from './services/ThemeContext';
-import './Settings.css';
+import './css/Settings.css';
 
 function Settings() {
   const [email, setEmail] = useState("");
