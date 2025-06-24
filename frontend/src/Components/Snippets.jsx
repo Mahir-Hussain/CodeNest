@@ -12,6 +12,7 @@ export default function Snippets() {
   const [loading, setLoading] = useState(true);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [profileMenu, setProfileMenu] = useState(false);
+  const [snippetMenuId, setSnippetMenuId] = useState(null);
 
   if (!userId || isNaN(userId)) {
     setAlertMessage("You must be logged in to view snippets.");
@@ -50,6 +51,17 @@ export default function Snippets() {
       }
     })();
   }, [userId]);
+
+  useEffect(() => {
+    function clickHandler(e) {
+      if (!e.target.closest('.snippet-menu') && !e.target.closest('.action-icon')) {setSnippetMenuId(null);}
+    }
+    if (snippetMenuId !== null) {
+      document.addEventListener('mousedown', clickHandler);
+      return () => document.removeEventListener('mousedown', clickHandler);
+    }
+  }, [snippetMenuId]);
+  
 
   if (loading) return <div className="loading">Loading snippets…</div>;
 
@@ -163,7 +175,21 @@ export default function Snippets() {
                   <div className="card-actions">
                     <span className="action-icon" title="Attach">📋</span>
                     <span className="action-icon" title="Link">🔗</span>
-                    <span className="action-icon" title="More">⋯</span>
+                    <span
+                      className="action-icon"
+                      title="More"
+                      onClick={() => setSnippetMenuId(snippetMenuId === s.id ? null : s.id)}
+                      tabIndex={0}
+                      style={{ position: "relative" }}
+                    >
+                      ⋯
+                      {snippetMenuId === s.id && (
+                        <div className="snippet-menu">
+                          <button onClick={() => { setSnippetMenuId(null); /* Need to add the Edit logic */ }}>📝</button>
+                          <button onClick={() => { setSnippetMenuId(null); /* Need to add the Delete logic  */ }}>🗑️</button>
+                        </div>
+                      )}
+                    </span>
                   </div>
                 </div>
               </div>
