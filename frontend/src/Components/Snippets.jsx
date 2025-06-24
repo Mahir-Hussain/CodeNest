@@ -12,7 +12,6 @@ export default function Snippets() {
   const [loading, setLoading] = useState(true);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [profileMenu, setProfileMenu] = useState(false);
-  const [snippetMenuId, setSnippetMenuId] = useState(null);
 
   if (!userId || isNaN(userId)) {
     setAlertMessage("You must be logged in to view snippets.");
@@ -52,21 +51,27 @@ export default function Snippets() {
     })();
   }, [userId]);
 
-  useEffect(() => {
-    function clickHandler(e) {
-      if (!e.target.closest('.snippet-menu') && !e.target.closest('.action-icon')) {setSnippetMenuId(null);}
-    }
-    if (snippetMenuId !== null) {
-      document.addEventListener('mousedown', clickHandler);
-      return () => document.removeEventListener('mousedown', clickHandler);
-    }
-  }, [snippetMenuId]);
-  
-
   if (loading) return <div className="loading">Loading snippets…</div>;
+
+  const deleteSnippet = async (snippetId) => {
+    try {
+      const response = await fetch(`http://localhost:8000/delete_snippet/${userId}/${snippetId}`,
+      {method: 'DELETE'});
+      const data = await response.json();
+      if (data.success) {
+        setSnippets(snippets => snippets.filter(s => s.id !== snippetId));
+        setAlertMessage("Snippet deleted!");
+      } else{
+        setAlertMessage(data.error || "Failed to delete snippet.");
+      }
+    } catch (error) {
+      console.error("Error deleting snippet:", error);  
+    }
+  }
 
   return (
     <div className="app">
+      {alertMessage && <Alert message={alertMessage} onClose={() => setAlertMessage("")} />}
       <aside className={`sidebar${sidebarCollapsed ? " collapsed" : ""}`}>
         <button
           className="collapse-sidebar-btn"
@@ -175,21 +180,10 @@ export default function Snippets() {
                   <div className="card-actions">
                     <span className="action-icon" title="Attach">📋</span>
                     <span className="action-icon" title="Link">🔗</span>
-                    <span
-                      className="action-icon"
-                      title="More"
-                      onClick={() => setSnippetMenuId(snippetMenuId === s.id ? null : s.id)}
-                      tabIndex={0}
-                      style={{ position: "relative" }}
-                    >
-                      ⋯
-                      {snippetMenuId === s.id && (
-                        <div className="snippet-menu">
-                          <button onClick={() => { setSnippetMenuId(null); /* Need to add the Edit logic */ }}>📝</button>
-                          <button onClick={() => { setSnippetMenuId(null); /* Need to add the Delete logic  */ }}>🗑️</button>
-                        </div>
-                      )}
-                    </span>
+                    <span className="action-icon" title="Edit">✏️</span>
+                    <span className="action-icon" title="Delete" onClick={() => deleteSnippet(s.id)}>🗑️</span>
+                    <span className='action-icon' title="Favourite">{s.favourite ? '❤️' : '🤍'}</span>
+
                   </div>
                 </div>
               </div>
