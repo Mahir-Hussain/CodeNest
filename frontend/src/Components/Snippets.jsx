@@ -26,17 +26,20 @@ export default function Snippets() {
         const data = await resp.json();
         console.log("API response:", data);
 
+
         if (data.success && Array.isArray(data.snippets)) {
           const mapped = data.snippets.map(
-            ([id, title, content, language, favourite, created_at]) => ({
+            ([id, title, content, language, favourite, created_at, tags]) => ({
               id,
               title,
               content,
               language,
               favourite,
               created_at,
+              tags
             })
           );
+          console.log("Mapped snippets:", mapped);
           setSnippets(mapped);
         } else {
           console.warn("Unexpected payload shape:", data);
@@ -171,6 +174,9 @@ export default function Snippets() {
                           })
                         : 'No date'}
                     </span>
+                    <span className="card-tags">
+                      ---{s.tags}
+                    </span>
                   </div>
                 </div>
                 <pre className="card-code">
@@ -183,7 +189,6 @@ export default function Snippets() {
                     <span className="action-icon" title="Edit">✏️</span>
                     <span className="action-icon" title="Delete" onClick={() => deleteSnippet(s.id)}>🗑️</span>
                     <span className='action-icon' title="Favourite">{s.favourite ? '❤️' : '🤍'}</span>
-
                   </div>
                 </div>
               </div>

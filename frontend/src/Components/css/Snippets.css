@@ -400,3 +400,9 @@ body {
   background: var(--nav-item-active-bg-light);
   color: var(--text-light);
 }
+
+.card-tags {
+  color: #888;
+  font-size: 0.85rem;
+  text-align: right;
+}
