@@ -90,7 +90,7 @@ class Snippets(Database):
                     self.encryptor.encrypt(content),
                     self.encryptor.encrypt(language),
                     self.user_id,
-                    favourite,
+                    self.encryptor.encrypt_boolean(favourite),
                     tags,
                 ),
             )
@@ -129,7 +129,7 @@ class Snippets(Database):
                     self.encryptor.decrypt(title),
                     self.encryptor.decrypt(content),
                     self.encryptor.decrypt(language),
-                    favourite,
+                    self.encryptor.decrypt_boolean(favourite),
                     created_at,
                     tags,
                 )
