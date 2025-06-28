@@ -5,6 +5,7 @@ from concurrent.futures import ThreadPoolExecutor
 from backend.auth.database import Database
 from backend.auth.jwtAuth import jwtAuth, require_auth
 from backend.code_data_ai import CodeDataAI
+from backend.auth.encryption import Encryption
 
 
 class Snippets(Database):
@@ -15,6 +16,7 @@ class Snippets(Database):
         super().__init__()
         self.user_id = user_id
         self.jwt_auth = jwtAuth()
+        self.encryptor = Encryption()  # Set up the encryptor
         self.ai_usage = True  # Enable this based on user preference
 
     def authenticate(self, token):
@@ -57,9 +59,9 @@ class Snippets(Database):
                 self.cursor.execute(
                     "UPDATE code_snippets SET title = %s, language = %s, tags = %s WHERE id = %s",
                     (
-                        enriched["title"],
-                        enriched["language"],
-                        enriched["tags"],
+                        self.encryptor.encrypt(enriched["title"]),
+                        self.encryptor.encrypt(enriched["language"]),
+                        self.encryptor.encrypt(enriched["tags"]),
                         snippet_id,
                     ),
                 )
@@ -84,9 +86,9 @@ class Snippets(Database):
             self.cursor.execute(
                 "INSERT INTO code_snippets (title, content, language, user_id, favourite, tags) VALUES (%s, %s, %s, %s, %s, %s) RETURNING id",
                 (
-                    new_title,
-                    content,
-                    language,
+                    self.encryptor.encrypt(new_title),
+                    self.encryptor.encrypt(content),
+                    self.encryptor.encrypt(language),
                     self.user_id,
                     favourite,
                     tags,
@@ -118,7 +120,20 @@ class Snippets(Database):
                 "SELECT id, title, content, language, favourite, created_at, tags FROM code_snippets WHERE user_id = %s",
                 (self.user_id,),
             )
-            snippets = self.cursor.fetchall()
+            data = self.cursor.fetchall()
+            snippets = []
+            for row in data:
+                id, title, content, language, favourite, created_at, tags = row
+                decrypted = (
+                    id,
+                    self.encryptor.decrypt(title),
+                    self.encryptor.decrypt(content),
+                    self.encryptor.decrypt(language),
+                    favourite,
+                    created_at,
+                    tags,
+                )
+                snippets.append(decrypted)
             return {"success": True, "snippets": snippets}
         except psycopg2.Error as error:
             self.connection.rollback()
