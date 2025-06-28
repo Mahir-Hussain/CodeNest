@@ -61,7 +61,7 @@ class Snippets(Database):
                     (
                         self.encryptor.encrypt(enriched["title"]),
                         self.encryptor.encrypt(enriched["language"]),
-                        self.encryptor.encrypt(enriched["tags"]),
+                        enriched["tags"],
                         snippet_id,
                     ),
                 )
