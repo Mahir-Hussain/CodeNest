@@ -47,6 +47,26 @@ class LoginSystem(Database):
             self.connection.rollback()
             return {"success": False, "error": str(error)}
 
+    def get_dark_mode(self, user_id):
+        """
+        Get the dark mode preference for a user.
+
+        Requires:
+            user_id (int): The user's ID.
+
+        Returns:
+            dict: Success status and dark mode preference if found; otherwise, error.
+        """
+        try:
+            self.cursor.execute("SELECT dark_mode FROM users WHERE id = %s", (user_id,))
+            result = self.cursor.fetchone()
+            if result is not None:
+                return {"success": True, "dark_mode": result[0]}
+            else:
+                return {"success": False, "error": "User not found"}
+        except psycopg2.Error as error:
+            return {"success": False, "error": f"Database error: {str(error)}"}
+
     def authenticate(self, email, password):
         """
         Authenticate a user by email and password.

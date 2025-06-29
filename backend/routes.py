@@ -39,6 +39,26 @@ async def root():
     return {"message": "Welcome to the CodeNest API"}
 
 
+@app.get("/dark_mode/{user_id}")
+async def get_dark_mode(user_id: int):
+    """
+    Retrieve the dark mode preference for a specific user.
+
+    Requires:
+        user_id (int): The ID of the user whose dark mode preference is to be retrieved.
+
+    Returns:
+        dict: Dark mode preference if found, otherwise raises HTTPException.
+    """
+    result = login_system.get_dark_mode(user_id)
+    if result.get("success"):
+        return {"dark_mode": result["dark_mode"]}
+    else:
+        raise HTTPException(
+            status_code=404, detail=result.get("error", "User not found")
+        )
+
+
 @app.post("/login")
 async def login(credentials: LoginData):
     """
