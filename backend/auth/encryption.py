@@ -22,19 +22,19 @@ class Encryption:
             return self.fernet.decrypt(token.encode()).decode()
         return None
 
-    def encrypt_boolean(self, boolean_value):
-        if boolean_value is not None:
-            boolean_bytes = str(boolean_value).encode("utf-8")
+    # def encrypt_boolean(self, boolean_value):
+    #     if boolean_value is not None:
+    #         boolean_bytes = str(boolean_value).encode("utf-8")
 
-            # Encrypt the byte string
-            cipher_text = self.fernet.encrypt(boolean_bytes)
-            return cipher_text
-        return None
+    #         # Encrypt the byte string
+    #         cipher_text = self.fernet.encrypt(boolean_bytes)
+    #         return cipher_text
+    #     return None
 
-    def decrypt_boolean(self, encrypted_value):
-        if encrypted_value is not None:
-            plain_text_bytes = self.fernet.decrypt(encrypted_value)
+    # def decrypt_boolean(self, encrypted_value):
+    #     if encrypted_value is not None:
+    #         plain_text_bytes = self.fernet.decrypt(encrypted_value)
 
-            decrypted_boolean = plain_text_bytes.decode("utf-8") == "True"
-            return decrypted_boolean
-        return None
+    #         decrypted_boolean = plain_text_bytes.decode("utf-8") == "True"
+    #         return decrypted_boolean
+    #     return None
