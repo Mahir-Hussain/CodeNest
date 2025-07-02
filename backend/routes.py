@@ -1,11 +1,21 @@
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Depends
+from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from pydantic import BaseModel
 from backend.snippets import Snippets
 from backend.auth.login import LoginSystem
+from backend.auth.jwtAuth import jwtAuth
 import asyncio
 from contextlib import asynccontextmanager
 
+# Initialize FastAPI app and login system
+login_system = LoginSystem()
+jwt_auth = jwtAuth()
+auth_scheme = HTTPBearer()  # For extracting token from Authorization header
 
+print("Running CodeNest API")
+
+
+# Models for request bodies
 class LoginData(BaseModel):
     email: str
     password: str
@@ -27,36 +37,26 @@ async def lifespan(app: FastAPI):
 
 
 app = FastAPI(lifespan=lifespan)
-login_system = LoginSystem()
-print("Running CodeNest API")
 
 
+# Dependency to get user_id from JWT token
+async def get_current_user_id(
+    credentials: HTTPAuthorizationCredentials = Depends(auth_scheme),
+):
+    token = credentials.credentials
+    result = jwt_auth.verify_token(token)
+    if not result["success"]:
+        raise HTTPException(status_code=401, detail=result["error"])
+    return result["user_id"]
+
+
+# Public endpoints
 @app.get("/")
 async def root():
     """
     Root endpoint for the API.
     """
     return {"message": "Welcome to the CodeNest API"}
-
-
-@app.get("/dark_mode/{user_id}")
-async def get_dark_mode(user_id: int):
-    """
-    Retrieve the dark mode preference for a specific user.
-
-    Requires:
-        user_id (int): The ID of the user whose dark mode preference is to be retrieved.
-
-    Returns:
-        dict: Dark mode preference if found, otherwise raises HTTPException.
-    """
-    result = login_system.get_dark_mode(user_id)
-    if result.get("success"):
-        return {"dark_mode": result["dark_mode"]}
-    else:
-        raise HTTPException(
-            status_code=404, detail=result.get("error", "User not found")
-        )
 
 
 @app.post("/login")
@@ -99,13 +99,35 @@ async def create_user(credentials: LoginData):
         )
 
 
+# Protected endpoints - require token
+@app.get("/dark_mode")
+async def get_dark_mode(user_id: int = Depends(get_current_user_id)):
+    """
+    Retrieve the dark mode preference for the authenticated user.
+
+    Requires:
+        user_id (int): Obtained from the JWT token.
+
+    Returns:
+        dict: Dark mode preference if found, otherwise raises HTTPException.
+    """
+    result = login_system.get_dark_mode(user_id)
+    if result.get("success"):
+        return {"dark_mode": result["dark_mode"]}
+    else:
+        raise HTTPException(
+            status_code=404, detail=result.get("error", "User not found")
+        )
+
+
 @app.delete("/delete_user")
-async def delete_user(email: str):
+async def delete_user(email: str, user_id: int = Depends(get_current_user_id)):
     """
     Delete a user account by email.
 
     Requires:
         email (str): The email address of the user to delete.
+        user_id (int): Authenticated user ID.
 
     Returns:
         dict: Success message if user is deleted, otherwise raises HTTPException.
@@ -119,13 +141,13 @@ async def delete_user(email: str):
         )
 
 
-@app.get("/get_snippets/{user_id}")
-async def get_snippets(user_id: int):
+@app.get("/get_snippets")
+async def get_snippets(user_id: int = Depends(get_current_user_id)):
     """
-    Retrieve all code snippets for a specific user.
+    Retrieve all code snippets for the authenticated user.
 
     Requires:
-        user_id (int): The ID of the user whose snippets are to be retrieved.
+        user_id (int): Obtained from the JWT token.
 
     Returns:
         dict: List of snippets for the user, or raises HTTPException on error.
@@ -137,14 +159,16 @@ async def get_snippets(user_id: int):
         raise HTTPException(status_code=500, detail=str(error))
 
 
-@app.post("/create_snippet/{user_id}")
-async def create_snippet(user_id: int, data: SnippetData):
+@app.post("/create_snippet")
+async def create_snippet(
+    data: SnippetData, user_id: int = Depends(get_current_user_id)
+):
     """
-    Create a new code snippet for a specific user.
+    Create a new code snippet for the authenticated user.
 
     Requires:
-        user_id (int): The ID of the user creating the snippet.
-        data (SnippetData): The snippet's title, content, and language.
+        data (SnippetData): The snippet's title, content, language, favourite flag, and tags.
+        user_id (int): Obtained from the JWT token.
 
     Returns:
         dict: Success message if snippet is created, otherwise raises HTTPException.
@@ -159,14 +183,14 @@ async def create_snippet(user_id: int, data: SnippetData):
         raise HTTPException(status_code=400, detail=result["error"])
 
 
-@app.delete("/delete_snippet/{user_id}/{snippet_id}")
-async def delete_snippet(user_id: int, snippet_id: int):
+@app.delete("/delete_snippet/{snippet_id}")
+async def delete_snippet(snippet_id: int, user_id: int = Depends(get_current_user_id)):
     """
-    Delete a code snippet by its ID for a specific user.
+    Delete a code snippet by its ID for the authenticated user.
 
     Requires:
-        user_id (int): The ID of the user.
         snippet_id (int): The ID of the snippet to delete.
+        user_id (int): Obtained from the JWT token.
 
     Returns:
         dict: Success message if snippet is deleted, otherwise raises HTTPException.
