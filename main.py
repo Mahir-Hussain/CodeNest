@@ -1,4 +1,5 @@
 from fastapi.middleware.cors import CORSMiddleware
+from backend.ratelimit import RateLimit
 import backend.routes as routes
 import uvicorn
 import subprocess
@@ -11,6 +12,7 @@ routes.app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+routes.app.add_middleware(RateLimit)
 
 
 def run_fastapi():
