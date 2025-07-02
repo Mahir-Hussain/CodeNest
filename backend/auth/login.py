@@ -47,6 +47,27 @@ class LoginSystem(Database):
             self.connection.rollback()
             return {"success": False, "error": str(error)}
 
+    def delete_user(self, user_id):
+        """
+        Delete a user from the database.
+
+        Requires:
+            user_id (int): The user's ID.
+
+        Returns:
+            dict: Success status and message or error.
+        """
+        try:
+            self.cursor.execute("DELETE FROM users WHERE id = %s", (user_id,))
+            if self.cursor.rowcount > 0:
+                self.connection.commit()
+                return {"success": True, "message": "User deleted successfully!"}
+            else:
+                return {"success": False, "error": "User not found"}
+        except psycopg2.Error as error:
+            self.connection.rollback()
+            return {"success": False, "error": str(error)}
+
     def get_dark_mode(self, user_id):
         """
         Get the dark mode preference for a user.

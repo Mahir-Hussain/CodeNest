@@ -121,7 +121,7 @@ async def get_dark_mode(user_id: int = Depends(get_current_user_id)):
 
 
 @app.delete("/delete_user")
-async def delete_user(email: str, user_id: int = Depends(get_current_user_id)):
+async def delete_user(user_id: int = Depends(get_current_user_id)):
     """
     Delete a user account by email.
 
@@ -132,7 +132,7 @@ async def delete_user(email: str, user_id: int = Depends(get_current_user_id)):
     Returns:
         dict: Success message if user is deleted, otherwise raises HTTPException.
     """
-    result = login_system.delete_user(email)
+    result = login_system.delete_user(user_id)
     if result.get("success"):
         return {"message": "User deleted successfully"}
     else:
