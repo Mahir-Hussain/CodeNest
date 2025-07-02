@@ -1,49 +1,51 @@
 import { useState, useEffect } from 'react';
-import { Navigate } from 'react-router-dom';
+import { Navigate, Link } from 'react-router-dom';
 import { FaUserCircle } from "react-icons/fa";
-import { Link } from 'react-router-dom';
 import './css/Snippets.css';
 import Alert from './Alert';
 
 export default function Snippets() {
   const token = localStorage.getItem("authToken");
+
   const [snippets, setSnippets] = useState([]);
   const [alertMessage, setAlertMessage] = useState("");
   const [loading, setLoading] = useState(true);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [profileMenu, setProfileMenu] = useState(false);
 
-  if (!token) {
-    setAlertMessage("You must be logged in to view snippets.");
-    return <Navigate to="/" replace />;
-  }
+  useEffect(() => {
+    if (!token) {
+      setAlertMessage("You must be logged in to view snippets.");
+    }
+  }, [token]);
 
   useEffect(() => {
+    if (!token) {
+      setLoading(false);
+      return;
+    }
+
     (async () => {
       try {
         const resp = await fetch("http://localhost:8000/get_snippets", {
-          headers: {
-            Authorization: `Bearer ${token}`
-          }
+          headers: { Authorization: `Bearer ${token}` }
         });
         if (!resp.ok) throw new Error(`Status ${resp.status}`);
         const data = await resp.json();
         console.log("API response:", data);
 
         if (data.success && Array.isArray(data.snippets)) {
-          const mapped = data.snippets.map(
-            ([id, title, content, language, favourite, created_at, tags]) => ({
-              id,
-              title,
-              content,
-              language,
-              favourite,
-              created_at,
-              tags
-            })
-          );
-          console.log("Mapped snippets:", mapped);
-          setSnippets(mapped);
+          // Convert array snippets into objects
+          const formatted = data.snippets.map(s => ({
+            id: s[0],
+            title: s[1],
+            content: s[2],
+            language: s[3],
+            favourite: s[4],
+            created_at: s[5],
+            tags: s[6],
+          }));
+          setSnippets(formatted);
         } else {
           console.warn("Unexpected payload shape:", data);
           setSnippets([]);
@@ -57,13 +59,17 @@ export default function Snippets() {
     })();
   }, [token]);
 
+  if (!token) {
+    return <Navigate to="/" replace />;
+  }
+
+  if (loading) return <div className="loading">Loading snippets…</div>;
+
   const deleteSnippet = async (snippetId) => {
     try {
       const response = await fetch(`http://localhost:8000/delete_snippet/${snippetId}`, {
         method: 'DELETE',
-        headers: {
-          Authorization: `Bearer ${token}`
-        }
+        headers: { Authorization: `Bearer ${token}` }
       });
       const data = await response.json();
       if (data.success) {
@@ -77,8 +83,6 @@ export default function Snippets() {
       setAlertMessage("Error deleting snippet.");
     }
   };
-
-  if (loading) return <div className="loading">Loading snippets…</div>;
 
   return (
     <div className="app">
