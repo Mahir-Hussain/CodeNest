@@ -3,17 +3,17 @@ import { Navigate } from 'react-router-dom';
 import { FaUserCircle } from "react-icons/fa";
 import { Link } from 'react-router-dom';
 import './css/Snippets.css';
-import Alert from './Alert'; 
+import Alert from './Alert';
 
 export default function Snippets() {
-  const userId = parseInt(localStorage.getItem('userId'), 10);
+  const token = localStorage.getItem("authToken");
   const [snippets, setSnippets] = useState([]);
   const [alertMessage, setAlertMessage] = useState("");
   const [loading, setLoading] = useState(true);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [profileMenu, setProfileMenu] = useState(false);
 
-  if (!userId || isNaN(userId)) {
+  if (!token) {
     setAlertMessage("You must be logged in to view snippets.");
     return <Navigate to="/" replace />;
   }
@@ -21,11 +21,14 @@ export default function Snippets() {
   useEffect(() => {
     (async () => {
       try {
-        const resp = await fetch(`http://localhost:8000/get_snippets/${userId}`);
+        const resp = await fetch("http://localhost:8000/get_snippets", {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        });
         if (!resp.ok) throw new Error(`Status ${resp.status}`);
         const data = await resp.json();
         console.log("API response:", data);
-
 
         if (data.success && Array.isArray(data.snippets)) {
           const mapped = data.snippets.map(
@@ -52,25 +55,30 @@ export default function Snippets() {
         setLoading(false);
       }
     })();
-  }, [userId]);
-
-  if (loading) return <div className="loading">Loading snippets…</div>;
+  }, [token]);
 
   const deleteSnippet = async (snippetId) => {
     try {
-      const response = await fetch(`http://localhost:8000/delete_snippet/${userId}/${snippetId}`,
-      {method: 'DELETE'});
+      const response = await fetch(`http://localhost:8000/delete_snippet/${snippetId}`, {
+        method: 'DELETE',
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
       const data = await response.json();
       if (data.success) {
         setSnippets(snippets => snippets.filter(s => s.id !== snippetId));
         setAlertMessage("Snippet deleted!");
-      } else{
+      } else {
         setAlertMessage(data.error || "Failed to delete snippet.");
       }
     } catch (error) {
-      console.error("Error deleting snippet:", error);  
+      console.error("Error deleting snippet:", error);
+      setAlertMessage("Error deleting snippet.");
     }
-  }
+  };
+
+  if (loading) return <div className="loading">Loading snippets…</div>;
 
   return (
     <div className="app">
@@ -80,25 +88,15 @@ export default function Snippets() {
           className="collapse-sidebar-btn"
           onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
           aria-label={sidebarCollapsed ? "Expand sidebar" : "Collapse sidebar"}>
-          <span className="collapse-icon">  
-          {sidebarCollapsed ? "→" : "←"}
-          </span>
+          <span className="collapse-icon">{sidebarCollapsed ? "→" : "←"}</span>
         </button>
         <div className="sidebar-title">All Snippets</div>
 
         <div className="sidebar-nav">
-          <div className="nav-item active">
-            <span className="nav-icon">≡</span> All Snippets
-          </div>
-          <div className="nav-item">
-            <span className="nav-icon">★</span> Favorites
-          </div>
-          <div className="nav-item">
-            <span className="nav-icon">⏱</span> Recently Edited
-          </div>
-          <div className="nav-item">
-            <span className="nav-icon">🗑</span> Trash
-          </div>
+          <div className="nav-item active"><span className="nav-icon">≡</span> All Snippets</div>
+          <div className="nav-item"><span className="nav-icon">★</span> Favorites</div>
+          <div className="nav-item"><span className="nav-icon">⏱</span> Recently Edited</div>
+          <div className="nav-item"><span className="nav-icon">🗑</span> Trash</div>
         </div>
 
         <div className="filters">
@@ -117,10 +115,8 @@ export default function Snippets() {
         </div>
 
         <div style={{ flexGrow: 1 }} />
-
         <Link to="/settings" className="nav-item settings-nav">
-          <span className="nav-icon" role="img" aria-label="Settings">⚙️</span>
-          Settings
+          <span className="nav-icon" role="img" aria-label="Settings">⚙️</span> Settings
         </Link>
       </aside>
 
@@ -132,28 +128,26 @@ export default function Snippets() {
           <span className="sort-arrow">▲▼</span>
           <div style={{ flex: 1 }} />
           <div className="profile-wrapper" style={{ position: 'relative' }}>
-          <div 
-            className="profile-icon"
-            onClick={() => setProfileMenu(!profileMenu)}
-            onBlur={() => setTimeout(() => setProfileMenu(false), 200)}
-            style={{ cursor: 'pointer' }}>
-            <FaUserCircle size={32} />
-          </div>
-          {profileMenu && (
-            <div className="profile-menu">
-              <Link to="/settings" className="profile-menu-item">Account Settings</Link>
-              <button
-                className='profile-menu-item'
-                onClick={() => {
-                  localStorage.removeItem('userId');
-                  localStorage.removeItem('authToken');
-                  setAlertMessage("You have been logged out.");
-                  window.location.href = '/';
-                }}
-                >
-                Logout</button>
+            <div
+              className="profile-icon"
+              onClick={() => setProfileMenu(!profileMenu)}
+              onBlur={() => setTimeout(() => setProfileMenu(false), 200)}
+              style={{ cursor: 'pointer' }}>
+              <FaUserCircle size={32} />
             </div>
-          )}
+            {profileMenu && (
+              <div className="profile-menu">
+                <Link to="/settings" className="profile-menu-item">Account Settings</Link>
+                <button
+                  className="profile-menu-item"
+                  onClick={() => {
+                    localStorage.removeItem('authToken');
+                    setAlertMessage("You have been logged out.");
+                  }}>
+                  Logout
+                </button>
+              </div>
+            )}
           </div>
         </header>
 
@@ -174,9 +168,7 @@ export default function Snippets() {
                           })
                         : 'No date'}
                     </span>
-                    <span className="card-tags">
-                      ---{s.tags}
-                    </span>
+                    <span className="card-tags">---{s.tags}</span>
                   </div>
                 </div>
                 <pre className="card-code">
@@ -188,7 +180,7 @@ export default function Snippets() {
                     <span className="action-icon" title="Link">🔗</span>
                     <span className="action-icon" title="Edit">✏️</span>
                     <span className="action-icon" title="Delete" onClick={() => deleteSnippet(s.id)}>🗑️</span>
-                    <span className='action-icon' title="Favourite">{s.favourite ? '❤️' : '🤍'}</span>
+                    <span className="action-icon" title="Favourite">{s.favourite ? '❤️' : '🤍'}</span>
                   </div>
                 </div>
               </div>

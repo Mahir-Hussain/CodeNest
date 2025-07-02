@@ -1,18 +1,12 @@
 from fastapi.middleware.cors import CORSMiddleware
-from backend.ratelimit import RateLimit
 import backend.routes as routes
 import uvicorn
 import subprocess
 import threading
+import logging
 
-routes.app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["http://localhost:3000"],  # React dev server
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
-routes.app.add_middleware(RateLimit)
+logging.info("Starting CodeNest API")
+logging.basicConfig(level=logging.INFO)
 
 
 def run_fastapi():

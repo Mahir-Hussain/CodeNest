@@ -1,18 +1,13 @@
 from fastapi import FastAPI, HTTPException, Depends
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
+from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from backend.snippets import Snippets
 from backend.auth.login import LoginSystem
 from backend.auth.jwtAuth import jwtAuth
+from backend.ratelimit import RateLimit
 import asyncio
 from contextlib import asynccontextmanager
-
-# Initialize FastAPI app and login system
-login_system = LoginSystem()
-jwt_auth = jwtAuth()
-auth_scheme = HTTPBearer()  # For extracting token from Authorization header
-
-print("Running CodeNest API")
 
 
 # Models for request bodies
@@ -37,6 +32,21 @@ async def lifespan(app: FastAPI):
 
 
 app = FastAPI(lifespan=lifespan)
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:3000"],  # React dev server
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+app.add_middleware(RateLimit)
+
+# Initialize FastAPI app and login system
+login_system = LoginSystem()
+jwt_auth = jwtAuth()
+auth_scheme = HTTPBearer()  # For extracting token from Authorization header
+
+print("Running CodeNest API")
 
 
 # Dependency to get user_id from JWT token
