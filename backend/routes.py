@@ -119,11 +119,31 @@ async def get_dark_mode(user_id: int = Depends(get_current_user_id)):
         user_id (int): Obtained from the JWT token.
 
     Returns:
-        dict: Dark mode preference if found, otherwise raises HTTPException.
+        bool: Dark mode preference if found.
     """
     result = login_system.get_dark_mode(user_id)
     if result.get("success"):
         return {"dark_mode": result["dark_mode"]}
+    else:
+        raise HTTPException(
+            status_code=404, detail=result.get("error", "User not found")
+        )
+
+
+@app.get("/get_ai_use")
+async def get_ai_use(user_id: int = Depends(get_current_user_id)):
+    """
+    Retrieve if the user has AI usage enabled.
+
+    Requires:
+        user_id (int): Obtained from the JWT token.
+
+    Returns:
+        bool: AI usage status if true or false.
+    """
+    result = login_system.get_ai_use(user_id)
+    if result.get("success"):
+        return {"ai_use": result["ai_use"]}
     else:
         raise HTTPException(
             status_code=404, detail=result.get("error", "User not found")
