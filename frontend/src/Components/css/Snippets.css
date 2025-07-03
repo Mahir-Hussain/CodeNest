@@ -242,7 +242,7 @@ body {
 
 .snippet-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(450px, 1fr));
   gap: 20px;
 }
 
@@ -301,7 +301,7 @@ body {
   color: var(--text-light);
   overflow-x: auto;
   overflow-y: auto;
-  max-height: 150px;
+  max-height: 200px;
   white-space: pre-wrap;
 }
 
