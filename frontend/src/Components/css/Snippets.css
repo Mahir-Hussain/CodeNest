@@ -300,6 +300,8 @@ body {
   line-height: 1.5;
   color: var(--text-light);
   overflow-x: auto;
+  overflow-y: auto;
+  max-height: 150px;
   white-space: pre-wrap;
 }
 
