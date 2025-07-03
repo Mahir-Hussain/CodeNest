@@ -4,6 +4,7 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Login from './Components/Login';
 import SignUp from './Components/Signup';
 import Snippets from './Components/Snippets';
+import CreateSnippet from './Components/CreateSnippet';
 import ProtectedRoute from './Components/services/ProtectedRoute';
 import { ThemeProvider } from './Components/services/ThemeContext';
 import Settings from './Components/Settings';
@@ -21,6 +22,14 @@ function App() {
             element={
               <ProtectedRoute>
                 <Snippets />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/create-snippet"
+            element={
+              <ProtectedRoute>
+                <CreateSnippet />
               </ProtectedRoute>
             }
           />
