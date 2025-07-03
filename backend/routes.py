@@ -39,7 +39,7 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
-app.add_middleware(RateLimit)
+# app.add_middleware(RateLimit)
 
 # Initialize FastAPI app and login system
 login_system = LoginSystem()
