@@ -12,6 +12,93 @@ export default function Snippets() {
   const [loading, setLoading] = useState(true);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [profileMenu, setProfileMenu] = useState(false);
+  const [isCreateOpen, setCreateOpen] = useState(false);
+  
+  const NewSnippet = ({isOpen, onClose, onSubmit}) => {
+    const [title, setTitle] = useState("");
+    const [content, setContent] = useState("");
+    const [language, setLanguage] = useState("");
+    const [tags, setTags] = useState("");
+    const [favourite, setFavourite] = useState(false);
+
+    const submitTriggered = (e) => {
+      e.preventDefault();
+      onSubmit({ title, content, language, tags, favourite });
+      setTitle("");
+      setContent("");
+      setLanguage("");
+      setTags("");
+      setFavourite(false);
+      onClose();
+    };
+
+    if (!isOpen) return null;
+
+    return(
+      <div className="popup-overlay">
+        <div className="popup-container">
+          <div className="popup-header">
+            <h3>Create new snippet</h3>
+          </div>
+          <div className="popup-content">
+            <form id="snippet-form" onSubmit={submitTriggered}>
+              <div className="form-group">
+                <label>Title</label>
+                <input
+                  className="form-input"
+                  type="text"
+                  value={title}
+                  onChange={(e) => setTitle(e.target.value)}
+                  required
+                />
+              </div>
+
+              <div className="form-group">
+                <label>Language</label>
+                <input
+                  className="form-input"
+                  type="text"
+                  value={language}
+                  onChange={(e) => setLanguage(e.target.value)}
+                  required
+                />
+              </div>
+
+              <div className="form-group">
+                <label>Content</label>
+                <textarea 
+                  className="form-input form-textarea"
+                  value={content}
+                  onChange={(e) => setContent(e.target.value)}
+                  required
+                  rows="5"
+                />
+              </div>
+
+              <div className="form-group">
+                <label>Tags (comma separated)</label>
+                <input
+                  className="form-input"
+                  type="text"
+                  value={tags}
+                  onChange={(e) => setTags(e.target.value)}
+                  placeholder="e.g. api, regex" 
+                />
+              </div>
+            </form>
+          </div>
+          <div className="popup-actions">
+            <button className="btn btn-secondary" type="button" onClick={onClose}>Cancel</button>
+            <button className="btn btn-primary" type="submit" form="snippet-form">Create Snippet</button>
+          </div>
+        </div>
+      </div>
+    );
+  };
+
+  const snippetSubmit = (snippetData) => {
+    console.log('New snippet:', snippetData);
+  };
 
   useEffect(() => {
     if (!token) {
@@ -127,7 +214,7 @@ export default function Snippets() {
       <main className="main">
         <header className="topbar">
           <input type="text" className="search-input" placeholder="Search snippets..." />
-          <Link to="/create-snippet" className="new-snippet-button">New Snippet</Link>
+          <button className="new-snippet-button" onClick={() => setCreateOpen(true)}>New Snippet</button>
           <span className="date-created">Date Created</span>
           <span className="sort-arrow">▲▼</span>
           <div style={{ flex: 1 }} />
@@ -194,6 +281,12 @@ export default function Snippets() {
           )}
         </section>
       </main>
+      
+      <NewSnippet
+        isOpen={isCreateOpen}
+        onClose={() => setCreateOpen(false)}
+        onSubmit={snippetSubmit}
+      />
     </div>
   );
 }
