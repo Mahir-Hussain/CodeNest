@@ -588,3 +588,17 @@ body {
 [data-theme="dark"] .btn-secondary:hover {
   background-color: var(--border-dark);
 }
+
+.tag-inputs {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.tag-inputs .form-input {
+  flex: 1;
+  min-width: 100px;
+  max-width: 140px;
+  font-size: 13px;
+  padding: 6px 10px;
+}

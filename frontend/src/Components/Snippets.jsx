@@ -18,16 +18,24 @@ export default function Snippets() {
     const [title, setTitle] = useState("");
     const [content, setContent] = useState("");
     const [language, setLanguage] = useState("");
-    const [tags, setTags] = useState("");
+    const [tag1, setTag1] = useState("");
+    const [tag2, setTag2] = useState("");
+    const [tag3, setTag3] = useState("");
     const [favourite, setFavourite] = useState(false);
 
     const submitTriggered = (e) => {
       e.preventDefault();
-      onSubmit({ title, content, language, tags, favourite });
+
+      const tagsArray = [tag1, tag2, tag3].filter(tag => tag.trim() !== "");
+      const combinedTags = tagsArray.join(", ");
+
+      onSubmit({ title, content, language, combinedTags, favourite });
       setTitle("");
       setContent("");
       setLanguage("");
-      setTags("");
+      setTag1("");
+      setTag2("");
+      setTag3("");
       setFavourite(false);
       onClose();
     };
@@ -55,13 +63,18 @@ export default function Snippets() {
 
               <div className="form-group">
                 <label>Language</label>
-                <input
+                <select
                   className="form-input"
-                  type="text"
                   value={language}
                   onChange={(e) => setLanguage(e.target.value)}
                   required
-                />
+                >
+                  <option value="">Select a language</option>
+                  <option value="python">Python</option>
+                  <option value="javascript">JavaScript</option>
+                  <option value="html">HTML</option>
+                  <option value="css">CSS</option>
+                </select>
               </div>
 
               <div className="form-group">
@@ -76,14 +89,31 @@ export default function Snippets() {
               </div>
 
               <div className="form-group">
-                <label>Tags (comma separated)</label>
-                <input
-                  className="form-input"
-                  type="text"
-                  value={tags}
-                  onChange={(e) => setTags(e.target.value)}
-                  placeholder="e.g. api, regex" 
-                />
+                <label>Tags (optional)</label>
+                <div className="tag-inputs">
+                  <input
+                    className="form-input"
+                    type="text"
+                    value={tag1}
+                    onChange={(e) => setTag1(e.target.value)}
+                    placeholder="e.g. api, regex" 
+                  />
+                  <input
+                    className="form-input"
+                    type="text"
+                    value={tag2}
+                    onChange={(e) => setTag2(e.target.value)}
+                    placeholder="e.g. api, regex" 
+                  />
+                  <input
+                    className="form-input"
+                    type="text"
+                    value={tag3}
+                    onChange={(e) => setTag3(e.target.value)}
+                    placeholder="e.g. api, regex" 
+                  />
+                </div>
+
               </div>
             </form>
           </div>
