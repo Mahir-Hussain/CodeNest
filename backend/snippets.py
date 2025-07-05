@@ -17,7 +17,6 @@ class Snippets(Database):
         self.user_id = user_id
         self.jwt_auth = jwtAuth()
         self.encryptor = Encryption()  # Set up the encryptor
-        self.ai_usage = True  # Enable this based on user preference
 
     def authenticate(self, token):
         token_result = self.jwt_auth.verify_token(token)
@@ -78,7 +77,13 @@ class Snippets(Database):
 
     @require_auth
     def create_snippet(
-        self, title=None, content=None, language=None, favourite=False, tags=None
+        self,
+        title=None,
+        content=None,
+        language=None,
+        favourite=False,
+        tags=None,
+        ai_usage=False,
     ):
         new_title = title if title else "Untitled Snippet"
         print("create_snippet called with title:", new_title)
@@ -97,7 +102,7 @@ class Snippets(Database):
             snippet_id = self.cursor.fetchone()[0]
             self.connection.commit()
 
-            if self.ai_usage:
+            if ai_usage:
                 print("if self.ai_usage:")
                 Snippets.executor.submit(
                     self.run_ai_enrichment_and_update,

@@ -5,7 +5,6 @@ from pydantic import BaseModel
 from backend.snippets import Snippets
 from backend.auth.login import LoginSystem
 from backend.auth.jwtAuth import jwtAuth
-from backend.ratelimit import RateLimit
 import asyncio
 from contextlib import asynccontextmanager
 
@@ -39,7 +38,6 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
-# app.add_middleware(RateLimit)
 
 # Initialize FastAPI app and login system
 login_system = LoginSystem()
@@ -204,8 +202,11 @@ async def create_snippet(
         dict: Success message if snippet is created, otherwise raises HTTPException.
     """
     snippets = Snippets(user_id)
+    ai_usage = (await get_ai_use(user_id))["ai_use"]
+
+    print("AI usage status:", ai_usage)
     result = snippets.create_snippet(
-        data.title, data.content, data.language, data.favourite, data.tags
+        data.title, data.content, data.language, data.favourite, data.tags, ai_usage
     )
     if result["success"]:
         return result
