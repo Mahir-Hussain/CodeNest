@@ -75,6 +75,44 @@ class Snippets(Database):
         else:
             print("⚠️ No event loop available for background enrichment")
 
+    def get_public_snippet_by_id(self, snippet_id: int):
+        """
+        Fetch a single public snippet by ID and decrypt its fields.
+
+        Args:
+            snippet_id (int): The ID of the snippet to fetch.
+
+        Returns:
+            dict: Success status and snippet data or error message.
+        """
+        try:
+            self.cursor.execute(
+                "SELECT id, title, content, language, favourite, created_at, tags "
+                "FROM code_snippets WHERE id = %s AND is_public = TRUE",
+                (snippet_id,),
+            )
+            row = self.cursor.fetchone()
+            if row is None:
+                return {"success": False, "error": "Snippet not found or not public"}
+
+            id, title, content, language, favourite, created_at, tags = row
+            snippet = {
+                "id": id,
+                "title": self.encryptor.decrypt(title),
+                "content": self.encryptor.decrypt(content),
+                "language": self.encryptor.decrypt(language),
+                "favourite": favourite,
+                "created_at": created_at,
+                "tags": tags,
+            }
+            return {"success": True, "snippet": snippet}
+
+        except psycopg2.Error as error:
+            return {
+                "success": False,
+                "error": f"Error fetching snippet: {str(error)}",
+            }
+
     @require_auth
     def create_snippet(
         self,
@@ -84,12 +122,13 @@ class Snippets(Database):
         favourite=False,
         tags=None,
         ai_usage=False,
+        is_public=False,
     ):
         new_title = title if title else "Untitled Snippet"
         print("create_snippet called with title:", new_title)
         try:
             self.cursor.execute(
-                "INSERT INTO code_snippets (title, content, language, user_id, favourite, tags) VALUES (%s, %s, %s, %s, %s, %s) RETURNING id",
+                "INSERT INTO code_snippets (title, content, language, user_id, favourite, tags, is_public) VALUES (%s, %s, %s, %s, %s, %s, %s) RETURNING id",
                 (
                     self.encryptor.encrypt(new_title),
                     self.encryptor.encrypt(content),
@@ -97,6 +136,7 @@ class Snippets(Database):
                     self.user_id,
                     favourite,
                     tags,
+                    is_public,
                 ),
             )
             snippet_id = self.cursor.fetchone()[0]

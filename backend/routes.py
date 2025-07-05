@@ -21,6 +21,7 @@ class SnippetData(BaseModel):
     language: str = None
     favourite: bool = False
     tags: list[str] = []
+    is_public: bool = False
 
 
 @asynccontextmanager
@@ -187,6 +188,16 @@ async def get_snippets(user_id: int = Depends(get_current_user_id)):
         raise HTTPException(status_code=500, detail=str(error))
 
 
+@app.get("/get_public_snippet/{snippet_id}")
+async def read_public_snippet(snippet_id: int):
+    result = Snippets(user_id=0).get_public_snippet_by_id(snippet_id)
+    if not result["success"]:
+        raise HTTPException(
+            status_code=404, detail=result.get("error", "Snippet not found")
+        )
+    return {"snippet": result["snippet"]}
+
+
 @app.post("/create_snippet")
 async def create_snippet(
     data: SnippetData, user_id: int = Depends(get_current_user_id)
@@ -206,7 +217,13 @@ async def create_snippet(
 
     print("AI usage status:", ai_usage)
     result = snippets.create_snippet(
-        data.title, data.content, data.language, data.favourite, data.tags, ai_usage
+        data.title,
+        data.content,
+        data.language,
+        data.favourite,
+        data.tags,
+        ai_usage,
+        data.is_public,
     )
     if result["success"]:
         return result

@@ -3,6 +3,7 @@ import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Login from './Components/Login';
 import SignUp from './Components/Signup';
+import SnippetView from './Components/PublicSnippets';
 import Snippets from './Components/Snippets';
 import ProtectedRoute from './Components/services/ProtectedRoute';
 import { ThemeProvider } from './Components/services/ThemeContext';
@@ -16,6 +17,7 @@ function App() {
         <Routes>
           <Route path="/" element={<Login />} />
           <Route path="/Signup" element={<SignUp />} />
+          <Route path="/public_snippet/:snippetId" element={<SnippetView />} />
           <Route
             path="/snippets"
             element={
