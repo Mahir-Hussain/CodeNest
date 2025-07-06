@@ -1,6 +1,7 @@
 import psycopg2
 import asyncio
 from concurrent.futures import ThreadPoolExecutor
+import ast
 
 from backend.auth.database import Database
 from backend.auth.jwtAuth import jwtAuth, require_auth
@@ -17,6 +18,16 @@ class Snippets(Database):
         self.user_id = user_id
         self.jwt_auth = jwtAuth()
         self.encryptor = Encryption()  # Set up the encryptor
+
+    def convert_tags(self, tags: str):
+        """
+        Safely parse tags from a string representation of a list.
+        Returns an empty list if parsing fails.
+        """
+        try:
+            return ast.literal_eval(tags) if isinstance(tags, str) else tags
+        except:
+            return []
 
     def authenticate(self, token):
         token_result = self.jwt_auth.verify_token(token)
@@ -103,7 +114,7 @@ class Snippets(Database):
                 "language": self.encryptor.decrypt(language),
                 "favourite": favourite,
                 "created_at": created_at,
-                "tags": tags,
+                "tags": self.convert_tags(tags),
             }
             return {"success": True, "snippet": snippet}
 
@@ -125,7 +136,6 @@ class Snippets(Database):
         is_public=False,
     ):
         new_title = title if title else "Untitled Snippet"
-        print("create_snippet called with title:", new_title)
         try:
             self.cursor.execute(
                 "INSERT INTO code_snippets (title, content, language, user_id, favourite, tags, is_public) VALUES (%s, %s, %s, %s, %s, %s, %s) RETURNING id",
@@ -135,7 +145,7 @@ class Snippets(Database):
                     self.encryptor.encrypt(language),
                     self.user_id,
                     favourite,
-                    tags,
+                    tags,  # Comes in as a list already
                     is_public,
                 ),
             )
@@ -169,16 +179,16 @@ class Snippets(Database):
             snippets = []
             for row in data:
                 id, title, content, language, favourite, created_at, tags = row
-                decrypted = (
-                    id,
-                    self.encryptor.decrypt(title),
-                    self.encryptor.decrypt(content),
-                    self.encryptor.decrypt(language),
-                    favourite,
-                    created_at,
-                    tags,
-                )
-                snippets.append(decrypted)
+                snippet = {
+                    "id": id,
+                    "title": self.encryptor.decrypt(title),
+                    "content": self.encryptor.decrypt(content),
+                    "language": self.encryptor.decrypt(language),
+                    "favourite": favourite,
+                    "created_at": created_at,
+                    "tags": self.convert_tags(tags),
+                }
+                snippets.append(snippet)
             return {"success": True, "snippets": snippets}
         except psycopg2.Error as error:
             self.connection.rollback()

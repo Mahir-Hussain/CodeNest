@@ -43,7 +43,7 @@ class CodeDataAI:
 
     async def get_tags(self, user_code: str):
         prompt = """Generate up to 3 tags for this code. Do not deviate. 
-                    In the style of a comma-separated list. E.g #tag1, #tag2, #tag3.
+                    In the style of a comma-separated list. E.g ["tag1", "tag2", "tag3"].
                     You do not need 3 tags, you can return 1 or 2 if you want."""
         return await asyncio.to_thread(self.run_prompt, prompt, user_code)
 

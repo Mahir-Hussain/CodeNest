@@ -98,16 +98,12 @@ export default function Snippets() {
 
   const snippetSubmit = (snippetData) => {
     console.log('New snippet:', snippetData);
+    // Here add logic to POST the new snippet to your backend and update state
   };
 
   useEffect(() => {
     if (!token) {
       setAlertMessage("You must be logged in to view snippets.");
-    }
-  }, [token]);
-
-  useEffect(() => {
-    if (!token) {
       setLoading(false);
       return;
     }
@@ -122,17 +118,8 @@ export default function Snippets() {
         console.log("API response:", data);
 
         if (data.success && Array.isArray(data.snippets)) {
-          // Convert array snippets into objects
-          const formatted = data.snippets.map(s => ({
-            id: s[0],
-            title: s[1],
-            content: s[2],
-            language: s[3],
-            favourite: s[4],
-            created_at: s[5],
-            tags: s[6],
-          }));
-          setSnippets(formatted);
+          // Assume snippets are objects as you showed with keys
+          setSnippets(data.snippets);
         } else {
           console.warn("Unexpected payload shape:", data);
           setSnippets([]);
@@ -259,7 +246,9 @@ export default function Snippets() {
                           })
                         : 'No date'}
                     </span>
-                    <span className="card-tags">---{s.tags}</span>
+                    <span className="card-tags">
+                      {Array.isArray(s.tags) ? s.tags.join(", ") : s.tags}
+                    </span>
                   </div>
                 </div>
                 <pre className="card-code">
