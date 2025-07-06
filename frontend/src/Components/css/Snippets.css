@@ -433,7 +433,7 @@ body {
   overflow-y: auto;
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
   border: 1px solid var(--border-light);
-  animation: popup-appear 0.2s ease-out;
+  animation: popup-appear 0.3s ease-out;
 }
 
 @keyframes popup-appear {
@@ -601,4 +601,15 @@ body {
   max-width: 140px;
   font-size: 13px;
   padding: 6px 10px;
+}
+
+.char-count {
+  color: var(--subtext-light);
+  font-size: 0.75rem;
+  margin-top: 0.25rem;
+  display: block;
+}
+
+.dark .char-count {
+  color: var(--subtext-dark);
 }

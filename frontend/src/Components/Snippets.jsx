@@ -57,8 +57,10 @@ export default function Snippets() {
                   type="text"
                   value={title}
                   onChange={(e) => setTitle(e.target.value)}
+                  maxLength={20}
                   required
                 />
+                <small className="char-count">{20 - title.length} characters remaining</small>
               </div>
 
               <div className="form-group">
@@ -96,6 +98,7 @@ export default function Snippets() {
                     type="text"
                     value={tag1}
                     onChange={(e) => setTag1(e.target.value)}
+                    maxLength={10}
                     placeholder="e.g. api, regex" 
                   />
                   <input
@@ -103,6 +106,7 @@ export default function Snippets() {
                     type="text"
                     value={tag2}
                     onChange={(e) => setTag2(e.target.value)}
+                    maxLength={10}
                     placeholder="e.g. api, regex" 
                   />
                   <input
@@ -110,10 +114,10 @@ export default function Snippets() {
                     type="text"
                     value={tag3}
                     onChange={(e) => setTag3(e.target.value)}
+                    maxLength={10}
                     placeholder="e.g. api, regex" 
                   />
                 </div>
-
               </div>
             </form>
           </div>
