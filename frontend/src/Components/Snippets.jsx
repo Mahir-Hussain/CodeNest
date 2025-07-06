@@ -186,6 +186,16 @@ export default function Snippets() {
 
   if (loading) return <div className="loading">Loading snippets…</div>;
 
+  const copyToClipboard = async (content) => {
+    try {
+      await navigator.clipboard.writeText(content);
+      setAlertMessage("Snippet copied to clipboard!");
+    } catch (error) {
+      console.error("Failed to copy to clipboard:", error);
+      setAlertMessage("Failed to copy to clipboard.");
+    }
+  };
+
   const deleteSnippet = async (snippetId) => {
     try {
       const response = await fetch(`http://localhost:8000/delete_snippet/${snippetId}`, {
@@ -301,7 +311,7 @@ export default function Snippets() {
                 </pre>
                 <div className="card-footer">
                   <div className="card-actions">
-                    <span className="action-icon" title="Attach">📋</span>
+                    <span className="action-icon" title="Copy to clipboard" onClick={() => copyToClipboard(s.content)}>📋</span>
                     <span className="action-icon" title="Link">🔗</span>
                     <span className="action-icon" title="Edit">✏️</span>
                     <span className="action-icon" title="Delete" onClick={() => deleteSnippet(s.id)}>🗑️</span>
