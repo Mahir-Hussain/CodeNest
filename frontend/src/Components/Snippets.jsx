@@ -22,14 +22,14 @@ export default function Snippets() {
     const [tag2, setTag2] = useState("");
     const [tag3, setTag3] = useState("");
     const [favourite, setFavourite] = useState(false);
+    const [isPublic, setPublic] = useState(false);
 
     const submitTriggered = (e) => {
       e.preventDefault();
 
       const tagsArray = [tag1, tag2, tag3].filter(tag => tag.trim() !== "");
-      const combinedTags = tagsArray.join(", ");
 
-      onSubmit({ title, content, language, combinedTags, favourite });
+      onSubmit({ title, content, language, tags: tagsArray, favourite, isPublic });
       setTitle("");
       setContent("");
       setLanguage("");
@@ -37,6 +37,7 @@ export default function Snippets() {
       setTag2("");
       setTag3("");
       setFavourite(false);
+      setPublic(false);
       onClose();
     };
 
@@ -119,6 +120,19 @@ export default function Snippets() {
                   />
                 </div>
               </div>
+
+              <div className="form-group">
+                <label>Visibility </label>
+                <select
+                  className="form-input"
+                  value={isPublic ? "public" : "private"}
+                  onChange={(e) => setPublic(e.target.value === "public")}
+                  required
+                >
+                <option value="private">Private</option>
+                  <option value="public">Public</option>
+                </select>
+              </div>
             </form>
           </div>
           <div className="popup-actions">
@@ -130,9 +144,44 @@ export default function Snippets() {
     );
   };
 
-  const snippetSubmit = (snippetData) => {
-    console.log('New snippet:', snippetData);
-    // Here add logic to POST the new snippet to your backend and update state
+  const snippetSubmit = async (snippetData) => {
+    try {
+      const response = await fetch("http://localhost:8000/create_snippet", {
+        method: 'POST',
+        headers: { 
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}` 
+        },
+        body: JSON.stringify({
+          title: snippetData.title,
+          content: snippetData.content,
+          language: snippetData.language,
+          tags: snippetData.tags,
+          favourite: snippetData.favourite,
+          is_public: snippetData.isPublic
+        })
+      });
+      
+      const data = await response.json();
+      
+      if (data.success) {
+        setAlertMessage("Snippet created successfully!");
+        const resp = await fetch("http://localhost:8000/get_snippets", {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        if (resp.ok) {
+          const refreshData = await resp.json();
+          if (refreshData.success && Array.isArray(refreshData.snippets)) {
+            setSnippets(refreshData.snippets);
+          }
+        }
+      } else {
+        setAlertMessage("Failed to create snippet.");
+      }
+    } catch (error) {
+      console.error("Error:", error);
+      setAlertMessage("Error creating snippet. See console.");
+    }
   };
 
   useEffect(() => {
