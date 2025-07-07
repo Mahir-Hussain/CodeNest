@@ -1,7 +1,8 @@
 import psycopg2
 import asyncio
-from concurrent.futures import ThreadPoolExecutor
+import json
 import ast
+from concurrent.futures import ThreadPoolExecutor
 
 from backend.auth.database import Database
 from backend.auth.jwtAuth import jwtAuth, require_auth
@@ -21,13 +22,19 @@ class Snippets(Database):
 
     def convert_tags(self, tags: str):
         """
-        Safely parse tags from a string representation of a list.
-        Returns an empty list if parsing fails.
+        Converts a JSON string of tags to a Python list.
+        Handles errors and ensures it returns a list.
         """
         try:
-            return ast.literal_eval(tags) if isinstance(tags, str) else tags
-        except:
-            return []
+            if isinstance(tags, str):
+                return ast.literal_eval(
+                    tags
+                )  # Use ast to safely parse Python-like strings
+            elif isinstance(tags, list):
+                return tags
+        except Exception as e:
+            print("Tag parsing failed:", e)  # Think it fires if empty
+        return []
 
     def authenticate(self, token):
         token_result = self.jwt_auth.verify_token(token)
@@ -39,14 +46,12 @@ class Snippets(Database):
     async def run_ai_enrichment(self, content, title=None, language=None, tags=None):
         ai = CodeDataAI()
         if title == "Untitled Snippet" and language == "" and tags == []:
-            print("running uheiufhne")
             data = await ai.get_all_data(content)
             title = data["title"]
             language = data["language"]
             tags = data["tags"]
 
         if title == "" or title == "Untitled Snippet":
-            print("title is None, running AI for title")
             title = await ai.get_title(content)
 
         if language == "":
@@ -63,7 +68,6 @@ class Snippets(Database):
 
     def run_ai_enrichment_and_update(self, snippet_id, content, title, language, tags):
         async def inner():
-            print("inner() called for AI enrichment")
             enriched = await self.run_ai_enrichment(content, title, language, tags)
             try:
                 self.cursor.execute(
@@ -71,13 +75,12 @@ class Snippets(Database):
                     (
                         self.encryptor.encrypt(enriched["title"]),
                         self.encryptor.encrypt(enriched["language"]),
-                        enriched["tags"],
+                        self.encryptor.encrypt(json.dumps(enriched["tags"])),
                         snippet_id,
                     ),
                 )
-                print(enriched["title"], enriched["language"], enriched["tags"])
                 self.connection.commit()
-            except Exception as e:
+            except psycopg2.Error as e:
                 self.connection.rollback()
                 print(f"AI enrichment DB update failed: {e}")
 
@@ -107,6 +110,10 @@ class Snippets(Database):
                 return {"success": False, "error": "Snippet not found or not public"}
 
             id, title, content, language, favourite, created_at, tags = row
+
+            decrypted_tags = self.encryptor.decrypt(tags)
+            parsed_tags = self.convert_tags(decrypted_tags)
+
             snippet = {
                 "id": id,
                 "title": self.encryptor.decrypt(title),
@@ -114,7 +121,7 @@ class Snippets(Database):
                 "language": self.encryptor.decrypt(language),
                 "favourite": favourite,
                 "created_at": created_at,
-                "tags": self.convert_tags(tags),
+                "tags": parsed_tags,
             }
             return {"success": True, "snippet": snippet}
 
@@ -137,15 +144,19 @@ class Snippets(Database):
     ):
         new_title = title if title else "Untitled Snippet"
         try:
+            json_tags = json.dumps(tags or [])
+            encrypted_tags = self.encryptor.encrypt(json_tags)
+
             self.cursor.execute(
-                "INSERT INTO code_snippets (title, content, language, user_id, favourite, tags, is_public) VALUES (%s, %s, %s, %s, %s, %s, %s) RETURNING id",
+                "INSERT INTO code_snippets (title, content, language, user_id, favourite, tags, is_public) "
+                "VALUES (%s, %s, %s, %s, %s, %s, %s) RETURNING id",
                 (
                     self.encryptor.encrypt(new_title),
                     self.encryptor.encrypt(content),
                     self.encryptor.encrypt(language),
                     self.user_id,
                     favourite,
-                    tags,  # Comes in as a list already
+                    encrypted_tags,
                     is_public,
                 ),
             )
@@ -153,7 +164,6 @@ class Snippets(Database):
             self.connection.commit()
 
             if ai_usage:
-                print("if self.ai_usage:")
                 Snippets.executor.submit(
                     self.run_ai_enrichment_and_update,
                     snippet_id,
@@ -179,6 +189,14 @@ class Snippets(Database):
             snippets = []
             for row in data:
                 id, title, content, language, favourite, created_at, tags = row
+
+                try:
+                    decrypted_tags = self.encryptor.decrypt(tags)
+                    parsed_tags = self.convert_tags(decrypted_tags)
+                except Exception as e:
+                    print("Tag parsing failed:", e)
+                    parsed_tags = []
+
                 snippet = {
                     "id": id,
                     "title": self.encryptor.decrypt(title),
@@ -186,12 +204,13 @@ class Snippets(Database):
                     "language": self.encryptor.decrypt(language),
                     "favourite": favourite,
                     "created_at": created_at,
-                    "tags": self.convert_tags(tags),
+                    "tags": parsed_tags,
                 }
                 snippets.append(snippet)
             return {"success": True, "snippets": snippets}
         except psycopg2.Error as error:
             self.connection.rollback()
+            print("Error fetching snippets:", error)
             return {"success": False, "error": f"Error fetching snippets: {str(error)}"}
 
     @require_auth
