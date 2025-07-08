@@ -182,13 +182,13 @@ class Snippets(Database):
     def get_snippets(self):
         try:
             self.cursor.execute(
-                "SELECT id, title, content, language, favourite, created_at, tags FROM code_snippets WHERE user_id = %s",
+                "SELECT id, title, content, language, favourite, created_at, tags, is_public FROM code_snippets WHERE user_id = %s",
                 (self.user_id,),
             )
             data = self.cursor.fetchall()
             snippets = []
             for row in data:
-                id, title, content, language, favourite, created_at, tags = row
+                id, title, content, language, favourite, created_at, tags, is_public = row
 
                 try:
                     decrypted_tags = self.encryptor.decrypt(tags)
@@ -205,6 +205,7 @@ class Snippets(Database):
                     "favourite": self.encryptor.decrypt(favourite) == 'true',
                     "created_at": created_at,
                     "tags": parsed_tags,
+                    "is_public": is_public if is_public is not None else False,
                 }
                 snippets.append(snippet)
             return {"success": True, "snippets": snippets}

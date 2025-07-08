@@ -13,35 +13,73 @@ export default function Snippets() {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [profileMenu, setProfileMenu] = useState(false);
   const [isCreateOpen, setCreateOpen] = useState(false);
+  const [isEditOpen, setEditOpen] = useState(false);
+  const [editingSnippet, setEditingSnippet] = useState(null);
   const [selectedLanguages, setSelectedLanguages] = useState([]);
   const [selectedTags, setSelectedTags] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
   
-  const NewSnippet = ({isOpen, onClose, onSubmit}) => {
-    const [title, setTitle] = useState("");
-    const [content, setContent] = useState("");
-    const [language, setLanguage] = useState("");
+  const SnippetModal = ({isOpen, onClose, onSubmit, snippet = null}) => {
+    const isEditing = snippet !== null;
+    
+    const [title, setTitle] = useState(snippet?.title || "");
+    const [content, setContent] = useState(snippet?.content || "");
+    const [language, setLanguage] = useState(snippet?.language || "");
     const [tag1, setTag1] = useState("");
     const [tag2, setTag2] = useState("");
     const [tag3, setTag3] = useState("");
-    const [favourite, setFavourite] = useState(false);
-    const [isPublic, setPublic] = useState(false);
+    const [favourite, setFavourite] = useState(snippet?.favourite || false);
+    const [isPublic, setPublic] = useState(snippet?.is_public || false);
+
+    useEffect(() => {
+      if (isEditing && snippet) {
+        let tags = [];
+        if (Array.isArray(snippet.tags)) {
+          tags = snippet.tags;
+        } else if (typeof snippet.tags === 'string') {
+          try {
+            const parsed = JSON.parse(snippet.tags);
+            tags = Array.isArray(parsed) ? parsed : [snippet.tags];
+          } catch {
+            tags = [snippet.tags];
+          }
+        }
+        
+        setTag1(tags[0] || "");
+        setTag2(tags[1] || "");
+        setTag3(tags[2] || "");
+      }
+    }, [isEditing, snippet]);
 
     const submitTriggered = (e) => {
       e.preventDefault();
 
       const tagsArray = [tag1, tag2, tag3].filter(tag => tag.trim() !== "");
 
-      onSubmit({ title, content, language, tags: tagsArray, favourite, isPublic });
-      setTitle("");
-      setContent("");
-      setLanguage("");
-      setTag1("");
-      setTag2("");
-      setTag3("");
-      setFavourite(false);
-      setPublic(false);
-      onClose();
+      if (isEditing) {
+        // TODO: Implement edit submission later
+        console.log("Edit submission - UI only for now:", { 
+          id: snippet.id,
+          title, 
+          content, 
+          language, 
+          tags: tagsArray, 
+          favourite, 
+          isPublic 
+        });
+        onClose();
+      } else {
+        onSubmit({ title, content, language, tags: tagsArray, favourite, isPublic });
+        setTitle("");
+        setContent("");
+        setLanguage("");
+        setTag1("");
+        setTag2("");
+        setTag3("");
+        setFavourite(false);
+        setPublic(false);
+        onClose();
+      }
     };
 
     if (!isOpen) return null;
@@ -50,7 +88,7 @@ export default function Snippets() {
       <div className="popup-overlay">
         <div className="popup-container">
           <div className="popup-header">
-            <h3>Create new snippet</h3>
+            <h3>{isEditing ? "Edit snippet" : "Create new snippet"}</h3>
           </div>
           <div className="popup-content">
             <form id="snippet-form" onSubmit={submitTriggered}>
@@ -125,16 +163,18 @@ export default function Snippets() {
               </div>
 
               <div className="checkbox-row">
-                <div className="form-group">
-                  <label className="checkbox">
-                    <input
-                      type="checkbox"
-                      checked={favourite}
-                      onChange={(e) => setFavourite(e.target.checked)}
-                    />
-                    Add to favourites
-                  </label>
-                </div>
+                {!isEditing && (
+                  <div className="form-group">
+                    <label className="checkbox">
+                      <input
+                        type="checkbox"
+                        checked={favourite}
+                        onChange={(e) => setFavourite(e.target.checked)}
+                      />
+                      Add to favourites
+                    </label>
+                  </div>
+                )}
 
                 <div className="form-group">
                   <label className="checkbox">
@@ -151,7 +191,9 @@ export default function Snippets() {
           </div>
           <div className="popup-actions">
             <button className="btn btn-secondary" type="button" onClick={onClose}>Cancel</button>
-            <button className="btn btn-primary" type="submit" form="snippet-form">Create Snippet</button>
+            <button className="btn btn-primary" type="submit" form="snippet-form">
+              {isEditing ? "Update Snippet" : "Create Snippet"}
+            </button>
           </div>
         </div>
       </div>
@@ -186,7 +228,7 @@ export default function Snippets() {
         if (resp.ok) {
           const refreshData = await resp.json();
           if (refreshData.success && Array.isArray(refreshData.snippets)) {
-            setSnippets(refreshData.snippets);
+            setSnippets(sortSnippets(refreshData.snippets));
           }
         }
       } else {
@@ -336,6 +378,10 @@ export default function Snippets() {
     setSearchQuery(e.target.value);
   };
 
+  const editSnippet = (snippet) => {
+    setEditingSnippet(snippet);
+    setEditOpen(true);
+  };
 
   useEffect(() => {
     if (!token) {
@@ -545,8 +591,10 @@ export default function Snippets() {
                 <div className="card-footer">
                   <div className="card-actions">
                     <span className="action-icon" title="Copy to clipboard" onClick={() => copyToClipboard(s.content)}>📋</span>
-                    <span className="action-icon" title="Link">🔗</span>
-                    <span className="action-icon" title="Edit">✏️</span>
+                    {s.is_public && (
+                      <span className="action-icon" title="Link">🔗</span>
+                    )}
+                    <span className="action-icon" title="Edit" onClick={() => editSnippet(s)}>✏️</span>
                     <span className="action-icon" title="Delete" onClick={() => deleteSnippet(s.id)}>🗑️</span>
                     <span className="action-icon" title="Favourite">{s.favourite ? '❤️' : '🤍'}</span>
                   </div>
@@ -563,10 +611,20 @@ export default function Snippets() {
         </section>
       </main>
       
-      <NewSnippet
+      <SnippetModal
         isOpen={isCreateOpen}
         onClose={() => setCreateOpen(false)}
         onSubmit={snippetSubmit}
+      />
+      
+      <SnippetModal
+        isOpen={isEditOpen}
+        onClose={() => {
+          setEditOpen(false);
+          setEditingSnippet(null);
+        }}
+        onSubmit={snippetSubmit}
+        snippet={editingSnippet}
       />
     </div>
   );
