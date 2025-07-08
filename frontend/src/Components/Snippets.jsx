@@ -195,6 +195,20 @@ export default function Snippets() {
     }
   };
 
+  // Function to sort snippets: favorites first, then by date descending
+  const sortSnippets = (snippets) => {
+    return [...snippets].sort((a, b) => {
+      // First sort by favorite status (favorites first)
+      if (a.favourite && !b.favourite) return -1;
+      if (!a.favourite && b.favourite) return 1;
+      
+      // Then sort by date descending (newest first)
+      const dateA = new Date(a.created_at || 0);
+      const dateB = new Date(b.created_at || 0);
+      return dateB - dateA;
+    });
+  };
+
   useEffect(() => {
     if (!token) {
       setAlertMessage("You must be logged in to view snippets.");
@@ -212,8 +226,8 @@ export default function Snippets() {
         console.log("API response:", data);
 
         if (data.success && Array.isArray(data.snippets)) {
-          // Assume snippets are objects as you showed with keys
-          setSnippets(data.snippets);
+          // Sort snippets after fetching
+          setSnippets(sortSnippets(data.snippets));
         } else {
           console.warn("Unexpected payload shape:", data);
           setSnippets([]);
@@ -251,7 +265,7 @@ export default function Snippets() {
       });
       const data = await response.json();
       if (data.success) {
-        setSnippets(snippets => snippets.filter(s => s.id !== snippetId));
+        setSnippets(snippets => sortSnippets(snippets.filter(s => s.id !== snippetId)));
         setAlertMessage("Snippet deleted!");
       } else {
         setAlertMessage(data.error || "Failed to delete snippet.");
@@ -338,7 +352,10 @@ export default function Snippets() {
             snippets.map((s) => (
               <div className="snippet-card" key={s.id}>
                 <div className="card-header">
-                  <h4>{s.title}</h4>
+                  <h4>
+                    {s.favourite && <span className="favorite-star">⭐ </span>}
+                    {s.title}
+                  </h4>
                   <div className="lang-and-date-container">
                     <span className="lang-tag">{s.language ? s.language.toUpperCase() : ''}</span>
                     <span className="card-date">
