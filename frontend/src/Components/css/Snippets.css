@@ -613,3 +613,73 @@ body {
 .dark .char-count {
   color: var(--subtext-dark);
 }
+
+.form-group .checkbox {
+  display: flex;
+  align-items: center;
+  margin-bottom: 0;
+  color: var(--text-light);
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 400;
+  padding: 8px 0;
+}
+
+.form-group .checkbox input[type="checkbox"] {
+  appearance: none;
+  width: 16px;
+  height: 16px;
+  border: 1px solid var(--border-light);
+  border-radius: 3px;
+  margin-right: 10px;
+  cursor: pointer;
+  position: relative;
+  background-color: var(--input-bg-light);
+  transition: all 0.2s ease;
+}
+
+.form-group .checkbox input[type="checkbox"]:checked {
+  background-color: var(--btn-bg);
+  border-color: var(--btn-bg);
+}
+
+.form-group .checkbox input[type="checkbox"]:checked::before {
+  content: '✓';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: white;
+  font-size: 10px;
+  font-weight: bold;
+}
+
+.form-group .checkbox input[type="checkbox"]:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(31, 136, 61, 0.2);
+}
+
+[data-theme="dark"] .form-group .checkbox {
+  color: var(--text-dark);
+}
+
+[data-theme="dark"] .form-group .checkbox input[type="checkbox"] {
+  background-color: var(--input-bg-dark);
+  border-color: var(--border-dark);
+}
+
+[data-theme="dark"] .form-group .checkbox input[type="checkbox"]:checked {
+  background-color: var(--btn-bg);
+  border-color: var(--btn-bg);
+}
+
+.checkbox-row {
+  display: flex;
+  gap: 24px;
+  align-items: center;
+}
+
+.checkbox-row .form-group {
+  margin-bottom: 0;
+  flex: 1;
+}

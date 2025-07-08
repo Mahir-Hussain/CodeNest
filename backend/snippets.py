@@ -119,7 +119,7 @@ class Snippets(Database):
                 "title": self.encryptor.decrypt(title),
                 "content": self.encryptor.decrypt(content),
                 "language": self.encryptor.decrypt(language),
-                "favourite": favourite,
+                "favourite": self.encryptor.decrypt(favourite) == 'true',
                 "created_at": created_at,
                 "tags": parsed_tags,
             }
@@ -155,7 +155,7 @@ class Snippets(Database):
                     self.encryptor.encrypt(content),
                     self.encryptor.encrypt(language),
                     self.user_id,
-                    favourite,
+                    self.encryptor.encrypt(str(favourite).lower()),
                     encrypted_tags,
                     is_public,
                 ),
@@ -202,7 +202,7 @@ class Snippets(Database):
                     "title": self.encryptor.decrypt(title),
                     "content": self.encryptor.decrypt(content),
                     "language": self.encryptor.decrypt(language),
-                    "favourite": favourite,
+                    "favourite": self.encryptor.decrypt(favourite) == 'true',
                     "created_at": created_at,
                     "tags": parsed_tags,
                 }

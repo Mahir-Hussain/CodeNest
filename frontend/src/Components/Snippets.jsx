@@ -121,17 +121,28 @@ export default function Snippets() {
                 </div>
               </div>
 
-              <div className="form-group">
-                <label>Visibility </label>
-                <select
-                  className="form-input"
-                  value={isPublic ? "public" : "private"}
-                  onChange={(e) => setPublic(e.target.value === "public")}
-                  required
-                >
-                <option value="private">Private</option>
-                  <option value="public">Public</option>
-                </select>
+              <div className="checkbox-row">
+                <div className="form-group">
+                  <label className="checkbox">
+                    <input
+                      type="checkbox"
+                      checked={favourite}
+                      onChange={(e) => setFavourite(e.target.checked)}
+                    />
+                    Add to favourites
+                  </label>
+                </div>
+
+                <div className="form-group">
+                  <label className="checkbox">
+                    <input
+                      type="checkbox"
+                      checked={isPublic}
+                      onChange={(e) => setPublic(e.target.checked)}
+                    />
+                    Make public
+                  </label>
+                </div>
               </div>
             </form>
           </div>
