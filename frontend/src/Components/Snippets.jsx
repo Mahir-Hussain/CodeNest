@@ -13,6 +13,9 @@ export default function Snippets() {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [profileMenu, setProfileMenu] = useState(false);
   const [isCreateOpen, setCreateOpen] = useState(false);
+  const [selectedLanguages, setSelectedLanguages] = useState([]);
+  const [selectedTags, setSelectedTags] = useState([]);
+  const [searchQuery, setSearchQuery] = useState("");
   
   const NewSnippet = ({isOpen, onClose, onSubmit}) => {
     const [title, setTitle] = useState("");
@@ -209,6 +212,131 @@ export default function Snippets() {
     });
   };
 
+  // Function to get all unique languages from snippets
+  const getAllLanguages = (snippets) => {
+    const languages = snippets
+      .map(s => s.language)
+      .filter(lang => lang && lang.trim() !== '')
+      .map(lang => lang.toLowerCase());
+    return [...new Set(languages)].sort();
+  };
+
+  // Function to get all unique tags from snippets
+  const getAllTags = (snippets) => {
+    const tags = snippets
+      .flatMap(s => {
+        if (Array.isArray(s.tags)) {
+          return s.tags;
+        } else if (typeof s.tags === 'string') {
+          // Handle string format like '["React", "Snippet Management", "CRUD"]'
+          try {
+            const parsed = JSON.parse(s.tags);
+            return Array.isArray(parsed) ? parsed : [s.tags];
+          } catch {
+            return [s.tags];
+          }
+        }
+        return [];
+      })
+      .filter(tag => tag && tag.trim() !== '')
+      .map(tag => tag.toLowerCase());
+    return [...new Set(tags)].sort();
+  };
+
+  // Function to filter snippets based on search query
+  const getSearchFilteredSnippets = (snippets) => {
+    if (!searchQuery.trim()) return snippets;
+    
+    const query = searchQuery.toLowerCase();
+    return snippets.filter(snippet => {
+      // Search in title
+      const titleMatch = snippet.title?.toLowerCase().includes(query);
+      
+      // Search in content
+      const contentMatch = snippet.content?.toLowerCase().includes(query);
+      
+      // Search in language
+      const languageMatch = snippet.language?.toLowerCase().includes(query);
+      
+      // Search in tags
+      let tagMatch = false;
+      if (Array.isArray(snippet.tags)) {
+        tagMatch = snippet.tags.some(tag => tag.toLowerCase().includes(query));
+      } else if (typeof snippet.tags === 'string') {
+        try {
+          const parsed = JSON.parse(snippet.tags);
+          if (Array.isArray(parsed)) {
+            tagMatch = parsed.some(tag => tag.toLowerCase().includes(query));
+          } else {
+            tagMatch = snippet.tags.toLowerCase().includes(query);
+          }
+        } catch {
+          tagMatch = snippet.tags.toLowerCase().includes(query);
+        }
+      }
+      
+      return titleMatch || contentMatch || languageMatch || tagMatch;
+    });
+  };
+
+  // Function to filter snippets based on selected languages and tags
+  const getFilteredSnippets = (snippets) => {
+    return snippets.filter(snippet => {
+      const languageMatch = selectedLanguages.length === 0 || 
+        selectedLanguages.includes(snippet.language?.toLowerCase());
+      
+      // Handle different tag formats
+      let snippetTags = [];
+      if (Array.isArray(snippet.tags)) {
+        snippetTags = snippet.tags;
+      } else if (typeof snippet.tags === 'string') {
+        try {
+          const parsed = JSON.parse(snippet.tags);
+          snippetTags = Array.isArray(parsed) ? parsed : [snippet.tags];
+        } catch {
+          snippetTags = [snippet.tags];
+        }
+      }
+      
+      const tagMatch = selectedTags.length === 0 || 
+        selectedTags.some(selectedTag => 
+          snippetTags.some(snippetTag => snippetTag.toLowerCase() === selectedTag)
+        );
+      
+      return languageMatch && tagMatch;
+    });
+  };
+
+  // Combined filter function that applies both search and filters
+  const getFullyFilteredSnippets = (snippets) => {
+    const searchFiltered = getSearchFilteredSnippets(snippets);
+    return getFilteredSnippets(searchFiltered);
+  };
+
+  // Handler for language filter changes
+  const handleLanguageChange = (language, isChecked) => {
+    if (isChecked) {
+      setSelectedLanguages([...selectedLanguages, language]);
+    } else {
+      setSelectedLanguages(selectedLanguages.filter(lang => lang !== language));
+    }
+  };
+
+  // Handler for tag filter changes
+  const handleTagChange = (tag, isChecked) => {
+    if (isChecked) {
+      setSelectedTags([...selectedTags, tag]);
+    } else {
+      setSelectedTags(selectedTags.filter(t => t !== tag));
+    }
+  };
+
+  // Handler for search input changes
+  const handleSearchChange = (e) => {
+    setSearchQuery(e.target.value);
+  };
+
+
   useEffect(() => {
     if (!token) {
       setAlertMessage("You must be logged in to view snippets.");
@@ -276,6 +404,8 @@ export default function Snippets() {
     }
   };
 
+  const filteredSnippets = getFullyFilteredSnippets(snippets);
+
   return (
     <div className="app">
       {alertMessage && <Alert message={alertMessage} onClose={() => setAlertMessage("")} />}
@@ -297,28 +427,53 @@ export default function Snippets() {
 
         <div className="filters">
           <p className="filter-heading">LANGUAGE</p>
-          <label className="checkbox-label"><input type="checkbox" defaultChecked /> Python</label>
-          <label className="checkbox-label"><input type="checkbox" /> JavaScript</label>
-          <label className="checkbox-label"><input type="checkbox" /> HTML</label>
-          <label className="checkbox-label"><input type="checkbox" /> CSS</label>
+          <div className="filter-section">
+            {getAllLanguages(snippets).map(language => (
+              <label key={language} className="checkbox-label">
+                <input 
+                  type="checkbox" 
+                  checked={selectedLanguages.includes(language)}
+                  onChange={(e) => handleLanguageChange(language, e.target.checked)}
+                /> 
+                {language.charAt(0).toUpperCase() + language.slice(1)}
+              </label>
+            ))}
+          </div>
 
           <p className="filter-heading">TAGS</p>
-          <label className="checkbox-label"><input type="checkbox" defaultChecked /> sorting</label>
-          <label className="checkbox-label"><input type="checkbox" /> api</label>
-          <label className="checkbox-label"><input type="checkbox" /> regex</label>
+          <div className="filter-section">
+            {getAllTags(snippets).map(tag => (
+              <label key={tag} className="checkbox-label">
+                <input 
+                  type="checkbox" 
+                  checked={selectedTags.includes(tag)}
+                  onChange={(e) => handleTagChange(tag, e.target.checked)}
+                /> 
+                {tag}
+              </label>
+            ))}
+          </div>
 
-          <p className="filter-heading">Date</p>
         </div>
 
-        <div style={{ flexGrow: 1 }} />
-        <Link to="/settings" className="nav-item settings-nav">
-          <span className="nav-icon" role="img" aria-label="Settings">⚙️</span> Settings
-        </Link>
+        <div className="sidebar-bottom">
+          <Link to="/settings" className="nav-item settings-nav">
+            <span className="nav-icon" role="img" aria-label="Settings">⚙️</span> Settings
+          </Link>
+        </div>
       </aside>
 
       <main className="main">
         <header className="topbar">
-          <input type="text" className="search-input" placeholder="Search snippets..." />
+          <div className="search-container">
+            <input 
+              type="text" 
+              className="search-input" 
+              placeholder="Search snippets..." 
+              value={searchQuery}
+              onChange={handleSearchChange}
+            />
+          </div>
           <button className="new-snippet-button" onClick={() => setCreateOpen(true)}>New Snippet</button>
           <span className="date-created">Date Created</span>
           <span className="sort-arrow">▲▼</span>
@@ -348,8 +503,8 @@ export default function Snippets() {
         </header>
 
         <section className="snippet-grid">
-          {snippets.length > 0 ? (
-            snippets.map((s) => (
+          {filteredSnippets.length > 0 ? (
+            filteredSnippets.map((s) => (
               <div className="snippet-card" key={s.id}>
                 <div className="card-header">
                   <h4>
@@ -368,7 +523,19 @@ export default function Snippets() {
                         : 'No date'}
                     </span>
                     <span className="card-tags">
-                      {Array.isArray(s.tags) ? s.tags.join(", ") : s.tags}
+                      {(() => {
+                        if (Array.isArray(s.tags)) {
+                          return s.tags.join(", ");
+                        } else if (typeof s.tags === 'string') {
+                          try {
+                            const parsed = JSON.parse(s.tags);
+                            return Array.isArray(parsed) ? parsed.join(", ") : s.tags;
+                          } catch {
+                            return s.tags;
+                          }
+                        }
+                        return '';
+                      })()}
                     </span>
                   </div>
                 </div>
@@ -387,7 +554,11 @@ export default function Snippets() {
               </div>
             ))
           ) : (
-            <div className="no-snippets">No snippets found.</div>
+            <div className="no-snippets">
+              {snippets.length === 0 ? "No snippets found." : 
+               searchQuery ? `No snippets match "${searchQuery}"` : 
+               "No snippets match the selected filters."}
+            </div>
           )}
         </section>
       </main>

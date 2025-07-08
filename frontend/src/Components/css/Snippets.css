@@ -683,3 +683,52 @@ body {
   margin-bottom: 0;
   flex: 1;
 }
+/* Ensure sidebar has fixed width and proper scrolling */
+.sidebar {
+  width: 250px; /* Fixed width */
+  min-width: 250px; /* Prevent shrinking */
+  max-width: 250px; /* Prevent expanding */
+  overflow: hidden; /* Hide outer overflow */
+  display: flex;
+  flex-direction: column;
+}
+
+.sidebar.collapsed {
+  width: 60px;
+  min-width: 60px;
+  max-width: 60px;
+}
+
+/* Make filters scrollable */
+.filters {
+  flex: 1;
+  overflow-y: auto;
+  padding: 10px;
+  margin-bottom: 10px;
+}
+
+.filter-section {
+  max-height: 180px; /* Limit height of each section */
+  overflow-y: auto;
+  margin-bottom: 15px;
+}
+
+/* Ensure main content doesn't get pushed */
+.main {
+  flex: 1;
+  min-width: 0; /* Prevents flex item from expanding beyond container */
+}
+
+/* App container should use flexbox */
+.app {
+  display: flex;
+  height: 100vh;
+  overflow: hidden;
+}
+
+/* Settings button stays at bottom */
+.sidebar-bottom {
+  padding: 10px;
+  border-top: 1px solid #eee;
+  margin-top: auto;
+}
