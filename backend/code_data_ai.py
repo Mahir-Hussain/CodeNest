@@ -1,7 +1,7 @@
 from google import genai
 import asyncio
 import time
-from backend.auth.secret import ai_key
+from auth.secret import ai_key
 
 
 class CodeDataAI:
@@ -42,7 +42,7 @@ class CodeDataAI:
         return await asyncio.to_thread(self.run_prompt, prompt, user_code)
 
     async def get_tags(self, user_code: str):
-        prompt = """Generate up to 3 tags for this code. Do not deviate. 
+        prompt = """Generate up to 3 tags for this code. Do not deviate. Must be one word each.
                     In the style of a comma-separated list. E.g ["tag1", "tag2", "tag3"].
                     You do not need 3 tags, you can return 1 or 2 if you want."""
         return await asyncio.to_thread(self.run_prompt, prompt, user_code)

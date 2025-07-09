@@ -1,8 +1,8 @@
 import psycopg2
 import hashlib
 
-from backend.auth.database import Database
-from backend.auth.jwtAuth import jwtAuth
+from auth.database import Database
+from auth.jwtAuth import jwtAuth
 
 
 class LoginSystem(Database):

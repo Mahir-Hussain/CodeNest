@@ -1,5 +1,5 @@
 from cryptography.fernet import Fernet
-from backend.auth.secret import fernet_key
+from auth.secret import fernet_key
 
 """
 First install -> pip install cryptography

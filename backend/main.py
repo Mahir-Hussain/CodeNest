@@ -1,20 +1,20 @@
-from fastapi.middleware.cors import CORSMiddleware
-import backend.routes as routes
+import routes as routes
 import uvicorn
 import subprocess
 import threading
 import logging
+import os
 
 logging.info("Starting CodeNest API")
 logging.basicConfig(level=logging.INFO)
 
 
 def run_fastapi():
-    uvicorn.run("backend.routes:app", host="127.0.0.1", port=8000, reload=True)
+    uvicorn.run("routes:app", host="127.0.0.1", port=8000, reload=True)
 
 
 def run_react():
-    react_process = subprocess.Popen(["npm.cmd", "run", "dev"], cwd="./frontend")
+    react_process = subprocess.Popen(["npm.cmd", "run", "dev"], cwd="frontend")
     react_process.wait()
 
 

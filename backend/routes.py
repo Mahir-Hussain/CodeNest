@@ -2,9 +2,9 @@ from fastapi import FastAPI, HTTPException, Depends
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
-from backend.snippets import Snippets
-from backend.auth.login import LoginSystem
-from backend.auth.jwtAuth import jwtAuth
+from snippets import Snippets
+from auth.login import LoginSystem
+from auth.jwtAuth import jwtAuth
 import asyncio
 from contextlib import asynccontextmanager
 

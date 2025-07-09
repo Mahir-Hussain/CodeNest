@@ -4,10 +4,10 @@ import json
 import ast
 from concurrent.futures import ThreadPoolExecutor
 
-from backend.auth.database import Database
-from backend.auth.jwtAuth import jwtAuth, require_auth
-from backend.code_data_ai import CodeDataAI
-from backend.auth.encryption import Encryption
+from auth.database import Database
+from auth.jwtAuth import jwtAuth, require_auth
+from code_data_ai import CodeDataAI
+from auth.encryption import Encryption
 
 
 class Snippets(Database):
@@ -119,7 +119,7 @@ class Snippets(Database):
                 "title": self.encryptor.decrypt(title),
                 "content": self.encryptor.decrypt(content),
                 "language": self.encryptor.decrypt(language),
-                "favourite": self.encryptor.decrypt(favourite) == 'true',
+                "favourite": self.encryptor.decrypt(favourite) == "true",
                 "created_at": created_at,
                 "tags": parsed_tags,
             }
@@ -202,7 +202,7 @@ class Snippets(Database):
                     "title": self.encryptor.decrypt(title),
                     "content": self.encryptor.decrypt(content),
                     "language": self.encryptor.decrypt(language),
-                    "favourite": self.encryptor.decrypt(favourite) == 'true',
+                    "favourite": self.encryptor.decrypt(favourite) == "true",
                     "created_at": created_at,
                     "tags": parsed_tags,
                 }
