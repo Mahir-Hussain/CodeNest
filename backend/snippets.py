@@ -182,13 +182,13 @@ class Snippets(Database):
     def get_snippets(self):
         try:
             self.cursor.execute(
-                "SELECT id, title, content, language, favourite, created_at, tags FROM code_snippets WHERE user_id = %s",
+                "SELECT id, title, content, language, favourite, created_at, tags, is_public FROM code_snippets WHERE user_id = %s",
                 (self.user_id,),
             )
             data = self.cursor.fetchall()
             snippets = []
             for row in data:
-                id, title, content, language, favourite, created_at, tags = row
+                id, title, content, language, favourite, created_at, tags, is_public = row
 
                 try:
                     decrypted_tags = self.encryptor.decrypt(tags)
@@ -205,6 +205,7 @@ class Snippets(Database):
                     "favourite": self.encryptor.decrypt(favourite) == "true",
                     "created_at": created_at,
                     "tags": parsed_tags,
+                    "is_public": is_public if is_public is not None else False,
                 }
                 snippets.append(snippet)
             return {"success": True, "snippets": snippets}
@@ -229,6 +230,53 @@ class Snippets(Database):
                     "success": False,
                     "error": "Snippet not found or not owned by user",
                 }
+
+        except psycopg2.Error as error:
+            self.connection.rollback()
+            return {"success": False, "error": str(error)}
+
+    @require_auth
+    def edit_snippet(
+        self,
+        snippet_id,
+        title,
+        content,
+        language,
+        tags=None,
+        is_public=False,
+    ):
+        try:
+            self.cursor.execute(
+                "SELECT id FROM code_snippets WHERE id = %s AND user_id = %s",
+                (snippet_id, self.user_id),
+            )
+            if not self.cursor.fetchone():
+                return {
+                    "success": False,
+                    "error": "Snippet not found or not owned by user"
+                }
+            
+            new_title = title if title else "Untitled Snippet"
+
+            json_tags = json.dumps(tags or [])
+            encrypted_tags = self.encryptor.encrypt(json_tags)
+
+            self.cursor.execute(
+                "UPDATE code_snippets SET title = %s, content = %s, language = %s, tags = %s, is_public = %s "
+                "WHERE id = %s AND user_id = %s",
+                (
+                    self.encryptor.encrypt(new_title),
+                    self.encryptor.encrypt(content),
+                    self.encryptor.encrypt(language),
+                    encrypted_tags,
+                    is_public,
+                    snippet_id,
+                    self.user_id,
+                ),
+            )
+
+            self.connection.commit()
+            return {"success": True, "message": "Snippet updated successfully!"}
 
         except psycopg2.Error as error:
             self.connection.rollback()

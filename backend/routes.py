@@ -24,6 +24,14 @@ class SnippetData(BaseModel):
     is_public: bool = False
 
 
+class EditSnippetData(BaseModel):
+    title: str = None
+    content: str
+    language: str
+    tags: list[str] = []
+    is_public: bool = False
+
+
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     Snippets.event_loop = asyncio.get_running_loop()
@@ -223,6 +231,38 @@ async def create_snippet(
         data.favourite,
         data.tags,
         ai_usage,
+        data.is_public,
+    )
+    if result["success"]:
+        return result
+    else:
+        raise HTTPException(status_code=400, detail=result["error"])
+
+
+@app.put("/edit_snippet/{snippet_id}")
+async def edit_snippet(
+    snippet_id: int,
+    data: EditSnippetData,
+    user_id: int = Depends(get_current_user_id)
+):
+    """
+    Edit an existing code snippet for the authenticated user.
+
+    Requires:
+        snippet_id (int): The ID of the snippet to edit.
+        data (EditSnippetData): The updated snippet data (title, content, language, tags, is_public).
+        user_id (int): Obtained from the JWT token.
+
+    Returns:
+        dict: Success message if snippet is updated, otherwise raises HTTPException.
+    """
+    snippets = Snippets(user_id)
+    result = snippets.edit_snippet(
+        snippet_id,
+        data.title,
+        data.content,
+        data.language,
+        data.tags,
         data.is_public,
     )
     if result["success"]:
