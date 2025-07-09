@@ -57,16 +57,7 @@ export default function Snippets() {
       const tagsArray = [tag1, tag2, tag3].filter(tag => tag.trim() !== "");
 
       if (isEditing) {
-        // TODO: Implement edit submission later
-        console.log("Edit submission - UI only for now:", { 
-          id: snippet.id,
-          title, 
-          content, 
-          language, 
-          tags: tagsArray, 
-          favourite, 
-          isPublic 
-        });
+        onSubmit({ id: snippet.id,title, content, language, tags: tagsArray, favourite, isPublic });
         onClose();
       } else {
         onSubmit({ title, content, language, tags: tagsArray, favourite, isPublic });
@@ -240,6 +231,45 @@ export default function Snippets() {
     }
   };
 
+  const editSnippetSubmit = async (snippetData) => {
+    try {
+      const response = await fetch(`http://localhost:8000/edit_snippet/${snippetData.id}`, {
+        method: 'PUT',
+        headers: { 
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}` 
+        },
+        body: JSON.stringify({
+          title: snippetData.title,
+          content: snippetData.content,
+          language: snippetData.language,
+          tags: snippetData.tags,
+          is_public: snippetData.isPublic
+        })
+      });
+      
+      const data = await response.json();
+      
+      if (data.success) {
+        setAlertMessage("Snippet updated successfully!");
+        const resp = await fetch("http://localhost:8000/get_snippets", {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        if (resp.ok) {
+          const refreshData = await resp.json();
+          if (refreshData.success && Array.isArray(refreshData.snippets)) {
+            setSnippets(sortSnippets(refreshData.snippets));
+          }
+        }
+      } else {
+        setAlertMessage("Failed to update snippet.");
+      }
+    } catch (error) {
+      console.error("Error:", error);
+      setAlertMessage("Error updating snippet. See console.");
+    }
+  };
+
   // Function to sort snippets: favorites first, then by date descending
   const sortSnippets = (snippets) => {
     return [...snippets].sort((a, b) => {
@@ -270,7 +300,6 @@ export default function Snippets() {
         if (Array.isArray(s.tags)) {
           return s.tags;
         } else if (typeof s.tags === 'string') {
-          // Handle string format like '["React", "Snippet Management", "CRUD"]'
           try {
             const parsed = JSON.parse(s.tags);
             return Array.isArray(parsed) ? parsed : [s.tags];
@@ -623,7 +652,7 @@ export default function Snippets() {
           setEditOpen(false);
           setEditingSnippet(null);
         }}
-        onSubmit={snippetSubmit}
+        onSubmit={editSnippetSubmit}
         snippet={editingSnippet}
       />
     </div>
