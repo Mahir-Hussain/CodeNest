@@ -4,3 +4,4 @@ fastapi[standard]
 pyjwt
 google-genai
 cryptography
+python-dotenv

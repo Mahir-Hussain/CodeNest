@@ -2,11 +2,9 @@ import routes as routes
 import uvicorn
 import subprocess
 import threading
-import logging
-import os
+from dotenv import load_dotenv
 
-logging.info("Starting CodeNest API")
-logging.basicConfig(level=logging.INFO)
+load_dotenv()
 
 
 def run_fastapi():

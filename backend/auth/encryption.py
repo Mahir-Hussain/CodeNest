@@ -1,16 +1,10 @@
 from cryptography.fernet import Fernet
-from auth.secret import fernet_key
-
-"""
-First install -> pip install cryptography
-
-In secret.py create a variable called fernet_key and set it to the key I sent.
-"""
+import os
 
 
 class Encryption:
     def __init__(self):
-        self.fernet = Fernet(fernet_key)
+        self.fernet = Fernet(os.getenv("fernet_key"))
 
     def encrypt(self, data):
         if data is not None:

@@ -1,6 +1,6 @@
 import psycopg2
 
-from auth.secret import database_password
+import os
 
 
 class Database:
@@ -10,7 +10,7 @@ class Database:
         """
         self.db_name = "postgres"
         self.db_user = "postgres.rgxatektsqhjpjgmfncu"
-        self.db_password = database_password
+        self.db_password = os.getenv("database_password")
         self.db_host = host
         self.db_port = port
         self.connect()

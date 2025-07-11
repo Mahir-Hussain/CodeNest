@@ -7,6 +7,7 @@ from auth.login import LoginSystem
 from auth.jwtAuth import jwtAuth
 import asyncio
 from contextlib import asynccontextmanager
+from dotenv import load_dotenv
 
 
 # Models for request bodies
@@ -39,6 +40,7 @@ async def lifespan(app: FastAPI):
     Snippets.executor.shutdown(wait=False)
 
 
+load_dotenv()
 app = FastAPI(lifespan=lifespan)
 app.add_middleware(
     CORSMiddleware,
@@ -241,9 +243,7 @@ async def create_snippet(
 
 @app.put("/edit_snippet/{snippet_id}")
 async def edit_snippet(
-    snippet_id: int,
-    data: EditSnippetData,
-    user_id: int = Depends(get_current_user_id)
+    snippet_id: int, data: EditSnippetData, user_id: int = Depends(get_current_user_id)
 ):
     """
     Edit an existing code snippet for the authenticated user.

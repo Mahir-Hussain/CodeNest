@@ -188,7 +188,9 @@ class Snippets(Database):
             data = self.cursor.fetchall()
             snippets = []
             for row in data:
-                id, title, content, language, favourite, created_at, tags, is_public = row
+                id, title, content, language, favourite, created_at, tags, is_public = (
+                    row
+                )
 
                 try:
                     decrypted_tags = self.encryptor.decrypt(tags)
@@ -253,9 +255,9 @@ class Snippets(Database):
             if not self.cursor.fetchone():
                 return {
                     "success": False,
-                    "error": "Snippet not found or not owned by user"
+                    "error": "Snippet not found or not owned by user",
                 }
-            
+
             new_title = title if title else "Untitled Snippet"
 
             json_tags = json.dumps(tags or [])

@@ -1,12 +1,12 @@
 from google import genai
 import asyncio
 import time
-from auth.secret import ai_key
+import os
 
 
 class CodeDataAI:
     def __init__(self):
-        self.client = genai.Client(api_key=ai_key)
+        self.client = genai.Client(api_key=os.getenv("ai_key"))
         self.model = "gemini-2.0-flash"
 
     async def get_all_data(self, user_code: str):

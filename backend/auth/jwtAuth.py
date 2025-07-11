@@ -2,7 +2,7 @@ import jwt
 from datetime import datetime, timedelta, timezone
 from functools import wraps
 
-from auth.secret import jwt_secret
+import os
 
 
 class jwtAuth:
@@ -10,7 +10,7 @@ class jwtAuth:
         """
         Sets up the secret key for JWT operations.
         """
-        self.secret_key = jwt_secret
+        self.secret_key = os.getenv("jwt_secret")
 
     def generate_token(self, user_id, expires_in_hours=24):
         """
