@@ -18,6 +18,7 @@ export default function Snippets() {
   const [selectedLanguages, setSelectedLanguages] = useState([]);
   const [selectedTags, setSelectedTags] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
+  const API_URL = import.meta.env.VITE_API_URL;
   
   const SnippetModal = ({isOpen, onClose, onSubmit, snippet = null}) => {
     const isEditing = snippet !== null;
@@ -193,7 +194,7 @@ export default function Snippets() {
 
   const snippetSubmit = async (snippetData) => {
     try {
-      const response = await fetch("http://localhost:8000/create_snippet", {
+      const response = await fetch(`${API_URL}/create_snippet`, {
         method: 'POST',
         headers: { 
           'Content-Type': 'application/json',
@@ -213,7 +214,7 @@ export default function Snippets() {
       
       if (data.success) {
         setAlertMessage("Snippet created successfully!");
-        const resp = await fetch("http://localhost:8000/get_snippets", {
+        const resp = await fetch(`${API_URL}/get_snippets`, {
           headers: { Authorization: `Bearer ${token}` }
         });
         if (resp.ok) {
@@ -233,7 +234,7 @@ export default function Snippets() {
 
   const editSnippetSubmit = async (snippetData) => {
     try {
-      const response = await fetch(`http://localhost:8000/edit_snippet/${snippetData.id}`, {
+      const response = await fetch(`${API_URL}/edit_snippet/${snippetData.id}`, {
         method: 'PUT',
         headers: { 
           'Content-Type': 'application/json',
@@ -252,7 +253,7 @@ export default function Snippets() {
       
       if (data.success) {
         setAlertMessage("Snippet updated successfully!");
-        const resp = await fetch("http://localhost:8000/get_snippets", {
+        const resp = await fetch(`${API_URL}/get_snippets`, {
           headers: { Authorization: `Bearer ${token}` }
         });
         if (resp.ok) {
@@ -421,7 +422,7 @@ export default function Snippets() {
 
     (async () => {
       try {
-        const resp = await fetch("http://localhost:8000/get_snippets", {
+        const resp = await fetch(`${API_URL}/get_snippets`, {
           headers: { Authorization: `Bearer ${token}` }
         });
         if (!resp.ok) throw new Error(`Status ${resp.status}`);
@@ -462,7 +463,7 @@ export default function Snippets() {
 
   const deleteSnippet = async (snippetId) => {
     try {
-      const response = await fetch(`http://localhost:8000/delete_snippet/${snippetId}`, {
+      const response = await fetch(`${API_URL}/delete_snippet/${snippetId}`, {
         method: 'DELETE',
         headers: { Authorization: `Bearer ${token}` }
       });

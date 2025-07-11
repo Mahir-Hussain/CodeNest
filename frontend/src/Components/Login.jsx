@@ -7,6 +7,7 @@ function Login(){
   const [password, setPassword] = useState("");
   const [alertMessage, setAlertMessage] = useState("");
   const navigate = useNavigate();
+  const API_URL = import.meta.env.VITE_API_URL;
 
   useEffect(() => {
     const token = localStorage.getItem("authToken");
@@ -20,7 +21,8 @@ async function submitDetails(e) {
   console.log("submit");
 
   try {
-    const response = await fetch("http://localhost:8000/login", {
+    console.log("API URL:", API_URL);
+    const response = await fetch(`${API_URL}/login`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

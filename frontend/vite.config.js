@@ -2,12 +2,18 @@ import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 
 export default defineConfig({
-  plugins: [react()], // Enables React support
+  plugins: [react()],
   server: {
-    port: 3000, // Optional: Match CRA's default port
-    open: false, // Optional: Auto-open browser
+    port: 3000,
+    open: false
   },
   resolve: {
-    extensions: ['.js', '.jsx', '.ts', '.tsx'], // Helps with imports
+    extensions: ['.js', '.jsx', '.ts', '.tsx']
   },
+  build: {
+    outDir: 'dist', // Vercel expects 'dist' by default
+    emptyOutDir: true
+  },
+  // Fix for React Router DOM (SPA fallback)
+  assetsInclude: ['**/*.html'],
 });

@@ -5,9 +5,10 @@ function SnippetView() {
   const { snippetId } = useParams();
   const [snippet, setSnippet] = useState(null);
   const [error, setError] = useState(null);
+  const API_URL = import.meta.env.VITE_API_URL;
 
   useEffect(() => {
-    fetch(`http://localhost:8000/get_public_snippet/${snippetId}`)
+    fetch(`${API_URL}/get_public_snippet/${snippetId}`)
       .then((res) => {
         if (!res.ok) throw new Error("Snippet not found");
         return res.json();

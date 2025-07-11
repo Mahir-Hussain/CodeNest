@@ -9,6 +9,7 @@ function Settings() {
   const [password, setPassword] = useState("");
   const [alertMessage, setAlertMessage] = useState("");
   const navigate = useNavigate();
+  const API_URL = import.meta.env.VITE_API_URL;
 
   // Correct destructuring to match your context
   const { isDark, toggleTheme } = useContext(ThemeContext);
@@ -26,7 +27,7 @@ function Settings() {
     console.log("Updating settings...");
 
     try {
-      const response = await fetch("http://localhost:8000/update_settings", { // Link not a thing yet
+      const response = await fetch(`${API_URL}/update_settings`, { // Link not a thing yet
         method: "POST",
         headers: {
           "Content-Type": "application/json",

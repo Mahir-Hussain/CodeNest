@@ -7,12 +7,13 @@ function SignUp() {
     const [password, setPassword] = useState("");
     const navigate = useNavigate();
     const [alertMessage, setAlertMessage] = useState("");
+    const API_URL = import.meta.env.VITE_API_URL;
 
 
     async function signUp(e){
         e.preventDefault();
         try{
-            const response = await fetch("http://localhost:8000/create_user", {
+            const response = await fetch(`${API_URL}/create_user`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
