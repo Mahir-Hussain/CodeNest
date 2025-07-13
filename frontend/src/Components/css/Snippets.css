@@ -695,16 +695,11 @@ body {
 }
 
 .filter-section {
-  max-height: 180px; /* Limit height of each section */
+  max-height: 180px; 
   overflow-y: auto;
   margin-bottom: 15px;
 }
 
-/* Ensure main content doesn't get pushed */
-.main {
-  flex: 1;
-  min-width: 0; /* Prevents flex item from expanding beyond container */
-}
 
 /* App container should use flexbox */
 .app {
