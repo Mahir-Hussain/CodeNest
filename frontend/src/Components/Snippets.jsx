@@ -461,6 +461,18 @@ export default function Snippets() {
     }
   };
 
+  const grabLink = async (snippetId) => {
+    try {
+      const publicLink = `${window.location.origin}/public_snippet/${snippetId}`;
+      
+      await navigator.clipboard.writeText(publicLink);
+      setAlertMessage("Public link copied to clipboard!");
+    } catch (error) {
+      console.error("Failed to copy link to clipboard:", error);
+      setAlertMessage("Failed to copy link to clipboard.");
+    }
+  };
+
   const deleteSnippet = async (snippetId) => {
     try {
       const response = await fetch(`${API_URL}/delete_snippet/${snippetId}`, {
@@ -622,7 +634,7 @@ export default function Snippets() {
                   <div className="card-actions">
                     <span className="action-icon" title="Copy to clipboard" onClick={() => copyToClipboard(s.content)}>📋</span>
                     {s.is_public && (
-                      <span className="action-icon" title="Link">🔗</span>
+                      <span className="action-icon" title="Link" onClick={() => grabLink(s.id)}>🔗</span>
                     )}
                     <span className="action-icon" title="Edit" onClick={() => editSnippet(s)}>✏️</span>
                     <span className="action-icon" title="Delete" onClick={() => deleteSnippet(s.id)}>🗑️</span>
