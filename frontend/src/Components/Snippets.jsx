@@ -509,8 +509,6 @@ export default function Snippets() {
         <div className="sidebar-nav">
           <div className="nav-item active"><span className="nav-icon">≡</span> All Snippets</div>
           <div className="nav-item"><span className="nav-icon">★</span> Favorites</div>
-          <div className="nav-item"><span className="nav-icon">⏱</span> Recently Edited</div>
-          <div className="nav-item"><span className="nav-icon">🗑</span> Trash</div>
         </div>
 
         <div className="filters">
