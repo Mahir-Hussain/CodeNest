@@ -5,6 +5,10 @@ import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { tomorrow } from 'react-syntax-highlighter/dist/esm/styles/prism';
 import './css/Snippets.css';
 import Alert from './Alert';
+import pythonIcon from '../assets/python.svg'; 
+import javascriptIcon from '../assets/javascript.svg';
+import htmlIcon from '../assets/html.svg';
+import cssIcon from '../assets/css.svg';
 
 export default function Snippets() {
   const token = localStorage.getItem("authToken");
@@ -30,6 +34,16 @@ export default function Snippets() {
       'css': 'css'
     };
     return languageMap[language?.toLowerCase()] || 'text';
+  };
+
+    const getLanguageIcon = (language) => {
+    const iconMap = {
+      "python": <img src={pythonIcon} alt="Python" className="language-icon" />,
+      "javascript": <img src={javascriptIcon} alt="JavaScript" className="language-icon" />,
+      "html": <img src={htmlIcon} alt="HTML" className="language-icon" />,
+      "css": <img src={cssIcon} alt="CSS" className="language-icon" />
+    };
+    return iconMap[language?.toLowerCase()] || <span className="text-icon">TXT</span>;
   };
   
   const SnippetModal = ({isOpen, onClose, onSubmit, snippet = null}) => {
@@ -610,7 +624,7 @@ export default function Snippets() {
                     {s.title}
                   </h4>
                   <div className="lang-and-date-container">
-                    <span className="lang-tag">{s.language ? s.language.toUpperCase() : ''}</span>
+                    <span className="lang-tag">{getLanguageIcon(s.language)} {s.language ? s.language.toUpperCase() : ''}</span>
                     <span className="card-date">
                       {s.created_at
                         ? new Date(s.created_at).toLocaleDateString(undefined, {
