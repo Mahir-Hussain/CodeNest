@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react';
 import { Navigate, Link } from 'react-router-dom';
 import { FaUserCircle } from "react-icons/fa";
+import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
+import { tomorrow } from 'react-syntax-highlighter/dist/esm/styles/prism';
 import './css/Snippets.css';
 import Alert from './Alert';
 
@@ -19,6 +21,16 @@ export default function Snippets() {
   const [selectedTags, setSelectedTags] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
   const API_URL = import.meta.env.VITE_API_URL;
+  
+  const getLanguage = (language) => {
+    const languageMap = {
+      'javascript': 'javascript',
+      'python': 'python',
+      'html': 'markup',
+      'css': 'css'
+    };
+    return languageMap[language?.toLowerCase()] || 'text';
+  };
   
   const SnippetModal = ({isOpen, onClose, onSubmit, snippet = null}) => {
     const isEditing = snippet !== null;
@@ -625,9 +637,19 @@ export default function Snippets() {
                     </span>
                   </div>
                 </div>
-                <pre className="card-code">
-                  <code>{s.content}</code>
-                </pre>
+                <SyntaxHighlighter
+                  language={getLanguage(s.language)}
+                  style={tomorrow}
+                  customStyle={{
+                    borderRadius: '6px',
+                    maxHeight: '200px',
+                    overflow: 'auto',
+                    margin: 0,
+                    minHeight: '150px'
+                  }}
+                >
+                  {s.content}
+                </SyntaxHighlighter>
                 <div className="card-footer">
                   <div className="card-actions">
                     <span className="action-icon" title="Copy to clipboard" onClick={() => copyToClipboard(s.content)}>📋</span>

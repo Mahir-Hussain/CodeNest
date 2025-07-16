@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
+import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
+import { tomorrow } from 'react-syntax-highlighter/dist/esm/styles/prism';
 import './css/PublicSnippets.css';
 
 function SnippetView() {
@@ -7,6 +9,16 @@ function SnippetView() {
   const [snippet, setSnippet] = useState(null);
   const [error, setError] = useState(null);
   const API_URL = import.meta.env.VITE_API_URL;
+
+  const getLanguage = (language) => {
+    const languageMap = {
+      'javascript': 'javascript',
+      'python': 'python',
+      'html': 'markup',
+      'css': 'css'
+    };
+    return languageMap[language?.toLowerCase()] || 'text';
+  };
 
   useEffect(() => {
     fetch(`${API_URL}/get_public_snippet/${snippetId}`)
@@ -65,9 +77,19 @@ function SnippetView() {
           </div>
         </div>
 
-        <pre className="code">
-          <code>{snippet.content}</code>
-        </pre>
+        <SyntaxHighlighter
+          language={getLanguage(snippet.language)}
+          style={tomorrow}
+          customStyle={{
+            borderRadius: '8px',
+            minHeight: '200px',
+            maxHeight: '400px',
+            overflow: 'auto',
+            margin: 0
+          }}
+        >
+          {snippet.content}
+        </SyntaxHighlighter>
       </div>
     </div>
   );
