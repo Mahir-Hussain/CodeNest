@@ -522,6 +522,43 @@ export default function Snippets() {
     }
   };
 
+  const toggleFavorite = async (snippetId) => {
+    const snippet = snippets.find(s => s.id === snippetId);
+    if (!snippet) return;
+
+    try {
+      const response = await fetch(`${API_URL}/edit_snippet/${snippetId}`, {
+        method: 'PUT',
+        headers: { 
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}` 
+        },
+        body: JSON.stringify({
+          title: snippet.title,
+          content: snippet.content,
+          language: snippet.language,
+          tags: snippet.tags,
+          is_public: snippet.is_public,
+          favourite: !snippet.favourite
+        })
+      });
+      
+      const data = await response.json();
+      
+      if (data.success) {
+        setSnippets(prev => sortSnippets(prev.map(s => 
+          s.id === snippetId ? { ...s, favourite: !s.favourite } : s
+        )));
+        setAlertMessage(snippet.favourite ? "Removed from favorites!" : "Added to favorites!");
+      } else {
+        setAlertMessage("Failed to update favorite status.");
+      }
+    } catch (error) {
+      console.error("Error toggling favorite:", error);
+      setAlertMessage("Error updating favorite status.");
+    }
+  };
+
   const filteredSnippets = getFullyFilteredSnippets(snippets);
 
   return (
@@ -681,7 +718,14 @@ export default function Snippets() {
                     )}
                     <span className="action-icon" title="Edit" onClick={() => editSnippet(s)}>✏️</span>
                     <span className="action-icon" title="Delete" onClick={() => deleteSnippet(s.id)}>🗑️</span>
-                    <span className="action-icon" title="Favourite">{s.favourite ? '❤️' : '🤍'}</span>
+                    <span 
+                      className="action-icon" 
+                      title={s.favourite ? "Remove from favorites" : "Add to favorites"}
+                      onClick={() => toggleFavorite(s.id)}
+                      style={{ cursor: 'pointer' }}
+                    >
+                      {s.favourite ? '❤️' : '🤍'}
+                    </span>
                   </div>
                 </div>
               </div>
