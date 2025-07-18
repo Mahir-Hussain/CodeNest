@@ -25,6 +25,7 @@ export default function Snippets() {
   const [selectedTags, setSelectedTags] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [showFavoritesOnly, setShowFavoritesOnly] = useState(false);
+  const [sortOrder, setSortOrder] = useState('desc'); // 'desc' for newest first, 'asc' for oldest first
   const API_URL = import.meta.env.VITE_API_URL;
   
   const getLanguage = (language) => {
@@ -119,7 +120,6 @@ export default function Snippets() {
                   value={title}
                   onChange={(e) => setTitle(e.target.value)}
                   maxLength={20}
-                  required
                 />
                 <small className="char-count">{20 - title.length} characters remaining</small>
               </div>
@@ -298,18 +298,31 @@ export default function Snippets() {
     }
   };
 
-  // Function to sort snippets: favorites first, then by date descending
+  // Function to sort snippets: favorites first, then by date according to sortOrder
   const sortSnippets = (snippets) => {
     return [...snippets].sort((a, b) => {
       // First sort by favorite status (favorites first)
       if (a.favourite && !b.favourite) return -1;
       if (!a.favourite && b.favourite) return 1;
       
-      // Then sort by date descending (newest first)
+      // Then sort by date according to sortOrder
       const dateA = new Date(a.created_at || 0);
       const dateB = new Date(b.created_at || 0);
-      return dateB - dateA;
+      
+      if (sortOrder === 'desc') {
+        return dateB - dateA; // Newest first
+      } else {
+        return dateA - dateB; // Oldest first
+      }
     });
+  };
+
+  // Function to toggle sort order
+  const toggleSortOrder = () => {
+    const newSortOrder = sortOrder === 'desc' ? 'asc' : 'desc';
+    setSortOrder(newSortOrder);
+    // Re-sort existing snippets with new order
+    setSnippets(prev => sortSnippets(prev));
   };
 
   // Function to get all unique languages from snippets
@@ -645,8 +658,20 @@ export default function Snippets() {
             />
           </div>
           <button className="new-snippet-button" onClick={() => setCreateOpen(true)}>New Snippet</button>
-          <span className="date-created">Date Created</span>
-          <span className="sort-arrow">▲▼</span>
+          <span 
+            className="date-created"
+            onClick={toggleSortOrder}
+            style={{ cursor: 'pointer' }}
+          >
+            Date Created
+          </span>
+          <span 
+            className={`sort-arrow ${sortOrder === 'desc' ? 'desc-active' : 'asc-active'}`}
+            onClick={toggleSortOrder}
+            style={{ cursor: 'pointer' }}
+          >
+            {sortOrder === 'desc' ? '▼' : '▲'}
+          </span>
           <div style={{ flex: 1 }} />
           <div className="profile-wrapper" style={{ position: 'relative' }}>
             <div

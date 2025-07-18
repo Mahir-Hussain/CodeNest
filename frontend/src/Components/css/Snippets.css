@@ -205,6 +205,17 @@ body {
 .sort-arrow {
   font-size: 0.8em;
   margin-left: 6px;
+  transition: color 0.2s ease;
+  color: var(--btn-bg);
+  font-weight: bold;
+}
+
+.date-created {
+  transition: color 0.2s ease;
+}
+
+.date-created:hover {
+  color: var(--btn-bg);
 }
 
 .search-input {
@@ -697,7 +708,7 @@ body {
 /* Make filters scrollable */
 .filters {
   flex: 1;
-  overflow-y: auto;
+  overflow-y: visible;
   padding: 10px;
   margin-bottom: 10px;
 }
