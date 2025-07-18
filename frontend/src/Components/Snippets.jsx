@@ -499,6 +499,10 @@ export default function Snippets() {
     }
   };
 
+  const redirectToSnippet = (snippetId) => {
+    window.open(`/public_snippet/${snippetId}`, '_blank');
+  };
+
   const deleteSnippet = async (snippetId) => {
     try {
       const response = await fetch(`${API_URL}/delete_snippet/${snippetId}`, {
@@ -619,7 +623,12 @@ export default function Snippets() {
             filteredSnippets.map((s) => (
               <div className="snippet-card" key={s.id}>
                 <div className="card-header">
-                  <h4>
+                  <h4 
+                    className="snippet-title"
+                    onClick={() => redirectToSnippet(s.id)}
+                    style={{ cursor: 'pointer' }}
+                    title="Click to view snippet"
+                  >
                     {s.favourite && <span className="favorite-star">⭐ </span>}
                     {s.title}
                   </h4>
