@@ -24,6 +24,7 @@ export default function Snippets() {
   const [selectedLanguages, setSelectedLanguages] = useState([]);
   const [selectedTags, setSelectedTags] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
+  const [showFavoritesOnly, setShowFavoritesOnly] = useState(false);
   const API_URL = import.meta.env.VITE_API_URL;
   
   const getLanguage = (language) => {
@@ -380,6 +381,10 @@ export default function Snippets() {
   // Function to filter snippets based on selected languages and tags
   const getFilteredSnippets = (snippets) => {
     return snippets.filter(snippet => {
+      if (showFavoritesOnly && !snippet.favourite) {
+        return false;
+      }
+
       const languageMatch = selectedLanguages.length === 0 || 
         selectedLanguages.includes(snippet.language?.toLowerCase());
       
@@ -574,8 +579,20 @@ export default function Snippets() {
         <div className="sidebar-title">All Snippets</div>
 
         <div className="sidebar-nav">
-          <div className="nav-item active"><span className="nav-icon">≡</span> All Snippets</div>
-          <div className="nav-item"><span className="nav-icon">★</span> Favorites</div>
+          <div 
+            className={`nav-item ${!showFavoritesOnly ? 'active' : ''}`}
+            onClick={() => setShowFavoritesOnly(false)}
+            style={{ cursor: 'pointer' }}
+          >
+            <span className="nav-icon">≡</span> All Snippets
+          </div>
+          <div 
+            className={`nav-item ${showFavoritesOnly ? 'active' : ''}`}
+            onClick={() => setShowFavoritesOnly(true)}
+            style={{ cursor: 'pointer' }}
+          >
+            <span className="nav-icon">★</span> Favorites
+          </div>
         </div>
 
         <div className="filters">
