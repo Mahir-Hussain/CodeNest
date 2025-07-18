@@ -20,16 +20,17 @@ body {
   max-width: 1200px;
   background-color: #ffffff;
   border-radius: 12px;
-  padding: 30px;
+  padding: 40px;
   box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 30px;
+  min-height: 700px;
 }
 
 .header {
   border-bottom: 1px solid #d1d9e0;
-  padding-bottom: 20px;
+  padding-bottom: 25px;
 }
 
 .title {
@@ -81,14 +82,15 @@ body {
 .code {
   background-color: #f0f0f0;
   border-radius: 8px;
-  padding: 25px;
+  padding: 30px;
   font-size: 1em;
   line-height: 1.6;
   color: #24292f;
   overflow-x: auto;
   white-space: pre-wrap;
   border: 1px solid #d1d9e0;
-  min-height: 200px;
+  min-height: 500px;
+  flex-grow: 1;
 }
 
 .error {

@@ -82,10 +82,11 @@ function SnippetView() {
           style={tomorrow}
           customStyle={{
             borderRadius: '8px',
-            minHeight: '200px',
-            maxHeight: '400px',
+            minHeight: '300px',
+            maxHeight: '500px',
             overflow: 'auto',
-            margin: 0
+            margin: 0,
+            padding: '30px'
           }}
         >
           {snippet.content}
