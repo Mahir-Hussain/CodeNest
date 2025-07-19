@@ -1,6 +1,6 @@
 import { useState, useEffect, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
-import Alert from './Alert';
+import Alert from './services/Alert';
 import ThemeContext from './services/ThemeContext';
 import './css/Settings.css';
 

@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import Alert from './Alert';
+import Alert from './services/Alert';
 
 function SignUp() {
     const [email, setEmail] = useState("");

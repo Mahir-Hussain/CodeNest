@@ -4,7 +4,8 @@ import { FaUserCircle } from "react-icons/fa";
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { tomorrow } from 'react-syntax-highlighter/dist/esm/styles/prism';
 import './css/Snippets.css';
-import Alert from './Alert';
+import Alert from './services/Alert';
+import SnippetModal from './SnippetModal';
 import pythonIcon from '../assets/python.svg'; 
 import javascriptIcon from '../assets/javascript.svg';
 import htmlIcon from '../assets/html.svg';
@@ -38,7 +39,7 @@ export default function Snippets() {
     return languageMap[language?.toLowerCase()] || 'text';
   };
 
-    const getLanguageIcon = (language) => {
+  const getLanguageIcon = (language) => {
     const iconMap = {
       "python": <img src={pythonIcon} alt="Python" className="language-icon" />,
       "javascript": <img src={javascriptIcon} alt="JavaScript" className="language-icon" />,
@@ -46,177 +47,6 @@ export default function Snippets() {
       "css": <img src={cssIcon} alt="CSS" className="language-icon" />
     };
     return iconMap[language?.toLowerCase()] || <span className="text-icon">TXT</span>;
-  };
-  
-  const SnippetModal = ({isOpen, onClose, onSubmit, snippet = null}) => {
-    const isEditing = snippet !== null;
-    
-    const [title, setTitle] = useState(snippet?.title || "");
-    const [content, setContent] = useState(snippet?.content || "");
-    const [language, setLanguage] = useState(snippet?.language || "");
-    const [tag1, setTag1] = useState("");
-    const [tag2, setTag2] = useState("");
-    const [tag3, setTag3] = useState("");
-    const [favourite, setFavourite] = useState(snippet?.favourite || false);
-    const [isPublic, setPublic] = useState(snippet?.is_public || false);
-
-    useEffect(() => {
-      if (isEditing && snippet) {
-        let tags = [];
-        if (Array.isArray(snippet.tags)) {
-          tags = snippet.tags;
-        } else if (typeof snippet.tags === 'string') {
-          try {
-            const parsed = JSON.parse(snippet.tags);
-            tags = Array.isArray(parsed) ? parsed : [snippet.tags];
-          } catch {
-            tags = [snippet.tags];
-          }
-        }
-        
-        setTag1(tags[0] || "");
-        setTag2(tags[1] || "");
-        setTag3(tags[2] || "");
-      }
-    }, [isEditing, snippet]);
-
-    const submitTriggered = (e) => {
-      e.preventDefault();
-
-      const tagsArray = [tag1, tag2, tag3].filter(tag => tag.trim() !== "");
-
-      if (isEditing) {
-        onSubmit({ id: snippet.id,title, content, language, tags: tagsArray, favourite, isPublic });
-        onClose();
-      } else {
-        onSubmit({ title, content, language, tags: tagsArray, favourite, isPublic });
-        setTitle("");
-        setContent("");
-        setLanguage("");
-        setTag1("");
-        setTag2("");
-        setTag3("");
-        setFavourite(false);
-        setPublic(false);
-        onClose();
-      }
-    };
-
-    if (!isOpen) return null;
-
-    return(
-      <div className="popup-overlay">
-        <div className="popup-container">
-          <div className="popup-header">
-            <h3>{isEditing ? "Edit snippet" : "Create new snippet"}</h3>
-          </div>
-          <div className="popup-content">
-            <form id="snippet-form" onSubmit={submitTriggered}>
-              <div className="form-group">
-                <label>Title</label>
-                <input
-                  className="form-input"
-                  type="text"
-                  value={title}
-                  onChange={(e) => setTitle(e.target.value)}
-                  maxLength={20}
-                />
-                <small className="char-count">{20 - title.length} characters remaining</small>
-              </div>
-
-              <div className="form-group">
-                <label>Language</label>
-                <select
-                  className="form-input"
-                  value={language}
-                  onChange={(e) => setLanguage(e.target.value)}
-                  required
-                >
-                  <option value="">Select a language</option>
-                  <option value="python">Python</option>
-                  <option value="javascript">JavaScript</option>
-                  <option value="html">HTML</option>
-                  <option value="css">CSS</option>
-                </select>
-              </div>
-
-              <div className="form-group">
-                <label>Content</label>
-                <textarea 
-                  className="form-input form-textarea"
-                  value={content}
-                  onChange={(e) => setContent(e.target.value)}
-                  required
-                  rows="5"
-                />
-              </div>
-
-              <div className="form-group">
-                <label>Tags (optional)</label>
-                <div className="tag-inputs">
-                  <input
-                    className="form-input"
-                    type="text"
-                    value={tag1}
-                    onChange={(e) => setTag1(e.target.value)}
-                    maxLength={10}
-                    placeholder="e.g. api, regex" 
-                  />
-                  <input
-                    className="form-input"
-                    type="text"
-                    value={tag2}
-                    onChange={(e) => setTag2(e.target.value)}
-                    maxLength={10}
-                    placeholder="e.g. api, regex" 
-                  />
-                  <input
-                    className="form-input"
-                    type="text"
-                    value={tag3}
-                    onChange={(e) => setTag3(e.target.value)}
-                    maxLength={10}
-                    placeholder="e.g. api, regex" 
-                  />
-                </div>
-              </div>
-
-              <div className="checkbox-row">
-                {!isEditing && (
-                  <div className="form-group">
-                    <label className="checkbox">
-                      <input
-                        type="checkbox"
-                        checked={favourite}
-                        onChange={(e) => setFavourite(e.target.checked)}
-                      />
-                      Add to favourites
-                    </label>
-                  </div>
-                )}
-
-                <div className="form-group">
-                  <label className="checkbox">
-                    <input
-                      type="checkbox"
-                      checked={isPublic}
-                      onChange={(e) => setPublic(e.target.checked)}
-                    />
-                    Make public
-                  </label>
-                </div>
-              </div>
-            </form>
-          </div>
-          <div className="popup-actions">
-            <button className="btn btn-secondary" type="button" onClick={onClose}>Cancel</button>
-            <button className="btn btn-primary" type="submit" form="snippet-form">
-              {isEditing ? "Update Snippet" : "Create Snippet"}
-            </button>
-          </div>
-        </div>
-      </div>
-    );
   };
 
   const snippetSubmit = async (snippetData) => {
