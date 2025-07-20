@@ -3,11 +3,12 @@ import { useParams } from "react-router-dom";
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { tomorrow } from 'react-syntax-highlighter/dist/esm/styles/prism';
 import './css/PublicSnippets.css';
+import Alert from './services/Alert';
 
 function SnippetView() {
   const { snippetId } = useParams();
   const [snippet, setSnippet] = useState(null);
-  const [error, setError] = useState(null);
+  const [alertMessage, setAlertMessage] = useState("");
   const API_URL = import.meta.env.VITE_API_URL;
 
   const getLanguage = (language) => {
@@ -40,23 +41,22 @@ function SnippetView() {
 
         setSnippet({ ...data.snippet, tags: parsedTags });
       })
-      .catch((err) => setError(err.message));
+      .catch((err) => {
+        console.error("Error fetching snippet:", err);
+        setAlertMessage(err.message);
+      });
   }, [snippetId]);
 
-  if (error) return (
-    <div className="container">
-      <div className="error">⚠️ {error}</div>
-    </div>
-  );
-  
   if (!snippet) return (
     <div className="container">
+      {alertMessage && <Alert message={alertMessage} onClose={() => setAlertMessage("")} />}
       <div className="loading">Loading...</div>
     </div>
   );
 
   return (
     <div className="container">
+      {alertMessage && <Alert message={alertMessage} onClose={() => setAlertMessage("")} />}
       <div className="card">
         <div className="header">
           <h1 className="title">
