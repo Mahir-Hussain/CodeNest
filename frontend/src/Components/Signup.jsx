@@ -21,14 +21,27 @@ function SignUp() {
                 },
                 body: JSON.stringify({email, password}),
             });
-            if (!response.ok){
-                throw new Error("HTTP error");
+            
+            const result = await response.json();
+            console.log("Signup API result:", result);
+
+            if (response.status === 429) {
+                // Handle rate limiting
+                const retryAfter = result.detail?.retry_after || 60;
+                setAlertMessage(`Too many signup attempts! Please wait ${retryAfter} seconds before trying again.`);
+                return;
             }
-            const result = await response.text();
-            console.log(result);
-            if(result.includes("User created successfully")){
-                setAlertMessage("Account created");
-                navigate("/");
+            
+            if (!response.ok){
+                setAlertMessage(result.detail || "Account creation failed, try again");
+                return;
+            }
+            
+            if(result.message && result.message.includes("User created successfully")){
+                setAlertMessage("Account created successfully!");
+                setTimeout(() => {
+                    navigate("/");
+                }, 1500);
             }
         }catch (error){
             console.log(error);
