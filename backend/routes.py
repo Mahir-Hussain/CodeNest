@@ -131,7 +131,7 @@ async def create_user(request: Request, credentials: LoginData):
 
 # Protected endpoints - require token
 @app.get("/dark_mode")
-@rate_limit(requests_per_minute=30)  # Allow 30 requests per minute for settings
+@rate_limit(requests_per_minute=20)  # Allow 20 requests per minute for settings
 async def get_dark_mode(user_id: int = Depends(get_current_user_id)):
     """
     Retrieve the dark mode preference for the authenticated user.
@@ -195,7 +195,7 @@ async def delete_user(user_id: int = Depends(get_current_user_id)):
 
 
 @app.get("/get_snippets")
-@rate_limit(requests_per_minute=100)  # Higher limit for frequently accessed endpoint
+@rate_limit(requests_per_minute=80)  # Higher limit for frequently accessed endpoint
 async def get_snippets(user_id: int = Depends(get_current_user_id)):
     """
     Retrieve all code snippets for the authenticated user.
@@ -214,7 +214,7 @@ async def get_snippets(user_id: int = Depends(get_current_user_id)):
 
 
 @app.get("/get_public_snippet/{snippet_id}")
-@ip_rate_limit(requests_per_minute=50)  # Moderate limit for public snippet access
+@ip_rate_limit(requests_per_minute=30)  # Moderate limit for public snippet access
 async def read_public_snippet(request: Request, snippet_id: int):
     result = Snippets(user_id=0).get_public_snippet_by_id(snippet_id)
     if not result["success"]:
