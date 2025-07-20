@@ -1,6 +1,7 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import Alert from './services/Alert';
+import './css/Signup.css';
 
 function SignUp() {
     const [email, setEmail] = useState("");
@@ -44,6 +45,9 @@ function SignUp() {
           <input type="password" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} required />
           <button type="submit">Create Account</button>
         </form>
+        <div className="auth-link">
+          <p>Already have an account? <Link to="/login">Login</Link></p>
+        </div>
       </div>
     </>
     );

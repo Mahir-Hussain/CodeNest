@@ -1,0 +1,32 @@
+.auth-link {
+  text-align: center;
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid #e1e8ed;
+}
+
+.auth-link p {
+  margin: 0;
+  color: #656d76;
+  font-size: 0.9rem;
+}
+
+.auth-link a {
+  background-color: #1f883d;
+  color: #ffffff;
+  text-decoration: none;
+  font-weight: 600;
+  padding: 0.3rem 0.8rem;
+  border-radius: 6px;
+  transition: all 0.2s ease;
+  display: inline-block;
+  margin-left: 0.5rem;
+  border: 1px solid #1f883d;
+}
+
+.auth-link a:hover {
+  background-color: #1a7f37;
+  border-color: #1a7f37;
+  color: #ffffff;
+  text-decoration: none;
+}
