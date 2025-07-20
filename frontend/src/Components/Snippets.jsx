@@ -69,6 +69,13 @@ export default function Snippets() {
       
       const data = await response.json();
       
+      if (response.status === 429) {
+        // Handle rate limiting
+        const retryAfter = data.detail?.retry_after || 60;
+        setAlertMessage(`Rate limit exceeded! Please wait ${retryAfter} seconds before creating another snippet.`);
+        return;
+      }
+      
       if (data.success) {
         setAlertMessage("Snippet created successfully!");
         const resp = await fetch(`${API_URL}/get_snippets`, {
@@ -107,6 +114,13 @@ export default function Snippets() {
       });
       
       const data = await response.json();
+      
+      if (response.status === 429) {
+        // Handle rate limiting
+        const retryAfter = data.detail?.retry_after || 60;
+        setAlertMessage(`Rate limit exceeded! Please wait ${retryAfter} seconds before editing another snippet.`);
+        return;
+      }
       
       if (data.success) {
         setAlertMessage("Snippet updated successfully!");
@@ -299,6 +313,15 @@ export default function Snippets() {
         const resp = await fetch(`${API_URL}/get_snippets`, {
           headers: { Authorization: `Bearer ${token}` }
         });
+        
+        if (resp.status === 429) {
+          const data = await resp.json();
+          const retryAfter = data.detail?.retry_after || 60;
+          setAlertMessage(`Rate limit exceeded! Please wait ${retryAfter} seconds before refreshing.`);
+          setLoading(false);
+          return;
+        }
+        
         if (!resp.ok) throw new Error(`Status ${resp.status}`);
         const data = await resp.json();
         console.log("API response:", data);
@@ -358,6 +381,14 @@ export default function Snippets() {
         headers: { Authorization: `Bearer ${token}` }
       });
       const data = await response.json();
+      
+      if (response.status === 429) {
+        // Handle rate limiting
+        const retryAfter = data.detail?.retry_after || 60;
+        setAlertMessage(`Rate limit exceeded! Please wait ${retryAfter} seconds before deleting another snippet.`);
+        return;
+      }
+      
       if (data.success) {
         setSnippets(snippets => sortSnippets(snippets.filter(s => s.id !== snippetId)));
         setAlertMessage("Snippet deleted!");
@@ -392,6 +423,13 @@ export default function Snippets() {
       });
       
       const data = await response.json();
+      
+      if (response.status === 429) {
+        // Handle rate limiting
+        const retryAfter = data.detail?.retry_after || 60;
+        setAlertMessage(`Rate limit exceeded! Please wait ${retryAfter} seconds before updating favorites.`);
+        return;
+      }
       
       if (data.success) {
         setSnippets(prev => sortSnippets(prev.map(s => 

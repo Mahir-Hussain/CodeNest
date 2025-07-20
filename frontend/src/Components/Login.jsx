@@ -30,16 +30,22 @@ async function submitDetails(e) {
       body: JSON.stringify({ email: email.trim(), password: password.trim() }),
     });
 
-    if (!response.ok) {
-      // Server responded with error status like 400, 500 etc
-      const errorText = await response.text();
-      console.error("HTTP error response:", errorText);
-      setAlertMessage("Login failed: server error");
+    const result = await response.json();
+    console.log("Login API result:", result);
+
+    if (response.status === 429) {
+      // Handle rate limiting
+      const retryAfter = result.detail?.retry_after || 60;
+      setAlertMessage(`Too many login attempts! Please wait ${retryAfter} seconds before trying again.`);
       return;
     }
 
-    const result = await response.json();
-    console.log("Login API result:", result);
+    if (!response.ok) {
+      // Server responded with error status like 400, 500 etc
+      console.error("HTTP error response:", result);
+      setAlertMessage(result.detail || "Login failed: server error");
+      return;
+    }
 
     if (result && result.success && result.token) {
       console.log("Login success");

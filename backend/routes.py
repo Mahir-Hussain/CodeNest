@@ -1,10 +1,11 @@
-from fastapi import FastAPI, HTTPException, Depends
+from fastapi import FastAPI, HTTPException, Depends, Request
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from snippets import Snippets
 from auth.login import LoginSystem
 from auth.jwtAuth import jwtAuth
+from auth.ratelimit import rate_limit, cleanup_rate_limiter, rate_limiter, ip_rate_limit
 import asyncio
 from contextlib import asynccontextmanager
 from dotenv import load_dotenv
@@ -36,8 +37,16 @@ class EditSnippetData(BaseModel):
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     Snippets.event_loop = asyncio.get_running_loop()
+    # Start the rate limiter cleanup task
+    cleanup_task = asyncio.create_task(cleanup_rate_limiter())
     yield
     Snippets.executor.shutdown(wait=False)
+    # Cancel the cleanup task
+    cleanup_task.cancel()
+    try:
+        await cleanup_task
+    except asyncio.CancelledError:
+        pass
 
 
 load_dotenv()
@@ -79,7 +88,8 @@ async def root():
 
 
 @app.post("/login")
-async def login(credentials: LoginData):
+@ip_rate_limit(requests_per_minute=10)  # Strict limit to prevent brute force attacks
+async def login(request: Request, credentials: LoginData):
     """
     Authenticate a user and return a JWT token if successful.
 
@@ -99,7 +109,8 @@ async def login(credentials: LoginData):
 
 
 @app.post("/create_user")
-async def create_user(credentials: LoginData):
+@ip_rate_limit(requests_per_minute=5)  # Very strict limit for account creation
+async def create_user(request: Request, credentials: LoginData):
     """
     Create a new user account.
 
@@ -120,6 +131,7 @@ async def create_user(credentials: LoginData):
 
 # Protected endpoints - require token
 @app.get("/dark_mode")
+@rate_limit(requests_per_minute=30)  # Allow 30 requests per minute for settings
 async def get_dark_mode(user_id: int = Depends(get_current_user_id)):
     """
     Retrieve the dark mode preference for the authenticated user.
@@ -140,6 +152,7 @@ async def get_dark_mode(user_id: int = Depends(get_current_user_id)):
 
 
 @app.get("/get_ai_use")
+@rate_limit(requests_per_minute=30)  # Allow 30 requests per minute for settings
 async def get_ai_use(user_id: int = Depends(get_current_user_id)):
     """
     Retrieve if the user has AI usage enabled.
@@ -160,6 +173,7 @@ async def get_ai_use(user_id: int = Depends(get_current_user_id)):
 
 
 @app.delete("/delete_user")
+@rate_limit(requests_per_minute=5)  # Strict limit for account deletion
 async def delete_user(user_id: int = Depends(get_current_user_id)):
     """
     Delete a user account by email.
@@ -181,6 +195,7 @@ async def delete_user(user_id: int = Depends(get_current_user_id)):
 
 
 @app.get("/get_snippets")
+@rate_limit(requests_per_minute=100)  # Higher limit for frequently accessed endpoint
 async def get_snippets(user_id: int = Depends(get_current_user_id)):
     """
     Retrieve all code snippets for the authenticated user.
@@ -199,7 +214,8 @@ async def get_snippets(user_id: int = Depends(get_current_user_id)):
 
 
 @app.get("/get_public_snippet/{snippet_id}")
-async def read_public_snippet(snippet_id: int):
+@ip_rate_limit(requests_per_minute=50)  # Moderate limit for public snippet access
+async def read_public_snippet(request: Request, snippet_id: int):
     result = Snippets(user_id=0).get_public_snippet_by_id(snippet_id)
     if not result["success"]:
         raise HTTPException(
@@ -209,6 +225,7 @@ async def read_public_snippet(snippet_id: int):
 
 
 @app.post("/create_snippet")
+@rate_limit(requests_per_minute=20)  # Moderate limit for create operations
 async def create_snippet(
     data: SnippetData, user_id: int = Depends(get_current_user_id)
 ):
@@ -242,6 +259,7 @@ async def create_snippet(
 
 
 @app.put("/edit_snippet/{snippet_id}")
+@rate_limit(requests_per_minute=30)  # Moderate limit for edit operations
 async def edit_snippet(
     snippet_id: int, data: EditSnippetData, user_id: int = Depends(get_current_user_id)
 ):
@@ -272,6 +290,7 @@ async def edit_snippet(
 
 
 @app.delete("/delete_snippet/{snippet_id}")
+@rate_limit(requests_per_minute=15)  # Moderate limit for delete operations
 async def delete_snippet(snippet_id: int, user_id: int = Depends(get_current_user_id)):
     """
     Delete a code snippet by its ID for the authenticated user.

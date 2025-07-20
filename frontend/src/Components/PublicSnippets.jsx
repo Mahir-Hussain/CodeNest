@@ -23,6 +23,12 @@ function SnippetView() {
   useEffect(() => {
     fetch(`${API_URL}/get_public_snippet/${snippetId}`)
       .then((res) => {
+        if (res.status === 429) {
+          return res.json().then(data => {
+            const retryAfter = data.detail?.retry_after || 60;
+            throw new Error(`Rate limit exceeded! Please wait ${retryAfter} seconds before trying again.`);
+          });
+        }
         if (!res.ok) throw new Error("Snippet not found");
         return res.json();
       })
