@@ -51,13 +51,16 @@
   background: var(--btn-bg);
   color: #fff;
   border: 1px solid var(--btn-border);
-  padding: 0.5rem 1rem;
+  padding: 0.7rem 1.4rem;
   border-radius: 8px;
   cursor: pointer;
-  transition: background-color 0.2s ease;
+  font-size: 1rem;
+  font-weight: 500;
+  transition: background-color 0.2s ease, transform 0.2s ease;
 }
 .login-button:hover {
   background-color: var(--btn-hover);
+  transform: translateY(-1px);
 }
 
 .hero {
@@ -92,36 +95,36 @@
   background-color: var(--btn-bg);
   color: #fff;
   border: none;
-  padding: 0.75rem 1.5rem;
-  border-radius: 8px;
+  padding: 1rem 2.5rem;
+  border-radius: 10px;
   cursor: pointer;
-  transition: background-color 0.2s ease;
+  font-size: 1.2rem;
+  font-weight: 600;
+  transition: background-color 0.2s ease, transform 0.2s ease;
 }
 .cta-button:hover {
   background-color: var(--btn-hover);
+  transform: translateY(-2px);
 }
 
+/* DUPLICATE 1: Original home-content rule with styling */
 .home-content {
   flex: 1;
   padding: 2rem;
-  max-width: 800px;
-  margin: auto;
+  max-width: 1200px;
+  margin: 3rem auto 3rem auto;
   background-color: var(--bg-light);
   border: 1px solid var(--border-light);
   border-radius: 6px;
   box-shadow: 0 2px 8px rgba(0,0,0,0.1);
   transition: background-color 0.3s ease, border-color 0.3s ease;
+  padding: 0 2rem;
 }
+/* DUPLICATE 1: Dark mode for original home-content */
 .app.dark .home-content {
   background-color: var(--bg-dark);
   border-color: var(--border-dark);
   box-shadow: 0 2px 8px rgba(255,255,255,0.1);
-}
-
-.home-content {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 0 2rem;
 }
 
 .section {

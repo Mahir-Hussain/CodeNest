@@ -144,6 +144,7 @@ body {
   font-size: 1.1em;
 }
 
+/* DUPLICATE 1: First filters rule */
 .filters {
   flex-grow: 1;
 }
@@ -181,6 +182,7 @@ body {
   content: none;
 }
 
+/* DUPLICATE 1: First main rule with full styling */
 .main {
   flex: 1;
   padding: 20px 30px;
@@ -706,6 +708,7 @@ body {
 
 
 /* Make filters scrollable */
+/* DUPLICATE 2: Second filters rule with different properties */
 .filters {
   flex: 1;
   overflow-y: visible;
@@ -720,6 +723,7 @@ body {
 }
 
 /* Ensure main content doesn't get pushed */
+/* DUPLICATE 2: Second main rule with minimal properties */
 .main {
   flex: 1;
   min-width: 0; /* Prevents flex item from expanding beyond container */
