@@ -1,5 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
+import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
+import { tomorrow } from 'react-syntax-highlighter/dist/esm/styles/prism';
 import './css/Home.css';
 
 export default function Home() {
@@ -27,6 +29,88 @@ export default function Home() {
         <div className="section">
           <h3>Why CodeNest?</h3>
           <p>CodeNest streamlines how developers manage snippets. Whether you're debugging, learning, or collaborating, having instant access to your curated code library boosts productivity and consistency.</p>
+        </div>
+
+        <div className="section snippet-showcase">
+          <h3>See It In Action</h3>
+          <div className="showcase-container">
+            <div className="showcase-left">
+              <h4>Experience CodeNest Features</h4>
+              <div className="feature-list">
+                <div className="feature-item">
+                  <span className="feature-icon">🎨</span>
+                  <div>
+                    <strong>Syntax Highlighting</strong>
+                    <p>Beautiful color-coded display makes your code easy to read and understand at a glance.</p>
+                  </div>
+                </div>
+                <div className="feature-item">
+                  <span className="feature-icon">🏷️</span>
+                  <div>
+                    <strong>Smart Tags</strong>
+                    <p>Organize with custom tags and language labels for efficient categorization and searching.</p>
+                  </div>
+                </div>
+                <div className="feature-item">
+                  <span className="feature-icon">📋</span>
+                  <div>
+                    <strong>One-Click Actions</strong>
+                    <p>Copy, share, edit, and favorite with simple button clicks. No complex workflows needed.</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div className="showcase-right">
+              <div className="snippet-card">
+                <div className="card-header">
+                  <h4 className="snippet-title">
+                    <span className="favorite-star">⭐ </span>
+                    API Authentication Helper
+                  </h4>
+                  <div className="lang-and-date-container">
+                    <span className="lang-tag">🟨 JAVASCRIPT</span>
+                    <span className="card-date">Dec 15, 2024</span>
+                    <span className="card-tags">authentication, api, jwt</span>
+                  </div>
+                </div>
+                <SyntaxHighlighter
+                  language="javascript"
+                  style={tomorrow}
+                  customStyle={{
+                    borderRadius: '6px',
+                    maxHeight: '250px',
+                    overflow: 'auto',
+                    margin: 0,
+                    minHeight: '200px',
+                    fontSize: '0.9rem'
+                  }}
+                >
+                  {`const authenticateUser = async (token) => {
+  try {
+    const response = await fetch('/api/verify', {
+      method: 'POST',
+      headers: { 
+        'Authorization': \`Bearer \${token}\`,
+        'Content-Type': 'application/json'
+      }
+    });
+    return response.json();
+  } catch (error) {
+    console.error('Auth failed:', error);
+  }
+};`}
+                </SyntaxHighlighter>
+                <div className="card-footer">
+                  <div className="card-actions">
+                    <span className="action-icon" title="Copy to clipboard">📋</span>
+                    <span className="action-icon" title="Share link">🔗</span>
+                    <span className="action-icon" title="Edit snippet">✏️</span>
+                    <span className="action-icon" title="Delete snippet">🗑️</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
 
         <div className="section features">
