@@ -26,7 +26,7 @@ export default function Snippets() {
   const [selectedTags, setSelectedTags] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [showFavoritesOnly, setShowFavoritesOnly] = useState(false);
-  const [sortOrder, setSortOrder] = useState('desc'); // 'desc' for newest first, 'asc' for oldest first
+  const [sortOrder, setSortOrder] = useState('desc'); 
   const API_URL = import.meta.env.VITE_API_URL;
   
   const getLanguage = (language) => {
