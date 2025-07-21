@@ -545,6 +545,15 @@
   margin-top: 24px;
 }
 
+/* AI Settings Description */
+.ai-description {
+  color: var(--subtext-light, #656d76) !important;
+}
+
+.dark-mode .ai-description {
+  color: var(--subtext-dark, #8b949e) !important;
+}
+
 /* Responsive Design */
 @media (max-width: 768px) {
   .settings-page {

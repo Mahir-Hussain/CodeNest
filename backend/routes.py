@@ -34,6 +34,23 @@ class EditSnippetData(BaseModel):
     is_public: bool = False
 
 
+class ChangePasswordData(BaseModel):
+    current_password: str
+    new_password: str
+
+
+class ChangeEmailData(BaseModel):
+    new_email: str
+
+
+class ChangeDarkModeData(BaseModel):
+    dark_mode: bool
+
+
+class ChangeAIUseData(BaseModel):
+    ai_use: bool
+
+
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     Snippets.event_loop = asyncio.get_running_loop()
@@ -129,6 +146,17 @@ async def create_user(request: Request, credentials: LoginData):
         )
 
 
+@app.get("/get_public_snippet/{snippet_id}")
+@ip_rate_limit(requests_per_minute=30)  # Moderate limit for public snippet access
+async def read_public_snippet(request: Request, snippet_id: int):
+    result = Snippets(user_id=0).get_public_snippet_by_id(snippet_id)
+    if not result["success"]:
+        raise HTTPException(
+            status_code=404, detail=result.get("error", "Snippet not found")
+        )
+    return {"snippet": result["snippet"]}
+
+
 # Protected endpoints - require token
 @app.get("/dark_mode")
 @rate_limit(requests_per_minute=20)  # Allow 20 requests per minute for settings
@@ -194,6 +222,106 @@ async def delete_user(user_id: int = Depends(get_current_user_id)):
         )
 
 
+@app.put("/change_password")
+@rate_limit(requests_per_minute=10)  # Moderate limit for password changes
+async def change_password(
+    data: ChangePasswordData, user_id: int = Depends(get_current_user_id)
+):
+    """
+    Change the password for the authenticated user.
+
+    Requires:
+        data (ChangePasswordData): Current password and new password.
+        user_id (int): Obtained from the JWT token.
+
+    Returns:
+        dict: Success message if password is changed, otherwise raises HTTPException.
+    """
+    result = login_system.change_password(
+        user_id, data.current_password, data.new_password
+    )
+    if result.get("success"):
+        return {"message": "Password changed successfully"}
+    else:
+        raise HTTPException(
+            status_code=400, detail=result.get("error", "Failed to change password")
+        )
+
+
+@app.put("/change_email")
+@rate_limit(requests_per_minute=10)  # Moderate limit for email changes
+async def change_email(
+    data: ChangeEmailData, user_id: int = Depends(get_current_user_id)
+):
+    """
+    Change the email for the authenticated user.
+
+    Requires:
+        data (ChangeEmailData): New email address.
+        user_id (int): Obtained from the JWT token.
+
+    Returns:
+        dict: Success message if email is changed, otherwise raises HTTPException.
+    """
+    result = login_system.update_user(user_id, email=data.new_email)
+    if result.get("success"):
+        return {"message": "Email changed successfully"}
+    else:
+        raise HTTPException(
+            status_code=400, detail=result.get("error", "Failed to change email")
+        )
+
+
+@app.put("/change_dark_mode")
+@rate_limit(requests_per_minute=30)  # Higher limit for UI preference changes
+async def change_dark_mode(
+    data: ChangeDarkModeData, user_id: int = Depends(get_current_user_id)
+):
+    """
+    Change the dark mode preference for the authenticated user.
+
+    Requires:
+        data (ChangeDarkModeData): Dark mode preference (true/false).
+        user_id (int): Obtained from the JWT token.
+
+    Returns:
+        dict: Success message if dark mode preference is changed, otherwise raises HTTPException.
+    """
+    result = login_system.update_user(user_id, dark_mode=data.dark_mode)
+    if result.get("success"):
+        return {"message": "Dark mode preference changed successfully"}
+    else:
+        raise HTTPException(
+            status_code=400,
+            detail=result.get("error", "Failed to change dark mode preference"),
+        )
+
+
+@app.put("/change_ai_use")
+@rate_limit(requests_per_minute=30)  # Higher limit for settings changes
+async def change_ai_use(
+    data: ChangeAIUseData, user_id: int = Depends(get_current_user_id)
+):
+    """
+    Change the AI usage preference for the authenticated user.
+
+    Requires:
+        data (ChangeAIUseData): AI usage preference (true/false).
+        user_id (int): Obtained from the JWT token.
+
+    Returns:
+        dict: Success message if AI usage preference is changed, otherwise raises HTTPException.
+    """
+    result = login_system.update_user(user_id, use_ai=data.ai_use)
+    if result.get("success"):
+        return {"message": "AI usage preference changed successfully"}
+    else:
+        raise HTTPException(
+            status_code=400,
+            detail=result.get("error", "Failed to change AI usage preference"),
+        )
+
+
 @app.get("/get_snippets")
 @rate_limit(requests_per_minute=80)  # Higher limit for frequently accessed endpoint
 async def get_snippets(user_id: int = Depends(get_current_user_id)):
@@ -211,17 +339,6 @@ async def get_snippets(user_id: int = Depends(get_current_user_id)):
         return snippets.get_snippets()
     except Exception as error:
         raise HTTPException(status_code=500, detail=str(error))
-
-
-@app.get("/get_public_snippet/{snippet_id}")
-@ip_rate_limit(requests_per_minute=30)  # Moderate limit for public snippet access
-async def read_public_snippet(request: Request, snippet_id: int):
-    result = Snippets(user_id=0).get_public_snippet_by_id(snippet_id)
-    if not result["success"]:
-        raise HTTPException(
-            status_code=404, detail=result.get("error", "Snippet not found")
-        )
-    return {"snippet": result["snippet"]}
 
 
 @app.post("/create_snippet")

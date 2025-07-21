@@ -178,3 +178,92 @@ class LoginSystem(Database):
                 return {"success": False, "error": f"Database error: {str(error)}"}
         else:
             return token_result
+
+    def update_user(
+        self, user_id, email=None, password=None, dark_mode=None, use_ai=None
+    ):
+        """
+        Update user information in the database using a single SQL statement.
+
+        Requires:
+            user_id (int): The user's ID.
+            email (str, optional): The new email address.
+            password (str, optional): The new plain text password (will be hashed).
+            dark_mode (bool, optional): The dark mode preference.
+            use_ai (bool, optional): The AI usage status.
+
+        Returns:
+            dict: Success status and message or error.
+        """
+        try:
+            updates = []
+            values = []
+
+            if email is not None:
+                updates.append("email = %s")
+                values.append(email)
+            if password is not None:
+                updates.append("password = %s")
+                values.append(self.hash_password(password))
+            if dark_mode is not None:
+                updates.append("dark_mode = %s")
+                values.append(dark_mode)
+            if use_ai is not None:
+                updates.append("use_ai = %s")
+                values.append(use_ai)
+
+            if not updates:
+                return {"success": False, "error": "No fields to update"}
+
+            values.append(user_id)
+            query = f"UPDATE users SET {', '.join(updates)} WHERE id = %s"
+            self.cursor.execute(query, tuple(values))
+
+            if self.cursor.rowcount > 0:
+                self.connection.commit()
+                return {"success": True, "message": "User updated successfully!"}
+            else:
+                return {"success": False, "error": "User not found"}
+        except psycopg2.IntegrityError as error:
+            self.connection.rollback()
+            return {
+                "success": False,
+                "error": f"Database constraint error: {str(error)}",
+            }
+        except psycopg2.Error as error:
+            self.connection.rollback()
+            return {"success": False, "error": f"Database error: {str(error)}"}
+
+    def change_password(self, user_id, current_password, new_password):
+        """
+        Change user password after verifying the current password.
+
+        Requires:
+            user_id (int): The user's ID.
+            current_password (str): The user's current password.
+            new_password (str): The new password.
+
+        Returns:
+            dict: Success status and message or error.
+        """
+        try:
+            # First get the user's email to verify current password
+            self.cursor.execute(
+                "SELECT email, password FROM users WHERE id = %s", (user_id,)
+            )
+            result = self.cursor.fetchone()
+
+            if not result:
+                return {"success": False, "error": "User not found"}
+
+            user_email, stored_password = result
+
+            # Verify current password
+            if stored_password != self.hash_password(current_password):
+                return {"success": False, "error": "Current password is incorrect"}
+
+            # Update to new password using the update_user method
+            return self.update_user(user_id, password=new_password)
+
+        except psycopg2.Error as error:
+            return {"success": False, "error": f"Database error: {str(error)}"}

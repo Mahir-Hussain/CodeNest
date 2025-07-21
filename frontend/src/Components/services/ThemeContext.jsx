@@ -5,17 +5,50 @@ const ThemeContext = createContext();
 export const ThemeProvider = ({ children }) => {
     // State to hold the current theme mode (true for dark, false for light)
     const [isDark, setIsDark] = useState(() => {
-        // Initialize state from localStorage or system preference on first render
+        // Check localStorage first (for persistence between sessions)
         const savedTheme = localStorage.getItem('theme');
+        console.log('Saved theme:', savedTheme);
         if (savedTheme === 'dark') {
             return true;
         }
-        // Check system preference if no theme is explicitly saved
-        if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
-            return true;
+        if (savedTheme === 'light') {
+            return false;
         }
+        // Default to light mode if no preference is saved
         return false;
     });
+
+    // Function to fetch theme preference from backend
+    const fetchThemeFromBackend = async () => {
+        try {
+            const token = localStorage.getItem('authToken');
+            if (!token) return; // No token, keep current theme
+            
+            const API_URL = import.meta.env.VITE_API_URL;
+            const response = await fetch(`${API_URL}/dark_mode`, {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json',
+                },
+            });
+
+            if (response.ok) {
+                const result = await response.json();
+                const backendDarkMode = result.dark_mode;
+                setIsDark(backendDarkMode);
+                // Save to localStorage
+                localStorage.setItem('theme', backendDarkMode ? 'dark' : 'light');
+            }
+        } catch (error) {
+            console.error('Failed to fetch theme from backend:', error);
+        }
+    };
+
+    // Load theme from backend on mount (if user is logged in)
+    useEffect(() => {
+        fetchThemeFromBackend();
+    }, []);
 
     // useEffect to apply the theme class to the document body and save to localStorage
     useEffect(() => {
@@ -35,9 +68,15 @@ export const ThemeProvider = ({ children }) => {
         setIsDark(prevIsDark => !prevIsDark);
     };
 
-    // Provide the theme state and toggle function to children components
+    // Function to clear theme on logout
+    const clearTheme = () => {
+        localStorage.removeItem('theme');
+        setIsDark(false); // Reset to light mode
+    };
+
+    // Provide the theme state and functions to children components
     return (
-        <ThemeContext.Provider value={{ isDark, toggleTheme }}>
+        <ThemeContext.Provider value={{ isDark, toggleTheme, clearTheme, fetchThemeFromBackend }}>
             {children}
         </ThemeContext.Provider>
     );
