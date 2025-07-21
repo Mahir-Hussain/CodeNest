@@ -14,6 +14,14 @@ import cssIcon from '../assets/css.svg';
 export default function Snippets() {
   const token = localStorage.getItem("authToken");
 
+  // Handle JWT token expiry
+  const handleTokenExpiry = () => {
+    console.log('Token expired, clearing auth data and redirecting to login');
+    localStorage.removeItem('authToken');
+    localStorage.removeItem('theme');
+    window.location.href = '/';
+  };
+
   const [snippets, setSnippets] = useState([]);
   const [alertMessage, setAlertMessage] = useState("");
   const [loading, setLoading] = useState(true);
@@ -67,6 +75,12 @@ export default function Snippets() {
         })
       });
       
+      // Check for token expiry
+      if (response.status === 401) {
+        handleTokenExpiry();
+        return;
+      }
+      
       const data = await response.json();
       
       if (response.status === 429) {
@@ -81,6 +95,13 @@ export default function Snippets() {
         const resp = await fetch(`${API_URL}/get_snippets`, {
           headers: { Authorization: `Bearer ${token}` }
         });
+        
+        // Check for token expiry
+        if (resp.status === 401) {
+          handleTokenExpiry();
+          return;
+        }
+        
         if (resp.ok) {
           const refreshData = await resp.json();
           if (refreshData.success && Array.isArray(refreshData.snippets)) {
@@ -113,6 +134,12 @@ export default function Snippets() {
         })
       });
       
+      // Check for token expiry
+      if (response.status === 401) {
+        handleTokenExpiry();
+        return;
+      }
+      
       const data = await response.json();
       
       if (response.status === 429) {
@@ -127,6 +154,13 @@ export default function Snippets() {
         const resp = await fetch(`${API_URL}/get_snippets`, {
           headers: { Authorization: `Bearer ${token}` }
         });
+        
+        // Check for token expiry
+        if (resp.status === 401) {
+          handleTokenExpiry();
+          return;
+        }
+        
         if (resp.ok) {
           const refreshData = await resp.json();
           if (refreshData.success && Array.isArray(refreshData.snippets)) {
@@ -314,6 +348,12 @@ export default function Snippets() {
           headers: { Authorization: `Bearer ${token}` }
         });
         
+        // Check for token expiry
+        if (resp.status === 401) {
+          handleTokenExpiry();
+          return;
+        }
+        
         if (resp.status === 429) {
           const data = await resp.json();
           const retryAfter = data.detail?.retry_after || 60;
@@ -380,6 +420,13 @@ export default function Snippets() {
         method: 'DELETE',
         headers: { Authorization: `Bearer ${token}` }
       });
+      
+      // Check for token expiry
+      if (response.status === 401) {
+        handleTokenExpiry();
+        return;
+      }
+      
       const data = await response.json();
       
       if (response.status === 429) {
@@ -421,6 +468,12 @@ export default function Snippets() {
           favourite: !snippet.favourite
         })
       });
+      
+      // Check for token expiry
+      if (response.status === 401) {
+        handleTokenExpiry();
+        return;
+      }
       
       const data = await response.json();
       

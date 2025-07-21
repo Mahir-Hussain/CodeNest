@@ -20,29 +20,30 @@ export const ThemeProvider = ({ children }) => {
 
     // Function to fetch theme preference from backend
     const fetchThemeFromBackend = async () => {
-        try {
-            const token = localStorage.getItem('authToken');
-            if (!token) return; // No token, keep current theme
+        localStorage.setItem('theme', 'light'); // Clear localStorage theme to avoid conflicts
+        // try {
+        //     const token = localStorage.getItem('authToken');
+        //     if (!token) return; // No token, keep current theme
             
-            const API_URL = import.meta.env.VITE_API_URL;
-            const response = await fetch(`${API_URL}/dark_mode`, {
-                method: 'GET',
-                headers: {
-                    'Authorization': `Bearer ${token}`,
-                    'Content-Type': 'application/json',
-                },
-            });
+        //     const API_URL = import.meta.env.VITE_API_URL;
+        //     const response = await fetch(`${API_URL}/dark_mode`, {
+        //         method: 'GET',
+        //         headers: {
+        //             'Authorization': `Bearer ${token}`,
+        //             'Content-Type': 'application/json',
+        //         },
+        //     });
 
-            if (response.ok) {
-                const result = await response.json();
-                const backendDarkMode = result.dark_mode;
-                setIsDark(backendDarkMode);
-                // Save to localStorage
-                localStorage.setItem('theme', backendDarkMode ? 'dark' : 'light');
-            }
-        } catch (error) {
-            console.error('Failed to fetch theme from backend:', error);
-        }
+        //     if (response.ok) {
+        //         const result = await response.json();
+        //         const backendDarkMode = result.dark_mode;
+        //         setIsDark(backendDarkMode);
+        //         // Save to localStorage
+        //         localStorage.setItem('theme', backendDarkMode ? 'dark' : 'light');
+        //     }
+        // } catch (error) {
+        //     console.error('Failed to fetch theme from backend:', error);
+        // }
     };
 
     // Load theme from backend on mount (if user is logged in)
