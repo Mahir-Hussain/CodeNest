@@ -15,17 +15,23 @@ import { useState, useEffect } from 'react';
 const SnippetModal = ({isOpen, onClose, onSubmit, snippet = null}) => {
   const isEditing = snippet !== null;
   
-  const [title, setTitle] = useState(snippet?.title || "");
-  const [content, setContent] = useState(snippet?.content || "");
-  const [language, setLanguage] = useState(snippet?.language || "");
+  const [title, setTitle] = useState("");
+  const [content, setContent] = useState("");
+  const [language, setLanguage] = useState("");
   const [tag1, setTag1] = useState("");
   const [tag2, setTag2] = useState("");
   const [tag3, setTag3] = useState("");
-  const [favourite, setFavourite] = useState(snippet?.favourite || false);
-  const [isPublic, setPublic] = useState(snippet?.is_public || false);
+  const [favourite, setFavourite] = useState(false);
+  const [isPublic, setPublic] = useState(false);
 
   useEffect(() => {
     if (isEditing && snippet) {
+      setTitle(snippet.title || "");
+      setContent(snippet.content || "");
+      setLanguage(snippet.language || "");
+      setFavourite(snippet.favourite || false);
+      setPublic(snippet.is_public || false);
+      
       let tags = [];
       if (Array.isArray(snippet.tags)) {
         tags = snippet.tags;
@@ -41,6 +47,15 @@ const SnippetModal = ({isOpen, onClose, onSubmit, snippet = null}) => {
       setTag1(tags[0] || "");
       setTag2(tags[1] || "");
       setTag3(tags[2] || "");
+    } else {
+      setTitle("");
+      setContent("");
+      setLanguage("");
+      setTag1("");
+      setTag2("");
+      setTag3("");
+      setFavourite(false);
+      setPublic(false);
     }
   }, [isEditing, snippet]);
 
@@ -111,7 +126,8 @@ const SnippetModal = ({isOpen, onClose, onSubmit, snippet = null}) => {
                 value={content}
                 onChange={(e) => setContent(e.target.value)}
                 required
-                rows="5"
+                rows="12"
+                style={{ minHeight: '300px', resize: 'vertical' }}
               />
             </div>
 
