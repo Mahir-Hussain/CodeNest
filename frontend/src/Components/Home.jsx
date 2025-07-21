@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { tomorrow } from 'react-syntax-highlighter/dist/esm/styles/prism';
 import './css/Home.css';
+import javascriptIcon from '../assets/javascript.svg';
 
 export default function Home() {
   const navigate = useNavigate();
@@ -68,8 +69,8 @@ export default function Home() {
                     API Authentication Helper
                   </h4>
                   <div className="lang-and-date-container">
-                    <span className="lang-tag">🟨 JAVASCRIPT</span>
-                    <span className="card-date">Dec 15, 2024</span>
+                    <span className="lang-tag"><img src={javascriptIcon} alt="JavaScript" className="language-icon" /> JAVASCRIPT</span>
+                    <span className="card-date">July 15, 2025</span>
                     <span className="card-tags">authentication, api, jwt</span>
                   </div>
                 </div>
@@ -114,28 +115,131 @@ export default function Home() {
         </div>
 
         <div className="section features">
-          <h3>Key Features</h3>
-          <ul>
-            <li>🔐 <strong>Secure Auth</strong> with JWT & bcrypt</li>
-            <li>🔒 <strong>Encrypted Storage</strong> for user data</li>
-            <li>📂 <strong>Organize Snippets</strong> by language and tags</li>
-            <li>🔍 <strong>Real-Time Search</strong> & filtering</li>
-            <li>🤖 <strong>AI-Powered Titles</strong> via Google Generative AI</li>
-          </ul>
-        </div>
-
-        <div className="section tech-stack">
-          <h3>Tech Stack</h3>
-          <div className="tags">
-            {['React', 'Vite', 'FastAPI', 'PostgreSQL', 'JWT', 'Docker'].map(tag => (
-              <span key={tag} className="tag">{tag}</span>
-            ))}
+          <h3>Powerful Features for Developers</h3>
+          <div className="features-grid">
+            <div className="feature-card">
+              <div className="feature-icon-large">🔐</div>
+              <h4>Enterprise Security</h4>
+              <p>JWT authentication with bcrypt encryption ensures your code snippets are secure and private.</p>
+            </div>
+            <div className="feature-card">
+              <div className="feature-icon-large">🎨</div>
+              <h4>Beautiful Syntax</h4>
+              <p>Rich syntax highlighting for 50+ languages with customizable themes for optimal readability.</p>
+            </div>
+            <div className="feature-card">
+              <div className="feature-icon-large">🔍</div>
+              <h4>Smart Search</h4>
+              <p>Real-time search across titles, content, tags, and languages. Find exactly what you need, fast.</p>
+            </div>
+            <div className="feature-card">
+              <div className="feature-icon-large">🤖</div>
+              <h4>AI-Powered</h4>
+              <p>Google Generative AI automatically suggests meaningful titles and tags for your snippets.</p>
+            </div>
+            <div className="feature-card">
+              <div className="feature-icon-large">🔗</div>
+              <h4>Easy Sharing</h4>
+              <p>Share your code snippets publicly with clean, readable URLs or keep them private.</p>
+            </div>
+            <div className="feature-card">
+              <div className="feature-icon-large">📱</div>
+              <h4>Cross-Platform</h4>
+              <p>Access your snippets anywhere with our responsive web app that works on all devices.</p>
+            </div>
           </div>
         </div>
 
-        <div className="section team">
-          <h3>Collaboration</h3>
-          <p>Built in partnership with a fellow developer. We leveraged GitHub for version control, code reviews, and agile workflows.</p>
+        <div className="section workflow">
+          <h3>Your Workflow, Streamlined</h3>
+          <div className="workflow-steps">
+            <div className="workflow-step">
+              <div className="step-number">1</div>
+              <div className="step-content">
+                <h4>Create & Organize</h4>
+                <p>Add your code snippets with intelligent tagging and categorization. Our AI helps with titles and organization.</p>
+              </div>
+            </div>
+            <div className="workflow-step">
+              <div className="step-number">2</div>
+              <div className="step-content">
+                <h4>Search & Filter</h4>
+                <p>Find exactly what you need with powerful search and filtering by language, tags, or favorites.</p>
+              </div>
+            </div>
+            <div className="workflow-step">
+              <div className="step-number">3</div>
+              <div className="step-content">
+                <h4>Share & Collaborate</h4>
+                <p>Share snippets publicly or keep them private. Perfect for team collaboration and knowledge sharing.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className="section tech-stack">
+          <h3>Built with Modern Technology</h3>
+          <p className="tech-description">CodeNest leverages cutting-edge technologies to deliver a fast, reliable, and secure experience.</p>
+          <div className="tech-categories">
+            <div className="tech-category">
+              <h4>Frontend</h4>
+              <div className="tags">
+                <span className="tag react">React</span>
+                <span className="tag vite">Vite</span>
+                <span className="tag css">CSS3</span>
+              </div>
+            </div>
+            <div className="tech-category">
+              <h4>Backend</h4>
+              <div className="tags">
+                <span className="tag python">FastAPI</span>
+                <span className="tag python">Python</span>
+                <span className="tag jwt">JWT</span>
+              </div>
+            </div>
+            <div className="tech-category">
+              <h4>Database & AI</h4>
+              <div className="tags">
+                <span className="tag postgres">PostgreSQL</span>
+                <span className="tag ai">Google AI</span>
+                <span className="tag docker">Docker</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className="section cta-section">
+          <div className="cta-content">
+            <h3>Ready to organize your code?</h3>
+            <p>Join developers who trust CodeNest to manage their code snippets efficiently and securely.</p>
+            <div className="cta-buttons">
+              <button className="cta-button primary" onClick={() => navigate('/signup')}>
+                Get Started Free
+              </button>
+              <button className="cta-button secondary" onClick={() => navigate('/login')}>
+                Sign In
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div className="section open-source">
+          <h3>Open Source & Collaborative</h3>
+          <p>CodeNest is built in the open. Check out our code, contribute, or fork the project to make it your own.</p>
+          <div className="github-stats">
+            <a href="https://github.com/Mahir-Hussain/CodeNest" target="_blank" rel="noopener noreferrer" className="github-link">
+              <span className="github-icon">⭐</span>
+              <span>Star on GitHub</span>
+            </a>
+            <a href="https://github.com/Mahir-Hussain/CodeNest/issues" target="_blank" rel="noopener noreferrer" className="github-link">
+              <span className="github-icon">🐛</span>
+              <span>Report Issues</span>
+            </a>
+            <a href="https://github.com/Mahir-Hussain/CodeNest/fork" target="_blank" rel="noopener noreferrer" className="github-link">
+              <span className="github-icon">🔀</span>
+              <span>Fork Project</span>
+            </a>
+          </div>
         </div>
       </main>
 
