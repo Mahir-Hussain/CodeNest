@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { tomorrow } from 'react-syntax-highlighter/dist/esm/styles/prism';
 import './css/PublicSnippets.css';
@@ -7,9 +7,19 @@ import Alert from './services/Alert';
 
 function SnippetView() {
   const { snippetId } = useParams();
+  const navigate = useNavigate();
   const [snippet, setSnippet] = useState(null);
   const [alertMessage, setAlertMessage] = useState("");
   const API_URL = import.meta.env.VITE_API_URL;
+
+  const handleLogoClick = () => {
+    const token = localStorage.getItem("authToken");
+    if (token) {
+      navigate('/snippets');
+    } else {
+      navigate('/');
+    }
+  };
 
   const getLanguage = (language) => {
     const languageMap = {
@@ -48,15 +58,32 @@ function SnippetView() {
   }, [snippetId]);
 
   if (!snippet) return (
-    <div className="container">
-      {alertMessage && <Alert message={alertMessage} onClose={() => setAlertMessage("")} />}
-      <div className="loading">Loading...</div>
-    </div>
+    <>
+      <header className="home-header">
+        <div className="logo-container" onClick={handleLogoClick} style={{ cursor: 'pointer' }}>
+          <img src="/CodeNest.png" alt="CodeNest" className="logo-image" />
+          <h1 className="logo">CodeNest</h1>
+        </div>
+      </header>
+      
+      <div className="container">
+        {alertMessage && <Alert message={alertMessage} onClose={() => setAlertMessage("")} />}
+        <div className="loading">Loading...</div>
+      </div>
+    </>
   );
 
   return (
-    <div className="container">
-      {alertMessage && <Alert message={alertMessage} onClose={() => setAlertMessage("")} />}
+    <>
+      <header className="home-header">
+        <div className="logo-container" onClick={handleLogoClick} style={{ cursor: 'pointer' }}>
+          <img src="/CodeNest.png" alt="CodeNest" className="logo-image" />
+          <h1 className="logo">CodeNest</h1>
+        </div>
+      </header>
+      
+      <div className="container">
+        {alertMessage && <Alert message={alertMessage} onClose={() => setAlertMessage("")} />}
       <div className="card">
         <div className="header">
           <h1 className="title">
@@ -99,6 +126,7 @@ function SnippetView() {
         </SyntaxHighlighter>
       </div>
     </div>
+    </>
   );
 }
 

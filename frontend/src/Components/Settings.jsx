@@ -259,7 +259,7 @@ function Settings() {
     <div className="settings-page">
       {/* Header/Navbar */}
       <header className="settings-header-nav">
-        <div className="logo-container">
+        <div className="logo-container" onClick={() => navigate('/snippets')} style={{ cursor: 'pointer' }}>
           <img src="/CodeNest.png" alt="CodeNest" className="logo-image" />
           <h1 className="logo">CodeNest</h1>
         </div>

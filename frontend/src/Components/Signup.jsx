@@ -50,6 +50,13 @@ function SignUp() {
     }
     return (
     <>
+      <header className="home-header">
+        <div className="logo-container" onClick={() => navigate('/')} style={{ cursor: 'pointer' }}>
+          <img src="/CodeNest.png" alt="CodeNest" className="logo-image" />
+          <h1 className="logo">CodeNest</h1>
+        </div>
+      </header>
+      
       <Alert message={alertMessage} onClose={() => setAlertMessage("")} />
       <div className="signupContainer">
         <h1>Sign Up</h1>
