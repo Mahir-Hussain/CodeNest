@@ -32,6 +32,7 @@ class EditSnippetData(BaseModel):
     language: str
     tags: list[str] = []
     is_public: bool = False
+    favourite: bool = False
 
 
 class ChangePasswordData(BaseModel):
@@ -385,7 +386,7 @@ async def edit_snippet(
 
     Requires:
         snippet_id (int): The ID of the snippet to edit.
-        data (EditSnippetData): The updated snippet data (title, content, language, tags, is_public).
+        data (EditSnippetData): The updated snippet data (title, content, language, tags, is_public, favourite).
         user_id (int): Obtained from the JWT token.
 
     Returns:
@@ -399,6 +400,7 @@ async def edit_snippet(
         data.language,
         data.tags,
         data.is_public,
+        data.favourite,
     )
     if result["success"]:
         return result

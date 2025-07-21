@@ -449,24 +449,49 @@ export default function Snippets() {
   };
 
   const toggleFavorite = async (snippetId) => {
+    console.log('toggleFavorite function called with snippetId:', snippetId);
     const snippet = snippets.find(s => s.id === snippetId);
-    if (!snippet) return;
+    if (!snippet) {
+      console.log('No snippet found with id:', snippetId);
+      return;
+    }
+    console.log('Found snippet:', snippet);
+    console.log('Toggling favorite for snippet:', snippetId, 'Current favorite:', snippet.favourite);
 
     try {
+      // Handle tags properly - convert string to array if needed
+      let tagsArray = [];
+      if (Array.isArray(snippet.tags)) {
+        tagsArray = snippet.tags;
+      } else if (typeof snippet.tags === 'string') {
+        try {
+          const parsed = JSON.parse(snippet.tags);
+          tagsArray = Array.isArray(parsed) ? parsed : [snippet.tags];
+        } catch {
+          tagsArray = snippet.tags ? [snippet.tags] : [];
+        }
+      }
+
+      // Create a clean request body with only the necessary fields
+      const requestBody = {
+        title: snippet.title || '',
+        content: snippet.content || '',
+        language: snippet.language || '',
+        tags: tagsArray,
+        is_public: snippet.is_public || false,
+        favourite: !snippet.favourite  // Toggle the favorite status
+      };
+
+      console.log('Toggling favorite for snippet:', snippetId, 'Current favorite:', snippet.favourite, 'New favorite:', !snippet.favourite);
+      console.log('Request body:', requestBody);
+
       const response = await fetch(`${API_URL}/edit_snippet/${snippetId}`, {
         method: 'PUT',
         headers: { 
           'Content-Type': 'application/json',
           Authorization: `Bearer ${token}` 
         },
-        body: JSON.stringify({
-          title: snippet.title,
-          content: snippet.content,
-          language: snippet.language,
-          tags: snippet.tags,
-          is_public: snippet.is_public,
-          favourite: !snippet.favourite
-        })
+        body: JSON.stringify(requestBody)
       });
       
       // Check for token expiry
@@ -476,6 +501,7 @@ export default function Snippets() {
       }
       
       const data = await response.json();
+      console.log('Toggle favorite response:', data);
       
       if (response.status === 429) {
         // Handle rate limiting
@@ -490,7 +516,8 @@ export default function Snippets() {
         )));
         setAlertMessage(snippet.favourite ? "Removed from favorites!" : "Added to favorites!");
       } else {
-        setAlertMessage("Failed to update favorite status.");
+        setAlertMessage(data.error || "Failed to update favorite status.");
+        console.error('Failed to update favorite:', data);
       }
     } catch (error) {
       console.error("Error toggling favorite:", error);
@@ -684,7 +711,10 @@ export default function Snippets() {
                     <span 
                       className="action-icon" 
                       title={s.favourite ? "Remove from favorites" : "Add to favorites"}
-                      onClick={() => toggleFavorite(s.id)}
+                      onClick={() => {
+                        console.log('Heart icon clicked for snippet:', s.id);
+                        toggleFavorite(s.id);
+                      }}
                       style={{ cursor: 'pointer' }}
                     >
                       {s.favourite ? '❤️' : '🤍'}

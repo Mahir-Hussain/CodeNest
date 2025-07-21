@@ -40,7 +40,7 @@ function SignUp() {
             if(result.message && result.message.includes("User created successfully")){
                 setAlertMessage("Account created successfully!");
                 setTimeout(() => {
-                    navigate("/");
+                    navigate("/login");
                 }, 1500);
             }
         }catch (error){

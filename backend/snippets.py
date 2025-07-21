@@ -204,7 +204,7 @@ class Snippets(Database):
                     "title": self.encryptor.decrypt(title),
                     "content": self.encryptor.decrypt(content),
                     "language": self.encryptor.decrypt(language),
-                    "favourite": self.encryptor.decrypt(favourite) == "true",
+                    "favourite": favourite,  # favourite is already a boolean, no need to decrypt
                     "created_at": created_at,
                     "tags": parsed_tags,
                     "is_public": is_public if is_public is not None else False,
@@ -246,6 +246,7 @@ class Snippets(Database):
         language,
         tags=None,
         is_public=False,
+        favourite=False,
     ):
         try:
             self.cursor.execute(
@@ -264,7 +265,7 @@ class Snippets(Database):
             encrypted_tags = self.encryptor.encrypt(json_tags)
 
             self.cursor.execute(
-                "UPDATE code_snippets SET title = %s, content = %s, language = %s, tags = %s, is_public = %s "
+                "UPDATE code_snippets SET title = %s, content = %s, language = %s, tags = %s, is_public = %s, favourite = %s "
                 "WHERE id = %s AND user_id = %s",
                 (
                     self.encryptor.encrypt(new_title),
@@ -272,6 +273,7 @@ class Snippets(Database):
                     self.encryptor.encrypt(language),
                     encrypted_tags,
                     is_public,
+                    favourite,
                     snippet_id,
                     self.user_id,
                 ),
