@@ -246,6 +246,7 @@ class Snippets(Database):
         language,
         tags=None,
         is_public=False,
+        favourite=False,
     ):
         try:
             self.cursor.execute(
@@ -264,7 +265,7 @@ class Snippets(Database):
             encrypted_tags = self.encryptor.encrypt(json_tags)
 
             self.cursor.execute(
-                "UPDATE code_snippets SET title = %s, content = %s, language = %s, tags = %s, is_public = %s "
+                "UPDATE code_snippets SET title = %s, content = %s, language = %s, tags = %s, is_public = %s, favourite = %s "
                 "WHERE id = %s AND user_id = %s",
                 (
                     self.encryptor.encrypt(new_title),
@@ -272,6 +273,7 @@ class Snippets(Database):
                     self.encryptor.encrypt(language),
                     encrypted_tags,
                     is_public,
+                    self.encryptor.encrypt(str(favourite).lower()),
                     snippet_id,
                     self.user_id,
                 ),
@@ -279,6 +281,45 @@ class Snippets(Database):
 
             self.connection.commit()
             return {"success": True, "message": "Snippet updated successfully!"}
+
+        except psycopg2.Error as error:
+            self.connection.rollback()
+            return {"success": False, "error": str(error)}
+
+    @require_auth
+    def toggle_favorite(self, snippet_id):
+        try:
+            # First, get the current favorite status
+            self.cursor.execute(
+                "SELECT favourite FROM code_snippets WHERE id = %s AND user_id = %s",
+                (snippet_id, self.user_id),
+            )
+            row = self.cursor.fetchone()
+            if not row:
+                return {
+                    "success": False,
+                    "error": "Snippet not found or not owned by user",
+                }
+
+            current_favourite = self.encryptor.decrypt(row[0]) == "true"
+            new_favourite = not current_favourite
+
+            # Update only the favourite field
+            self.cursor.execute(
+                "UPDATE code_snippets SET favourite = %s WHERE id = %s AND user_id = %s",
+                (
+                    self.encryptor.encrypt(str(new_favourite).lower()),
+                    snippet_id,
+                    self.user_id,
+                ),
+            )
+
+            self.connection.commit()
+            return {
+                "success": True,
+                "message": "Favorite status updated successfully!",
+                "favourite": new_favourite,
+            }
 
         except psycopg2.Error as error:
             self.connection.rollback()

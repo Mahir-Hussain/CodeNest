@@ -449,24 +449,12 @@ export default function Snippets() {
   };
 
   const toggleFavorite = async (snippetId) => {
-    const snippet = snippets.find(s => s.id === snippetId);
-    if (!snippet) return;
-
     try {
-      const response = await fetch(`${API_URL}/edit_snippet/${snippetId}`, {
+      const response = await fetch(`${API_URL}/toggle_favorite/${snippetId}`, {
         method: 'PUT',
         headers: { 
-          'Content-Type': 'application/json',
           Authorization: `Bearer ${token}` 
-        },
-        body: JSON.stringify({
-          title: snippet.title,
-          content: snippet.content,
-          language: snippet.language,
-          tags: snippet.tags,
-          is_public: snippet.is_public,
-          favourite: !snippet.favourite
-        })
+        }
       });
       
       // Check for token expiry
@@ -486,9 +474,9 @@ export default function Snippets() {
       
       if (data.success) {
         setSnippets(prev => sortSnippets(prev.map(s => 
-          s.id === snippetId ? { ...s, favourite: !s.favourite } : s
+          s.id === snippetId ? { ...s, favourite: data.favourite } : s
         )));
-        setAlertMessage(snippet.favourite ? "Removed from favorites!" : "Added to favorites!");
+        setAlertMessage(data.favourite ? "Added to favorites!" : "Removed from favorites!");
       } else {
         setAlertMessage("Failed to update favorite status.");
       }

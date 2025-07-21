@@ -32,6 +32,7 @@ class EditSnippetData(BaseModel):
     language: str
     tags: list[str] = []
     is_public: bool = False
+    favourite: bool = False
 
 
 class ChangePasswordData(BaseModel):
@@ -399,7 +400,30 @@ async def edit_snippet(
         data.language,
         data.tags,
         data.is_public,
+        data.favourite,
     )
+    if result["success"]:
+        return result
+    else:
+        raise HTTPException(status_code=400, detail=result["error"])
+
+
+@app.put("/toggle_favorite/{snippet_id}")
+@rate_limit(requests_per_minute=40)  # Higher limit for quick favorite toggles
+async def toggle_favorite(snippet_id: int, user_id: int = Depends(get_current_user_id)):
+    """
+    Toggle the favorite status of a code snippet for the authenticated user.
+    This endpoint only updates the favorite field without affecting other snippet data.
+
+    Requires:
+        snippet_id (int): The ID of the snippet to toggle favorite status.
+        user_id (int): Obtained from the JWT token.
+
+    Returns:
+        dict: Success message and new favorite status, otherwise raises HTTPException.
+    """
+    snippets = Snippets(user_id)
+    result = snippets.toggle_favorite(snippet_id)
     if result["success"]:
         return result
     else:
