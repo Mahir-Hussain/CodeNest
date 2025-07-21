@@ -558,14 +558,11 @@
   justify-content: center;
 }
 
-.tag.react { background-color: #61dafb; color: #000; }
-.tag.vite { background-color: #646cff; color: white; }
-.tag.css { background-color: #1572b6; color: white; }
-.tag.python { background-color: #3776ab; color: white; }
-.tag.jwt { background-color: #000000; color: white; }
+.tag.react { background-color: #336791; color: white; }
+.tag.css { background-color: #336791; color: white; }
+.tag.python { background-color: #336791; color: white; }
 .tag.postgres { background-color: #336791; color: white; }
-.tag.ai { background-color: #4285f4; color: white; }
-.tag.docker { background-color: #0db7ed; color: white; }
+.tag.ai { background-color: #336791; color: white; }
 
 /* CTA Section */
 .cta-section {

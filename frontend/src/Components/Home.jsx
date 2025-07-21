@@ -185,8 +185,7 @@ export default function Home() {
               <h4>Frontend</h4>
               <div className="tags">
                 <span className="tag react">React</span>
-                <span className="tag vite">Vite</span>
-                <span className="tag css">CSS3</span>
+                <span className="tag css">CSS</span>
               </div>
             </div>
             <div className="tech-category">
@@ -194,7 +193,6 @@ export default function Home() {
               <div className="tags">
                 <span className="tag python">FastAPI</span>
                 <span className="tag python">Python</span>
-                <span className="tag jwt">JWT</span>
               </div>
             </div>
             <div className="tech-category">
@@ -202,7 +200,6 @@ export default function Home() {
               <div className="tags">
                 <span className="tag postgres">PostgreSQL</span>
                 <span className="tag ai">Google AI</span>
-                <span className="tag docker">Docker</span>
               </div>
             </div>
           </div>
@@ -211,10 +208,10 @@ export default function Home() {
         <div className="section cta-section">
           <div className="cta-content">
             <h3>Ready to organize your code?</h3>
-            <p>Join developers who trust CodeNest to manage their code snippets efficiently and securely.</p>
+            <p>Manage your code snippets efficiently and securely.</p>
             <div className="cta-buttons">
               <button className="cta-button primary" onClick={() => navigate('/signup')}>
-                Get Started Free
+                Get Started
               </button>
               <button className="cta-button secondary" onClick={() => navigate('/login')}>
                 Sign In
