@@ -32,7 +32,7 @@ class EditSnippetData(BaseModel):
     language: str
     tags: list[str] = []
     is_public: bool = False
-    favourite: bool = False
+    favourite: bool
 
 
 class ChangePasswordData(BaseModel):

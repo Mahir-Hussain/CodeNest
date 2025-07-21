@@ -130,7 +130,8 @@ export default function Snippets() {
           content: snippetData.content,
           language: snippetData.language,
           tags: snippetData.tags,
-          is_public: snippetData.isPublic
+          is_public: snippetData.isPublic,
+          favourite: snippetData.favourite
         })
       });
       
