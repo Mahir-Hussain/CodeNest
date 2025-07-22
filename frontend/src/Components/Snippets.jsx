@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { Navigate, Link } from 'react-router-dom';
 import { FaUserCircle } from "react-icons/fa";
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
-import { tomorrow } from 'react-syntax-highlighter/dist/esm/styles/prism';
+import { tomorrow, prism, materialLight, oneLight, vs } from 'react-syntax-highlighter/dist/esm/styles/prism';
 import './css/Snippets.css';
 import Alert from './services/Alert';
 import SnippetModal from './SnippetModal';
@@ -651,13 +651,15 @@ export default function Snippets() {
                 </div>
                 <SyntaxHighlighter
                   language={getLanguage(s.language)}
-                  style={tomorrow}
+                  style={prism}
                   customStyle={{
                     borderRadius: '6px',
                     maxHeight: '200px',
                     overflow: 'auto',
                     margin: 0,
-                    minHeight: '150px'
+                    fontSize: '14px',
+                    minHeight: '150px',
+                    backgroundColor: 'hsl(0, 0%, 95%)' // Very light grey, less bright
                   }}
                 >
                   {s.content}

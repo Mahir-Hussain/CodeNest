@@ -20,6 +20,11 @@ class Snippets(Database):
         self.jwt_auth = jwtAuth()
         self.encryptor = Encryption()  # Set up the encryptor
 
+    def __del__(self):
+        """Ensure connection is closed when object is destroyed"""
+        if hasattr(self, "connection") and self.connection:
+            self.close()
+
     def convert_tags(self, tags: str):
         """
         Converts a JSON string of tags to a Python list.

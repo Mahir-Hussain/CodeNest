@@ -150,12 +150,16 @@ async def create_user(request: Request, credentials: LoginData):
 @app.get("/get_public_snippet/{snippet_id}")
 @ip_rate_limit(requests_per_minute=30)  # Moderate limit for public snippet access
 async def read_public_snippet(request: Request, snippet_id: int):
-    result = Snippets(user_id=0).get_public_snippet_by_id(snippet_id)
-    if not result["success"]:
-        raise HTTPException(
-            status_code=404, detail=result.get("error", "Snippet not found")
-        )
-    return {"snippet": result["snippet"]}
+    snippets = Snippets(user_id=0)
+    try:
+        result = snippets.get_public_snippet_by_id(snippet_id)
+        if not result["success"]:
+            raise HTTPException(
+                status_code=404, detail=result.get("error", "Snippet not found")
+            )
+        return {"snippet": result["snippet"]}
+    finally:
+        snippets.close()  # Ensure connection is closed
 
 
 # Protected endpoints - require token
@@ -337,9 +341,12 @@ async def get_snippets(user_id: int = Depends(get_current_user_id)):
     """
     snippets = Snippets(user_id)
     try:
-        return snippets.get_snippets()
+        result = snippets.get_snippets()
+        return result
     except Exception as error:
         raise HTTPException(status_code=500, detail=str(error))
+    finally:
+        snippets.close()  # Ensure connection is closed
 
 
 @app.post("/create_snippet")
@@ -358,22 +365,25 @@ async def create_snippet(
         dict: Success message if snippet is created, otherwise raises HTTPException.
     """
     snippets = Snippets(user_id)
-    ai_usage = (await get_ai_use(user_id))["ai_use"]
+    try:
+        ai_usage = (await get_ai_use(user_id))["ai_use"]
 
-    print("AI usage status:", ai_usage)
-    result = snippets.create_snippet(
-        data.title,
-        data.content,
-        data.language,
-        data.favourite,
-        data.tags,
-        ai_usage,
-        data.is_public,
-    )
-    if result["success"]:
-        return result
-    else:
-        raise HTTPException(status_code=400, detail=result["error"])
+        print("AI usage status:", ai_usage)
+        result = snippets.create_snippet(
+            data.title,
+            data.content,
+            data.language,
+            data.favourite,
+            data.tags,
+            ai_usage,
+            data.is_public,
+        )
+        if result["success"]:
+            return result
+        else:
+            raise HTTPException(status_code=400, detail=result["error"])
+    finally:
+        snippets.close()  # Ensure connection is closed
 
 
 @app.put("/edit_snippet/{snippet_id}")
@@ -393,19 +403,22 @@ async def edit_snippet(
         dict: Success message if snippet is updated, otherwise raises HTTPException.
     """
     snippets = Snippets(user_id)
-    result = snippets.edit_snippet(
-        snippet_id,
-        data.title,
-        data.content,
-        data.language,
-        data.tags,
-        data.is_public,
-        data.favourite,
-    )
-    if result["success"]:
-        return result
-    else:
-        raise HTTPException(status_code=400, detail=result["error"])
+    try:
+        result = snippets.edit_snippet(
+            snippet_id,
+            data.title,
+            data.content,
+            data.language,
+            data.tags,
+            data.is_public,
+            data.favourite,
+        )
+        if result["success"]:
+            return result
+        else:
+            raise HTTPException(status_code=400, detail=result["error"])
+    finally:
+        snippets.close()  # Ensure connection is closed
 
 
 @app.put("/toggle_favorite/{snippet_id}")
@@ -423,11 +436,14 @@ async def toggle_favorite(snippet_id: int, user_id: int = Depends(get_current_us
         dict: Success message and new favorite status, otherwise raises HTTPException.
     """
     snippets = Snippets(user_id)
-    result = snippets.toggle_favorite(snippet_id)
-    if result["success"]:
-        return result
-    else:
-        raise HTTPException(status_code=400, detail=result["error"])
+    try:
+        result = snippets.toggle_favorite(snippet_id)
+        if result["success"]:
+            return result
+        else:
+            raise HTTPException(status_code=400, detail=result["error"])
+    finally:
+        snippets.close()  # Ensure connection is closed
 
 
 @app.delete("/delete_snippet/{snippet_id}")
@@ -444,8 +460,11 @@ async def delete_snippet(snippet_id: int, user_id: int = Depends(get_current_use
         dict: Success message if snippet is deleted, otherwise raises HTTPException.
     """
     snippets = Snippets(user_id)
-    result = snippets.delete_snippet(snippet_id)
-    if result["success"]:
-        return result
-    else:
-        raise HTTPException(status_code=400, detail=result["error"])
+    try:
+        result = snippets.delete_snippet(snippet_id)
+        if result["success"]:
+            return result
+        else:
+            raise HTTPException(status_code=400, detail=result["error"])
+    finally:
+        snippets.close()  # Ensure connection is closed

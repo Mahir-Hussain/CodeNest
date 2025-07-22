@@ -26,8 +26,8 @@
   --nav-item-active-bg-dark: #383838;
   --tag-bg-dark: #4a4a4a;
   --tag-text-dark: #c0c0c0;
-  --sidebar-bg-light: #f6f8fa;
-  --card-bg-light: #ffffff;
+  --sidebar-bg-light: hsl(0, 0%, 98%);
+  --card-bg-light: #f8f9fa;
   --code-bg-light: #f0f0f0;
   --search-input-bg-light: #ffffff;
   --search-input-border-light: #d1d9e0;
@@ -260,7 +260,7 @@ body {
 }
 
 .snippet-card {
-  background-color: var(--card-bg-light);
+  background-color: hsl(0, 0%, 98%) !important;
   border-radius: 8px;
   padding: 15px;
   display: flex;
