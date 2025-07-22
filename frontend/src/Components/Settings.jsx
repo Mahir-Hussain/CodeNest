@@ -2,6 +2,7 @@ import { useState, useEffect, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Alert from './services/Alert';
 import ThemeContext from './services/ThemeContext';
+import handleTokenExpiry from './services/utils';
 import './css/Settings.css';
 
 function Settings() {
@@ -83,6 +84,11 @@ function Settings() {
         },
       });
 
+      if (response.status === 401) {
+        handleTokenExpiry();
+        return;
+      }
+
       if (response.ok) {
         const result = await response.json();
         setAiUse(result.ai_use);
@@ -112,6 +118,11 @@ function Settings() {
       });
 
       const result = await response.json();
+
+      if (response.status === 401) {
+        handleTokenExpiry();
+        return;
+      }
 
       if (response.status === 429) {
         const retryAfter = result.detail?.retry_after || 60;
@@ -163,6 +174,11 @@ function Settings() {
 
       const result = await response.json();
 
+      if (response.status === 401) {
+        handleTokenExpiry();
+        return;
+      }
+
       if (response.status === 429) {
         const retryAfter = result.detail?.retry_after || 60;
         handleRateLimit(retryAfter, "updating your password");
@@ -205,6 +221,11 @@ function Settings() {
 
       const result = await response.json();
 
+      if (response.status === 401) {
+        handleTokenExpiry();
+        return;
+      }
+
       if (response.status === 429) {
         const retryAfter = result.detail?.retry_after || 60;
         handleRateLimit(retryAfter, "updating theme preference");
@@ -237,6 +258,11 @@ function Settings() {
 
       const result = await response.json();
 
+      if (response.status === 401) {
+        handleTokenExpiry();
+        return;
+      }
+
       if (response.status === 429) {
         const retryAfter = result.detail?.retry_after || 60;
         handleRateLimit(retryAfter, "updating AI usage preference");
@@ -263,6 +289,9 @@ function Settings() {
           <img src="/CodeNest.png" alt="CodeNest" className="logo-image" />
           <h1 className="logo">CodeNest</h1>
         </div>
+        <button className="login-button" onClick={() => navigate('/snippets')}>
+          Back to Snippets
+        </button>
       </header>
 
       <div className="settings-container">

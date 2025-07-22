@@ -10,17 +10,11 @@ import pythonIcon from '../assets/python.svg';
 import javascriptIcon from '../assets/javascript.svg';
 import htmlIcon from '../assets/html.svg';
 import cssIcon from '../assets/css.svg';
+import handleTokenExpiry from './services/utils'; 
 
 export default function Snippets() {
   const token = localStorage.getItem("authToken");
 
-  // Handle JWT token expiry
-  const handleTokenExpiry = () => {
-    console.log('Token expired, clearing auth data and redirecting to login');
-    localStorage.removeItem('authToken');
-    localStorage.removeItem('theme');
-    window.location.href = '/';
-  };
 
   const [snippets, setSnippets] = useState([]);
   const [alertMessage, setAlertMessage] = useState("");
