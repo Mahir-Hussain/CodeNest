@@ -16,5 +16,5 @@ export default defineConfig({
   },
   // Fix for React Router DOM (SPA fallback)
   assetsInclude: ['**/*.html'],
-  base: process.env.VITE_BASE_PATH || "/CodeNest",
+  base: '/', // Set to root for Vercel deployment
 });
