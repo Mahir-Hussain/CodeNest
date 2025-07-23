@@ -71,7 +71,7 @@ load_dotenv()
 app = FastAPI(lifespan=lifespan)
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000", "codenest-rho.vercel.app"],  # React dev server
+    allow_origins=["http://localhost:3000", "http://codenest-rho.vercel.app"],  # React dev server
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
