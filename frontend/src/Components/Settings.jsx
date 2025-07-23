@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import Alert from './services/Alert';
 import ThemeContext from './services/ThemeContext';
 import handleTokenExpiry from './services/utils';
-import './css/settings.css';
+import './css/Settings.css';
 
 function Settings() {
   const [currentPassword, setCurrentPassword] = useState("");
