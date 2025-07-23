@@ -103,11 +103,18 @@ export default function Snippets() {
           }
         }
       } else {
-        setAlertMessage("Failed to create snippet.");
+        setAlertMessage(data.error || data.detail || "Failed to create snippet.");
       }
     } catch (error) {
       console.error("Error:", error);
-      setAlertMessage("Error creating snippet. See console.");
+
+      if (error.name === 'TypeError' && error.message.includes('fetch')) {
+        setAlertMessage("Unable to connect to the server. Please check your internet connection.");
+      } else if (error.message.includes('NetworkError') || error.message.includes('Failed to fetch')) {
+        setAlertMessage("Network error. Please check your connection and try again.");
+      } else {
+        setAlertMessage("Unable to create snippet. Please try again.");
+      }
     }
   };
 
@@ -163,11 +170,18 @@ export default function Snippets() {
           }
         }
       } else {
-        setAlertMessage("Failed to update snippet.");
+
+        setAlertMessage(data.error || data.detail || "Failed to update snippet.");
       }
     } catch (error) {
       console.error("Error:", error);
-      setAlertMessage("Error updating snippet. See console.");
+      if (error.name === 'TypeError' && error.message.includes('fetch')) {
+        setAlertMessage("Unable to connect to the server. Please check your internet connection.");
+      } else if (error.message.includes('NetworkError') || error.message.includes('Failed to fetch')) {
+        setAlertMessage("Network error. Please check your connection and try again.");
+      } else {
+        setAlertMessage("Unable to update snippet. Please try again.");
+      }
     }
   };
 
@@ -370,7 +384,15 @@ export default function Snippets() {
         }
       } catch (err) {
         console.error("Error fetching snippets:", err);
-        setAlertMessage("Error fetching snippets. See console.");
+        if (err.name === 'TypeError' && err.message.includes('fetch')) {
+          setAlertMessage("Unable to connect to the server. Please check your internet connection.");
+        } else if (err.message.includes('NetworkError') || err.message.includes('Failed to fetch')) {
+          setAlertMessage("Network error. Please check your connection and try again.");
+        } else if (err.message.includes('Status 500')) {
+          setAlertMessage("Server error. Please try again in a few moments.");
+        } else {
+          setAlertMessage("Unable to load snippets. Please try again.");
+        }
       } finally {
         setLoading(false);
       }
