@@ -32,11 +32,13 @@ jobs:
           cd frontend
           npm run build
           
+      - name: Install Vercel CLI
+        run: npm install --global vercel@latest
+        
       - name: Deploy to Vercel
-        uses: Fire-Engine-Red/vercel-action@v1.1.1
-        with:
-          vercel_token: ${{ secrets.VERCEL_TOKEN }}
-          vercel_org_id: ${{ secrets.VERCEL_ORG_ID }}
-          vercel_project_id: ${{ secrets.VERCEL_PROJECT_ID }}
-          working_directory: frontend
-          production: true
+        run: |
+          cd frontend
+          vercel --token ${{ secrets.VERCEL_TOKEN }} --prod --yes
+        env:
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
