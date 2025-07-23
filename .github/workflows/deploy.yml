@@ -33,10 +33,10 @@ jobs:
           npm run build
           
       - name: Deploy to Vercel
-        uses: BetaHuhn/deploy-to-vercel-action@v1
+        uses: Fire-Engine-Red/vercel-action@v1.1.1
         with:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
-          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
-          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
-          WORKING_DIRECTORY: ./frontend
+          vercel_token: ${{ secrets.VERCEL_TOKEN }}
+          vercel_org_id: ${{ secrets.VERCEL_ORG_ID }}
+          vercel_project_id: ${{ secrets.VERCEL_PROJECT_ID }}
+          working_directory: frontend
+          production: true
