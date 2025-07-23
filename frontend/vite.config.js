@@ -11,10 +11,15 @@ export default defineConfig({
     extensions: ['.js', '.jsx', '.ts', '.tsx']
   },
   build: {
-    outDir: 'dist', // Vercel expects 'dist' by default
-    emptyOutDir: true
+    outDir: 'dist',
+    emptyOutDir: true,
+    sourcemap: false,
+    rollupOptions: {
+      output: {
+        manualChunks: undefined,
+      }
+    }
   },
-  // Fix for React Router DOM (SPA fallback)
-  assetsInclude: ['**/*.html'],
-  base: '/', // Set to root for Vercel deployment
+  base: '/',
+  publicDir: 'public'
 });
