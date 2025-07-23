@@ -136,6 +136,49 @@ class Snippets(Database):
                 "error": f"Error fetching snippet: {str(error)}",
             }
 
+    def get_user_snippet_by_id(self, snippet_id: int):
+        """
+        Fetch a snippet by ID only if it belongs to the current user.
+
+        Args:
+            snippet_id (int): The ID of the snippet to fetch.
+
+        Returns:
+            dict: Success status and snippet data or error message.
+        """
+        try:
+            # First check if the snippet belongs to this user
+            self.cursor.execute(
+                "SELECT id, title, content, language, favourite, created_at, tags "
+                "FROM code_snippets WHERE id = %s AND user_id = %s",
+                (snippet_id, self.user_id),
+            )
+            row = self.cursor.fetchone()
+            if row is None:
+                return {"success": False, "error": "Snippet not found or not owned by user"}
+
+            id, title, content, language, favourite, created_at, tags = row
+
+            decrypted_tags = self.encryptor.decrypt(tags)
+            parsed_tags = self.convert_tags(decrypted_tags)
+
+            snippet = {
+                "id": id,
+                "title": self.encryptor.decrypt(title),
+                "content": self.encryptor.decrypt(content),
+                "language": self.encryptor.decrypt(language),
+                "favourite": self.encryptor.decrypt(favourite) == "true",
+                "created_at": created_at,
+                "tags": parsed_tags,
+            }
+            return {"success": True, "snippet": snippet}
+
+        except psycopg2.Error as error:
+            return {
+                "success": False,
+                "error": f"Error fetching snippet: {str(error)}",
+            }
+
     @require_auth
     def create_snippet(
         self,

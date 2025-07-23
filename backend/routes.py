@@ -161,6 +161,19 @@ async def read_public_snippet(request: Request, snippet_id: int):
     finally:
         snippets.close()  # Ensure connection is closed
 
+@app.get("/get_user_snippet/{snippet_id}")
+@rate_limit(requests_per_minute=50) # Higher limit for user-specific snippet access
+async def read_user_snippet(snippet_id: int, user_id: int = Depends(get_current_user_id)):
+    snippets = Snippets(user_id)
+    try:
+        result = snippets.get_user_snippet_by_id(snippet_id)
+        if not result["success"]:
+            raise HTTPException(
+                status_code=404, detail=result.get("error", "Snippet not found")
+            )
+        return {"snippet": result["snippet"]}
+    finally:
+        snippets.close()  # Ensure connection is closed 
 
 # Protected endpoints - require token
 @app.get("/dark_mode")

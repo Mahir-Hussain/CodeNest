@@ -56,18 +56,29 @@ function SnippetView() {
   };
 
   useEffect(() => {
-    fetch(`${API_URL}/get_public_snippet/${snippetId}`)
-      .then((res) => {
-        if (res.status === 429) {
-          return res.json().then(data => {
-            const retryAfter = data.detail?.retry_after || 60;
-            throw new Error(`Rate limit exceeded! Please wait ${retryAfter} seconds before trying again.`);
+    const token = localStorage.getItem("authToken");
+    
+    const fetchSnippet = async () => {
+      try {
+        // First, try the public endpoint
+        let response = await fetch(`${API_URL}/get_public_snippet/${snippetId}`);
+        
+        // If public route fails and user is logged in, try user endpoint
+        if (!response.ok && token) {
+          response = await fetch(`${API_URL}/get_user_snippet/${snippetId}`, {
+            headers: { Authorization: `Bearer ${token}` }
           });
         }
-        if (!res.ok) throw new Error("Snippet not found");
-        return res.json();
-      })
-      .then((data) => {
+        
+        if (response.status === 429) {
+          const data = await response.json();
+          const retryAfter = data.detail?.retry_after || 60;
+          throw new Error(`Rate limit exceeded! Please wait ${retryAfter} seconds before trying again.`);
+        }
+        
+        if (!response.ok) throw new Error("Snippet not found");
+        
+        const data = await response.json();
         if (!data.snippet) throw new Error("Snippet not found");
         
         // Parse tags properly - handle both string and array formats
@@ -85,11 +96,13 @@ function SnippetView() {
         }
 
         setSnippet({ ...data.snippet, tags: parsedTags });
-      })
-      .catch((err) => {
+      } catch (err) {
         console.error("Error fetching snippet:", err);
         setAlertMessage(err.message);
-      });
+      }
+    };
+    
+    fetchSnippet();
   }, [snippetId]);
 
   if (!snippet) return (
