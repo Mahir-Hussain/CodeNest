@@ -123,7 +123,7 @@ function SnippetView() {
       </div>
     </>
   );
-
+  console.log(snippet);
   return (
     <>
       <header className="home-header">
@@ -143,6 +143,10 @@ function SnippetView() {
           <h1 className="title">
             {snippet.favourite && <span className="star">⭐</span>}
             {snippet.title}
+            <span className={`visibility-badge ${snippet.is_public ? 'public' : 'private'}`}>
+              {snippet.is_public ? 'Public' : 'Private'}
+              
+            </span>
           </h1>
           
           <div className="metadata">

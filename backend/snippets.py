@@ -127,6 +127,7 @@ class Snippets(Database):
                 "favourite": self.encryptor.decrypt(favourite) == "true",
                 "created_at": created_at,
                 "tags": parsed_tags,
+                "is_public": True,  # Public snippets are always public
             }
             return {"success": True, "snippet": snippet}
 
@@ -149,15 +150,18 @@ class Snippets(Database):
         try:
             # First check if the snippet belongs to this user
             self.cursor.execute(
-                "SELECT id, title, content, language, favourite, created_at, tags "
+                "SELECT id, title, content, language, favourite, created_at, tags, is_public "
                 "FROM code_snippets WHERE id = %s AND user_id = %s",
                 (snippet_id, self.user_id),
             )
             row = self.cursor.fetchone()
             if row is None:
-                return {"success": False, "error": "Snippet not found or not owned by user"}
+                return {
+                    "success": False,
+                    "error": "Snippet not found or not owned by user",
+                }
 
-            id, title, content, language, favourite, created_at, tags = row
+            id, title, content, language, favourite, created_at, tags, is_public = row
 
             decrypted_tags = self.encryptor.decrypt(tags)
             parsed_tags = self.convert_tags(decrypted_tags)
@@ -170,6 +174,7 @@ class Snippets(Database):
                 "favourite": self.encryptor.decrypt(favourite) == "true",
                 "created_at": created_at,
                 "tags": parsed_tags,
+                "is_public": is_public,
             }
             return {"success": True, "snippet": snippet}
 

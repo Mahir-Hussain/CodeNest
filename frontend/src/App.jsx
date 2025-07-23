@@ -2,7 +2,7 @@ import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Login from './Components/Login';
 import SignUp from './Components/Signup';
-import SnippetView from './Components/PublicSnippets';
+import SnippetView from './Components/SnippetView';
 import Snippets from './Components/Snippets';
 import Home from './Components/Home';
 import ProtectedRoute from './Components/services/ProtectedRoute';
@@ -18,7 +18,7 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/login" element={<Login />} />
           <Route path="/Signup" element={<SignUp />} />
-          <Route path="/public_snippet/:snippetId" element={<SnippetView />} />
+          <Route path="/snippet_view/:snippetId" element={<SnippetView />} />
           <Route
             path="/snippets"
             element={

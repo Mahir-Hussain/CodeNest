@@ -417,7 +417,7 @@ export default function Snippets() {
 
   const grabLink = async (snippetId) => {
     try {
-      const publicLink = `${window.location.origin}/public_snippet/${snippetId}`;
+      const publicLink = `${window.location.origin}/snippet_view/${snippetId}`;
       
       await navigator.clipboard.writeText(publicLink);
       setAlertMessage("Public link copied to clipboard!");
@@ -428,7 +428,7 @@ export default function Snippets() {
   };
 
   const redirectToSnippet = (snippetId) => {
-    window.open(`/public_snippet/${snippetId}`, '_blank');
+    window.open(`/snippet_view/${snippetId}`, '_blank');
   };
 
   const deleteSnippet = async (snippetId) => {
