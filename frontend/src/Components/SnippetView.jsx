@@ -123,7 +123,7 @@ function SnippetView() {
       </div>
     </>
   );
-  console.log(snippet);
+  // console.log(snippet);
   return (
     <>
       <header className="home-header">

@@ -23,7 +23,7 @@ function SignUp() {
             });
             
             const result = await response.json();
-            console.log("Signup API result:", result);
+            // console.log("Signup API result:", result);
 
             if (response.status === 429) {
                 // Handle rate limiting
@@ -44,7 +44,7 @@ function SignUp() {
                 }, 1500);
             }
         }catch (error){
-            console.log(error);
+            // console.log(error);
             setAlertMessage("Account creation failed, try again");
         }
     }

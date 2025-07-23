@@ -7,7 +7,7 @@ export const ThemeProvider = ({ children }) => {
     const [isDark, setIsDark] = useState(() => {
         // Check localStorage first (for persistence between sessions)
         const savedTheme = localStorage.getItem('theme');
-        console.log('Saved theme:', savedTheme);
+        // console.log('Saved theme:', savedTheme);
         if (savedTheme === 'dark') {
             return true;
         }

@@ -18,10 +18,10 @@ function Login(){
 
 async function submitDetails(e) {
   e.preventDefault();
-  console.log("submit");
+  // console.log("submit");
 
   try {
-    console.log("API URL:", API_URL);
+    // console.log("API URL:", API_URL);
     const response = await fetch(`${API_URL}/login`, {
       method: "POST",
       headers: {
@@ -31,7 +31,7 @@ async function submitDetails(e) {
     });
 
     const result = await response.json();
-    console.log("Login API result:", result);
+    // console.log("Login API result:", result);
 
     if (response.status === 429) {
       // Handle rate limiting
@@ -48,7 +48,7 @@ async function submitDetails(e) {
     }
 
     if (result && result.success && result.token) {
-      console.log("Login success");
+      // console.log("Login success");
       localStorage.setItem("authToken", result.token);
       localStorage.setItem("userId", result.userid);
 

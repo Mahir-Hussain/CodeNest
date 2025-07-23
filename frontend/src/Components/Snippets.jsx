@@ -373,7 +373,7 @@ export default function Snippets() {
         
         if (!resp.ok) throw new Error(`Status ${resp.status}`);
         const data = await resp.json();
-        console.log("API response:", data);
+        // console.log("API response:", data);
 
         if (data.success && Array.isArray(data.snippets)) {
           // Sort snippets after fetching
