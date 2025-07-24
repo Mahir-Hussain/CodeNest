@@ -6,6 +6,7 @@ import './css/Signup.css';
 function SignUp() {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
+    const [isLoading, setIsLoading] = useState(false);
     const navigate = useNavigate();
     const [alertMessage, setAlertMessage] = useState("");
     const API_URL = import.meta.env.VITE_API_URL;
@@ -13,6 +14,7 @@ function SignUp() {
 
     async function signUp(e){
         e.preventDefault();
+        setIsLoading(true);
         try{
             const response = await fetch(`${API_URL}/create_user`, {
                 method: "POST",
@@ -29,11 +31,13 @@ function SignUp() {
                 // Handle rate limiting
                 const retryAfter = result.detail?.retry_after || 60;
                 setAlertMessage(`Too many signup attempts! Please wait ${retryAfter} seconds before trying again.`);
+                setIsLoading(false);
                 return;
             }
             
             if (!response.ok){
                 setAlertMessage(result.detail || "Account creation failed, try again");
+                setIsLoading(false);
                 return;
             }
             
@@ -41,11 +45,13 @@ function SignUp() {
                 setAlertMessage("Account created successfully!");
                 setTimeout(() => {
                     navigate("/login");
+                    setIsLoading(false);
                 }, 1500);
             }
         }catch (error){
             // console.log(error);
             setAlertMessage("Account creation failed, try again");
+            setIsLoading(false);
         }
     }
     return (
@@ -60,10 +66,30 @@ function SignUp() {
       <Alert message={alertMessage} onClose={() => setAlertMessage("")} />
       <div className="signupContainer">
         <h1>Sign Up</h1>
+        <div style={{ 
+          backgroundColor: '#fff3cd', 
+          border: '1px solid #ffeaa7', 
+          borderRadius: '6px', 
+          padding: '12px', 
+          margin: '15px 0',
+          fontSize: '14px',
+          color: '#856404'
+        }}>
+          <strong>Note:</strong> Account creation may take a few seconds as our server spins up from sleep mode. You may have to signup again if the server is inactive for a while.
+        </div>
         <form className="form" onSubmit={signUp}>
           <input type="email" placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} required />
           <input type="password" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} required />
-          <button type="submit">Create Account</button>
+          <button type="submit" disabled={isLoading}>
+            {isLoading ? (
+              <span style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
+                <span className="loading-spinner"></span>
+                Creating Account...
+              </span>
+            ) : (
+              'Create Account'
+            )}
+          </button>
         </form>
         <div className="auth-link">
           <p>Already have an account? <Link to="/login">Login</Link></p>

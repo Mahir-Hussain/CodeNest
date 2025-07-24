@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { prism } from 'react-syntax-highlighter/dist/esm/styles/prism';
-import './css/PublicSnippets.css';
+import './css/Snippetview.css';
 import Alert from './services/Alert';
 import pythonIcon from '../assets/python.svg'; 
 import javascriptIcon from '../assets/javascript.svg';
@@ -191,8 +191,13 @@ function SnippetView() {
             margin: 0,
             padding: '30px',
             fontSize: '14px',
-            backgroundColor: 'hsl(0, 0%, 95%)' // Light grey background to match Snippets.jsx
+            backgroundColor: 'hsl(0, 0%, 95%)', // Light grey background to match Snippets.jsx
+            lineHeight: '1.5',
+            width: '100%',
+            boxSizing: 'border-box'
           }}
+          wrapLongLines={true}
+          className="syntax-highlighter-responsive"
         >
           {snippet.content}
         </SyntaxHighlighter>

@@ -119,8 +119,8 @@ export default function Home() {
           <div className="features-grid">
             <div className="feature-card">
               <div className="feature-icon-large">🔐</div>
-              <h4>Enterprise Security</h4>
-              <p>JWT authentication with bcrypt encryption ensures your code snippets are secure and private.</p>
+              <h4>Encrypted Data & Security</h4>
+              <p>Protect your code snippets with secure JWT authentication and bcrypt encryption, ensuring your data stays private.</p>
             </div>
             <div className="feature-card">
               <div className="feature-icon-large">🎨</div>
@@ -135,7 +135,7 @@ export default function Home() {
             <div className="feature-card">
               <div className="feature-icon-large">🤖</div>
               <h4>AI-Powered</h4>
-              <p>Google Generative AI automatically suggests meaningful titles and tags for your snippets.</p>
+              <p>Google Generative AI automatically adds meaningful titles and tags for your snippets.</p>
             </div>
             <div className="feature-card">
               <div className="feature-icon-large">🔗</div>

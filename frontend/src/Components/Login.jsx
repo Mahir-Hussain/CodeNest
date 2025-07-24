@@ -86,6 +86,17 @@ return (
     <div className="welcome-header">
       <h1>Welcome to CodeNest</h1>
       <p>Sign in to your account to continue</p>
+      <div style={{ 
+        backgroundColor: '#fff3cd', 
+        border: '1px solid #ffeaa7', 
+        borderRadius: '6px', 
+        padding: '12px', 
+        margin: '15px 0',
+        fontSize: '14px',
+        color: '#856404'
+      }}>
+        <strong>Note:</strong> First login may take a few seconds as our server spins up from sleep mode. You may have to login again if the server is inactive for a while.
+      </div>
     </div>
 
   <div className="loginContainer">

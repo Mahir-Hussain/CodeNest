@@ -706,6 +706,225 @@ body {
   flex: 1;
 }
 
+.language-icon {
+  width: 16px;
+  height: 16px;
+  margin-right: 4px;
+  vertical-align: middle;
+}
+
+/* Mobile Responsive Styles */
+@media (max-width: 768px) {
+  .app {
+    flex-direction: column;
+  }
+
+  /* Hide sidebar completely on mobile */
+  .sidebar {
+    display: none;
+  }
+
+  .main {
+    width: 100%;
+    padding: 15px;
+    margin: 0;
+  }
+
+  .topbar {
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 20px;
+    padding: 0;
+  }
+
+  .search-container {
+    order: 1;
+    width: 100%;
+    margin-bottom: 15px;
+  }
+
+  .search-input {
+    width: 100%;
+    font-size: 16px; /* Prevents zoom on iOS */
+    padding: 12px;
+    margin-right: 0;
+    box-sizing: border-box;
+  }
+
+  .new-snippet-button {
+    order: 2;
+    flex: 1;
+    min-width: 120px;
+    padding: 12px 15px;
+    font-size: 14px;
+    margin: 0 10px 0 0;
+  }
+
+  .date-created {
+    order: 3;
+    font-size: 14px;
+    margin-right: 5px;
+  }
+
+  .sort-arrow {
+    order: 4;
+    margin-right: 10px;
+  }
+
+  .profile-wrapper {
+    order: 5;
+    margin-left: auto;
+  }
+
+  /* Mobile-friendly snippet grid */
+  .snippet-grid {
+    grid-template-columns: 1fr;
+    gap: 15px;
+    padding: 0;
+  }
+
+  .snippet-card {
+    padding: 15px;
+    margin-bottom: 15px;
+  }
+
+  .snippet-title {
+    font-size: 1.1em;
+    line-height: 1.3;
+    word-break: break-word;
+  }
+
+  .card-header {
+    margin-bottom: 12px;
+  }
+
+  .lang-and-date-container {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+    margin-top: 8px;
+  }
+
+  .lang-tag {
+    font-size: 12px;
+    padding: 4px 8px;
+  }
+
+  .card-date {
+    font-size: 12px;
+  }
+
+  .card-tags {
+    font-size: 12px;
+    word-break: break-word;
+    overflow-wrap: break-word;
+    text-align: left;
+    margin-left: 0;
+  }
+
+  .card-actions {
+    gap: 15px;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .action-icon {
+    font-size: 1.3em;
+    padding: 8px;
+    min-height: 44px;
+    min-width: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 4px;
+  }
+
+  .action-icon:hover {
+    background-color: var(--nav-item-active-bg-light);
+  }
+
+  .profile-menu {
+    right: 0;
+    left: auto;
+    min-width: 150px;
+  }
+
+  .no-snippets {
+    padding: 40px 20px;
+    font-size: 16px;
+    text-align: center;
+  }
+
+  .loading {
+    padding: 40px 20px;
+    font-size: 16px;
+  }
+}
+
+@media (max-width: 480px) {
+  .main {
+    padding: 10px;
+  }
+
+  .topbar {
+    gap: 8px;
+    margin-bottom: 15px;
+  }
+
+  .search-input {
+    padding: 10px;
+    font-size: 16px;
+  }
+
+  .new-snippet-button {
+    padding: 10px 12px;
+    font-size: 13px;
+    min-width: 100px;
+  }
+
+  .snippet-grid {
+    gap: 12px;
+  }
+
+  .snippet-card {
+    padding: 12px;
+  }
+
+  .snippet-title {
+    font-size: 1em;
+  }
+
+  .lang-tag, .card-date, .card-tags {
+    font-size: 11px;
+  }
+
+  .action-icon {
+    font-size: 1.2em;
+    min-height: 40px;
+    min-width: 40px;
+    padding: 6px;
+  }
+
+  .card-actions {
+    gap: 12px;
+  }
+
+  .profile-menu {
+    min-width: 130px;
+    font-size: 14px;
+  }
+
+  .no-snippets {
+    padding: 30px 15px;
+    font-size: 14px;
+  }
+
+  .loading {
+    padding: 30px 15px;
+    font-size: 14px;
+  }
+}
+
 
 /* Make filters scrollable */
 /* DUPLICATE 2: Second filters rule with different properties */
