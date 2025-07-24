@@ -6,6 +6,7 @@ function Login(){
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [alertMessage, setAlertMessage] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
   const API_URL = import.meta.env.VITE_API_URL;
 
@@ -18,6 +19,7 @@ function Login(){
 
 async function submitDetails(e) {
   e.preventDefault();
+  setIsLoading(true);
   // console.log("submit");
 
   try {
@@ -37,6 +39,7 @@ async function submitDetails(e) {
       // Handle rate limiting
       const retryAfter = result.detail?.retry_after || 60;
       setAlertMessage(`Too many login attempts! Please wait ${retryAfter} seconds before trying again.`);
+      setIsLoading(false);
       return;
     }
 
@@ -44,6 +47,7 @@ async function submitDetails(e) {
       // Server responded with error status like 400, 500 etc
       console.error("HTTP error response:", result);
       setAlertMessage(result.detail || "Login failed: server error");
+      setIsLoading(false);
       return;
     }
 
@@ -55,13 +59,16 @@ async function submitDetails(e) {
       setAlertMessage("Login successful!");
       setTimeout(() => {
         navigate("/snippets", { replace: true });
+        setIsLoading(false);
       }, 1000);
     } else {
       setAlertMessage(result.error || "Login failed - invalid credentials");
+      setIsLoading(false);
     }
   } catch (error) {
     console.error("Fetch/login error:", error);
     setAlertMessage("Login failed, please try again.");
+    setIsLoading(false);
   }
 }
 
@@ -100,7 +107,16 @@ return (
         required
       />
 
-      <button type="submit">Login</button>
+      <button type="submit" disabled={isLoading}>
+        {isLoading ? (
+          <span style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
+            <span className="loading-spinner"></span>
+            Logging in...
+          </span>
+        ) : (
+          'Login'
+        )}
+      </button>
     </form>
   </div>
 

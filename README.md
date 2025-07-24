@@ -66,6 +66,22 @@ CodeNest/
 
 ## ▶️ How to Run the Project Locally
 
+### 💾 Database
+
+```python
+# Edit the host, port to match your database setup. You can either make a supabase account like done so below OR run a database locally.
+class Database:
+    def __init__(self, host="aws-0-eu-west-2.pooler.supabase.com", port="5432"):
+        """
+        Sets up database connection parameters and calls the connect() method.
+        """
+        self.db_name = "postgres"
+        self.db_user = "postgres.rgxatektsqhjpjgmfncu"
+        self.db_password = os.getenv("database_password")
+        self.db_host = host
+        self.db_port = port
+```
+
 ### ⚙️ Backend (FastAPI)
 
 ```bash
@@ -81,7 +97,7 @@ pip install -r requirements.txt
 database_password = ""
 ai_key = "" # Get the key from https://ai.google.dev/gemini-api/docs
 jwt_secret = "" # Can be whatever you want
-fernet_key = b"" #Create this key using fernet documentation  https://cryptography.io/en/latest/fernet/#using-the-key
+fernet_key = b"" # Create this key using fernet documentation  https://cryptography.io/en/latest/fernet/#using-the-key
 
 
 # 4. Run the FastAPI server
