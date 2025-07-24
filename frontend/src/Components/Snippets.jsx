@@ -403,7 +403,7 @@ export default function Snippets() {
     return <Navigate to="/" replace />;
   }
 
-  if (loading) return <div className="loading">Loading snippets…</div>;
+  if (loading) return <div className="loading">Loading snippets…, This may take some time if the server is waking up.</div>;
 
   const copyToClipboard = async (content) => {
     try {

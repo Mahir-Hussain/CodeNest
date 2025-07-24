@@ -119,7 +119,7 @@ function SnippetView() {
       
       <div className="container">
         {alertMessage && <Alert message={alertMessage} onClose={() => setAlertMessage("")} />}
-        <div className="loading">Loading...</div>
+        <div className="loading">Loading... This may take some time if the server is waking up.</div>
       </div>
     </>
   );

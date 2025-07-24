@@ -1,5 +1,6 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { Analytics } from '@vercel/analytics/react';
 import Login from './Components/Login';
 import SignUp from './Components/Signup';
 import SnippetView from './Components/SnippetView';
@@ -37,6 +38,7 @@ function App() {
           <Route path="*" element={<Home />} />
         </Routes>
       </Router>
+      <Analytics />
     </ThemeProvider>
   );
 }
