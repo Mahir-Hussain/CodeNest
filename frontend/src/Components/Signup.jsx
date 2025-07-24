@@ -82,8 +82,9 @@ function SignUp() {
       </header>
       
       <Alert message={alertMessage} onClose={() => setAlertMessage("")} />
-      <div className="signupContainer">
-        <h1>Sign Up</h1>
+      <div className="welcome-header">
+        <h1>Create Your Account</h1>
+        <p>Sign up to start organizing your code snippets</p>
         <div style={{ 
           backgroundColor: '#fff3cd', 
           border: '1px solid #ffeaa7', 
@@ -95,6 +96,10 @@ function SignUp() {
         }}>
           <strong>Note:</strong> Account creation may take a few seconds as our server spins up from sleep mode. You may have to signup again if the server is inactive for a while.
         </div>
+      </div>
+
+      <div className="signupContainer">
+        <h1>Sign Up</h1>
         <form className="form" onSubmit={signUp}>
           <input type="email" placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} required />
           
