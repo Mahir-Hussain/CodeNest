@@ -6,6 +6,9 @@ import './css/Signup.css';
 function SignUp() {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
+    const [retypePassword, setRetypePassword] = useState("");
+    const [showPassword, setShowPassword] = useState(false);
+    const [showRetypePassword, setShowRetypePassword] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const navigate = useNavigate();
     const [alertMessage, setAlertMessage] = useState("");
@@ -15,6 +18,21 @@ function SignUp() {
     async function signUp(e){
         e.preventDefault();
         setIsLoading(true);
+        
+        // Validate passwords match
+        if (password !== retypePassword) {
+            setAlertMessage("Passwords do not match!");
+            setIsLoading(false);
+            return;
+        }
+        
+        // Validate password length
+        if (password.length < 6) {
+            setAlertMessage("Password must be at least 6 characters long!");
+            setIsLoading(false);
+            return;
+        }
+        
         try{
             const response = await fetch(`${API_URL}/create_user`, {
                 method: "POST",
@@ -79,7 +97,81 @@ function SignUp() {
         </div>
         <form className="form" onSubmit={signUp}>
           <input type="email" placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} required />
-          <input type="password" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} required />
+          
+          <div style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
+            <input 
+              type={showPassword ? "text" : "password"}
+              placeholder="Password" 
+              value={password} 
+              onChange={(e) => setPassword(e.target.value)} 
+              style={{ paddingRight: '60px', width: '100%', boxSizing: 'border-box' }}
+              required
+            />
+            <button
+              type="button"
+              onClick={() => setShowPassword(!showPassword)}
+              style={{
+                position: 'absolute',
+                right: '12px',
+                top: '50%',
+                transform: 'translateY(-50%)',
+                zIndex: 1,
+                background: 'none',
+                border: 'none',
+                cursor: 'pointer',
+                fontSize: '14px',
+                color: '#666',
+                padding: '4px 8px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                minWidth: '40px',
+                height: '24px',
+                fontWeight: '500'
+              }}
+              title={showPassword ? 'Hide password' : 'Show password'}
+            >
+              {showPassword ? 'Hide' : 'Show'}
+            </button>
+          </div>
+
+          <div style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
+            <input 
+              type={showRetypePassword ? "text" : "password"}
+              placeholder="Retype Password" 
+              value={retypePassword} 
+              onChange={(e) => setRetypePassword(e.target.value)} 
+              style={{ paddingRight: '60px', width: '100%', boxSizing: 'border-box' }}
+              required
+            />
+            <button
+              type="button"
+              onClick={() => setShowRetypePassword(!showRetypePassword)}
+              style={{
+                position: 'absolute',
+                right: '12px',
+                top: '50%',
+                transform: 'translateY(-50%)',
+                zIndex: 1,
+                background: 'none',
+                border: 'none',
+                cursor: 'pointer',
+                fontSize: '14px',
+                color: '#666',
+                padding: '4px 8px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                minWidth: '40px',
+                height: '24px',
+                fontWeight: '500'
+              }}
+              title={showRetypePassword ? 'Hide password' : 'Show password'}
+            >
+              {showRetypePassword ? 'Hide' : 'Show'}
+            </button>
+          </div>
+
           <button type="submit" disabled={isLoading}>
             {isLoading ? (
               <span style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>

@@ -5,6 +5,7 @@ import Alert from './services/Alert';
 function Login(){
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [alertMessage, setAlertMessage] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
@@ -110,13 +111,42 @@ return (
         required
       />
 
-      <input 
-        type="password" 
-        placeholder="Password" 
-        value={password} 
-        onChange={(event) => setPassword(event.target.value)} 
-        required
-      />
+      <div style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
+        <input 
+          type={showPassword ? "text" : "password"}
+          placeholder="Password" 
+          value={password} 
+          onChange={(event) => setPassword(event.target.value)} 
+          style={{ paddingRight: '60px', width: '100%', boxSizing: 'border-box' }}
+          required
+        />
+        <button
+          type="button"
+          onClick={() => setShowPassword(!showPassword)}
+          style={{
+            position: 'absolute',
+            right: '12px',
+            top: '50%',
+            transform: 'translateY(-50%)',
+            zIndex: 1,
+            background: 'none',
+            border: 'none',
+            cursor: 'pointer',
+            fontSize: '14px',
+            color: '#666',
+            padding: '4px 8px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            minWidth: '40px',
+            height: '24px',
+            fontWeight: '500'
+          }}
+          title={showPassword ? 'Hide password' : 'Show password'}
+        >
+          {showPassword ? 'Hide' : 'Show'}
+        </button>
+      </div>
 
       <button type="submit" disabled={isLoading}>
         {isLoading ? (
