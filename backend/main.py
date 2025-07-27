@@ -8,7 +8,7 @@ load_dotenv()
 
 
 def run_fastapi():
-    uvicorn.run("routes:app", host="127.0.0.1", port=8000, reload=True)
+    uvicorn.run("routes:app", host="localhost", port=8000, reload=True)
 
 
 def run_react():

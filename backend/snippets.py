@@ -67,32 +67,37 @@ class Snippets(Database):
 
         return {
             "title": title or "Untitled Snippet",
-            "language": language,
-            "tags": tags,
+            "language": language or "",
+            "tags": tags or [],
         }
 
     def run_ai_enrichment_and_update(self, snippet_id, content, title, language, tags):
         async def inner():
-            enriched = await self.run_ai_enrichment(content, title, language, tags)
             try:
-                self.cursor.execute(
-                    "UPDATE code_snippets SET title = %s, language = %s, tags = %s WHERE id = %s",
+                enriched = await self.run_ai_enrichment(content, title, language, tags)
+
+                # Create a new connection for thread safety
+                snippets_bg = Snippets(self.user_id)
+                snippets_bg.cursor.execute(
+                    "UPDATE code_snippets SET title = %s, language = %s, tags = %s WHERE id = %s AND user_id = %s",
                     (
-                        self.encryptor.encrypt(enriched["title"]),
-                        self.encryptor.encrypt(enriched["language"]),
-                        self.encryptor.encrypt(json.dumps(enriched["tags"])),
+                        snippets_bg.encryptor.encrypt(enriched["title"]),
+                        snippets_bg.encryptor.encrypt(enriched["language"]),
+                        snippets_bg.encryptor.encrypt(json.dumps(enriched["tags"])),
                         snippet_id,
+                        self.user_id,
                     ),
                 )
-                self.connection.commit()
-            except psycopg2.Error as e:
-                self.connection.rollback()
-                print(f"AI enrichment DB update failed: {e}")
+                snippets_bg.connection.commit()
+                snippets_bg.close()
+
+            except Exception:
+                if "snippets_bg" in locals():
+                    snippets_bg.connection.rollback()
+                    snippets_bg.close()
 
         if Snippets.event_loop:
             asyncio.run_coroutine_threadsafe(inner(), Snippets.event_loop)
-        else:
-            print("⚠️ No event loop available for background enrichment")
 
     def get_public_snippet_by_id(self, snippet_id: int):
         """

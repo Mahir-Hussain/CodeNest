@@ -55,11 +55,9 @@ class ChangeAIUseData(BaseModel):
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     Snippets.event_loop = asyncio.get_running_loop()
-    # Start the rate limiter cleanup task
     cleanup_task = asyncio.create_task(cleanup_rate_limiter())
     yield
     Snippets.executor.shutdown(wait=False)
-    # Cancel the cleanup task
     cleanup_task.cancel()
     try:
         await cleanup_task
@@ -71,7 +69,7 @@ load_dotenv()
 app = FastAPI(lifespan=lifespan)
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000", "https://codenest-rho.vercel.app"],  # React dev server
+    allow_origins=["http://localhost:3000", "https://codenest-rho.vercel.app"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -161,9 +159,12 @@ async def read_public_snippet(request: Request, snippet_id: int):
     finally:
         snippets.close()  # Ensure connection is closed
 
+
 @app.get("/get_user_snippet/{snippet_id}")
-@rate_limit(requests_per_minute=50) # Higher limit for user-specific snippet access
-async def read_user_snippet(snippet_id: int, user_id: int = Depends(get_current_user_id)):
+@rate_limit(requests_per_minute=50)  # Higher limit for user-specific snippet access
+async def read_user_snippet(
+    snippet_id: int, user_id: int = Depends(get_current_user_id)
+):
     snippets = Snippets(user_id)
     try:
         result = snippets.get_user_snippet_by_id(snippet_id)
@@ -173,7 +174,8 @@ async def read_user_snippet(snippet_id: int, user_id: int = Depends(get_current_
             )
         return {"snippet": result["snippet"]}
     finally:
-        snippets.close()  # Ensure connection is closed 
+        snippets.close()  # Ensure connection is closed
+
 
 # Protected endpoints - require token
 @app.get("/dark_mode")
@@ -380,8 +382,6 @@ async def create_snippet(
     snippets = Snippets(user_id)
     try:
         ai_usage = (await get_ai_use(user_id))["ai_use"]
-
-        print("AI usage status:", ai_usage)
         result = snippets.create_snippet(
             data.title,
             data.content,

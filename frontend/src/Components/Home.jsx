@@ -4,9 +4,19 @@ import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { tomorrow } from 'react-syntax-highlighter/dist/esm/styles/prism';
 import './css/Home.css';
 import javascriptIcon from '../assets/javascript.svg';
+const API_URL = import.meta.env.VITE_API_URL;
 
 export default function Home() {
   const navigate = useNavigate();
+  // Wake up server function to ensure backend is ready before login/signup
+  const wakeUpServer = async () => {
+    try {
+      await fetch(`${API_URL}/`, { method: 'GET' });
+    } catch (error) {
+      console.error('Error waking up server:', error);
+    }
+  };
+  wakeUpServer();
 
   return (
     <div className="home-page">
