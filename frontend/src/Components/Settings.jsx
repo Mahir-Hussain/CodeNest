@@ -15,6 +15,8 @@ function Settings() {
   const [loading, setLoading] = useState(false);
   const [rateLimitTimer, setRateLimitTimer] = useState(null);
   const [isRateLimited, setIsRateLimited] = useState(false);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [deleteConfirmText, setDeleteConfirmText] = useState("");
   const navigate = useNavigate();
   const API_URL = import.meta.env.VITE_API_URL;
 
@@ -282,14 +284,17 @@ function Settings() {
   };
 
   const handleDeleteAccount = async () => {
-    if (!window.confirm("Are you sure you want to delete your account? This action cannot be undone and will permanently delete all your snippets and data.")) {
+    setShowDeleteConfirm(true);
+    setDeleteConfirmText("");
+  };
+
+  const handleDeleteConfirm = async () => {
+    if (deleteConfirmText !== "DELETE") {
+      setAlertMessage("Please type 'DELETE' to confirm account deletion.");
       return;
     }
 
-    if (!window.confirm("This is your final warning! Are you absolutely sure you want to permanently delete your account?")) {
-      return;
-    }
-
+    setShowDeleteConfirm(false);
     setLoading(true);
     try {
       const token = localStorage.getItem("authToken");
@@ -319,7 +324,6 @@ function Settings() {
         localStorage.removeItem("authToken");
         localStorage.removeItem("userPreferences");
         
-        // Show success message briefly then redirect
         setSuccessMessage("✅ Account deleted successfully. You will be redirected to the login page.");
         
         setTimeout(() => {
@@ -334,6 +338,11 @@ function Settings() {
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleDeleteCancel = () => {
+    setShowDeleteConfirm(false);
+    setDeleteConfirmText("");
   };
 
   return (
@@ -580,6 +589,59 @@ function Settings() {
                 setAlertMessage("");
               }} 
             />
+          </div>
+        )}
+
+        {showDeleteConfirm && (
+          <div className="modal-overlay">
+            <div className="modal-container delete-confirm-modal">
+              <div className="modal-header">
+                <h2>🚨 Delete Account</h2>
+              </div>
+              
+              <div className="modal-body">
+                <p><strong>This action cannot be undone!</strong></p>
+                <div className="warning-list">
+                  <p><strong>This will permanently:</strong></p>
+                  <ul>
+                    <li>Delete your account</li>
+                    <li>Delete all your code snippets</li>
+                    <li>Remove all your data</li>
+                    <li>Log you out of all devices</li>
+                  </ul>
+                </div>
+                
+                <div className="confirmation-input-section">
+                  <p>To confirm, type <strong>DELETE</strong> in the box below:</p>
+                  <input
+                    type="text"
+                    className="delete-confirmation-input"
+                    placeholder="Type DELETE to confirm"
+                    value={deleteConfirmText}
+                    onChange={(e) => setDeleteConfirmText(e.target.value)}
+                    disabled={loading}
+                    autoFocus
+                  />
+                </div>
+              </div>
+              
+              <div className="modal-actions">
+                <button 
+                  className="btn btn-secondary" 
+                  onClick={handleDeleteCancel}
+                  disabled={loading}
+                >
+                  Cancel
+                </button>
+                <button 
+                  className="btn btn-danger" 
+                  onClick={handleDeleteConfirm}
+                  disabled={loading || deleteConfirmText !== "DELETE"}
+                >
+                  {loading ? 'Deleting...' : 'Delete Account'}
+                </button>
+              </div>
+            </div>
           </div>
         )}
       </div>
