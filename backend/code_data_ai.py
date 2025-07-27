@@ -38,7 +38,7 @@ class CodeDataAI:
         return await asyncio.to_thread(self.run_prompt, prompt, user_code)
 
     async def get_language(self, user_code: str):
-        prompt = "In one word, tell me what programming language the user is using. Do not deviate."
+        prompt = "In one word, tell me what programming language the user is using. Do not deviate. The available languages are: python, javascript, html, css, java."
         return await asyncio.to_thread(self.run_prompt, prompt, user_code)
 
     async def get_tags(self, user_code: str):

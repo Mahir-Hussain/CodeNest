@@ -4,10 +4,7 @@ import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { prism } from 'react-syntax-highlighter/dist/esm/styles/prism';
 import './css/Snippetview.css';
 import Alert from './services/Alert';
-import pythonIcon from '../assets/python.svg'; 
-import javascriptIcon from '../assets/javascript.svg';
-import htmlIcon from '../assets/html.svg';
-import cssIcon from '../assets/css.svg';
+import { getLanguage, getLanguageIcon, copyToClipboard } from './services/languageUtils';
 
 function SnippetView() {
   const { snippetId } = useParams();
@@ -22,36 +19,6 @@ function SnippetView() {
       navigate('/snippets');
     } else {
       navigate('/');
-    }
-  };
-
-  const getLanguage = (language) => {
-    const languageMap = {
-      'javascript': 'javascript',
-      'python': 'python',
-      'html': 'markup',
-      'css': 'css'
-    };
-    return languageMap[language?.toLowerCase()] || 'text';
-  };
-
-  const getLanguageIcon = (language) => {
-    const iconMap = {
-      "python": <img src={pythonIcon} alt="Python" className="language-icon" />,
-      "javascript": <img src={javascriptIcon} alt="JavaScript" className="language-icon" />,
-      "html": <img src={htmlIcon} alt="HTML" className="language-icon" />,
-      "css": <img src={cssIcon} alt="CSS" className="language-icon" />
-    };
-    return iconMap[language?.toLowerCase()] || <span className="text-icon">TXT</span>;
-  };
-
-  const copyToClipboard = async (content) => {
-    try {
-      await navigator.clipboard.writeText(content);
-      setAlertMessage("Snippet copied to clipboard!");
-    } catch (error) {
-      console.error("Failed to copy to clipboard:", error);
-      setAlertMessage("Failed to copy to clipboard.");
     }
   };
 
@@ -203,7 +170,7 @@ function SnippetView() {
         </SyntaxHighlighter>
         <div className="card-footer">
           <div className="card-actions">
-            <span className="action-icon" title="Copy to clipboard" onClick={() => copyToClipboard(snippet.content)}>📋</span>
+            <span className="action-icon" title="Copy to clipboard" onClick={() => copyToClipboard(snippet.content, setAlertMessage)}>📋</span>
           </div>
         </div>
       </div>

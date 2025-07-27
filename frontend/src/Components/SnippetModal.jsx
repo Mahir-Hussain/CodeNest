@@ -11,6 +11,7 @@
  */
 
 import { useState, useEffect } from 'react';
+import { LANGUAGE_OPTIONS } from './services/languageUtils';
 
 const SnippetModal = ({isOpen, onClose, onSubmit, snippet = null}) => {
   const isEditing = snippet !== null;
@@ -111,11 +112,11 @@ const SnippetModal = ({isOpen, onClose, onSubmit, snippet = null}) => {
                 onChange={(e) => setLanguage(e.target.value)}
                 required
               >
-                <option value="">Select a language</option>
-                <option value="python">Python</option>
-                <option value="javascript">JavaScript</option>
-                <option value="html">HTML</option>
-                <option value="css">CSS</option>
+                {LANGUAGE_OPTIONS.map(option => (
+                  <option key={option.value} value={option.value}>
+                    {option.label}
+                  </option>
+                ))}
               </select>
             </div>
 

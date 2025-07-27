@@ -2,15 +2,13 @@ import { useState, useEffect } from 'react';
 import { Navigate, Link } from 'react-router-dom';
 import { FaUserCircle } from "react-icons/fa";
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
-import { tomorrow, prism, materialLight, oneLight, vs } from 'react-syntax-highlighter/dist/esm/styles/prism';
+import { prism } from 'react-syntax-highlighter/dist/esm/styles/prism';
 import './css/Snippets.css';
 import Alert from './services/Alert';
 import SnippetModal from './SnippetModal';
-import pythonIcon from '../assets/python.svg'; 
-import javascriptIcon from '../assets/javascript.svg';
-import htmlIcon from '../assets/html.svg';
-import cssIcon from '../assets/css.svg';
 import handleTokenExpiry from './services/utils'; 
+import { getLanguage, getLanguageIcon, getLanguageDisplayName, copyToClipboard } from './services/languageUtils';
+
 
 export default function Snippets() {
   const token = localStorage.getItem("authToken");
@@ -31,26 +29,6 @@ export default function Snippets() {
   const [sortOrder, setSortOrder] = useState('desc'); 
   const API_URL = import.meta.env.VITE_API_URL;
   
-  const getLanguage = (language) => {
-    const languageMap = {
-      'javascript': 'javascript',
-      'python': 'python',
-      'html': 'markup',
-      'css': 'css'
-    };
-    return languageMap[language?.toLowerCase()] || 'text';
-  };
-
-  const getLanguageIcon = (language) => {
-    const iconMap = {
-      "python": <img src={pythonIcon} alt="Python" className="language-icon" />,
-      "javascript": <img src={javascriptIcon} alt="JavaScript" className="language-icon" />,
-      "html": <img src={htmlIcon} alt="HTML" className="language-icon" />,
-      "css": <img src={cssIcon} alt="CSS" className="language-icon" />
-    };
-    return iconMap[language?.toLowerCase()] || <span className="text-icon">TXT</span>;
-  };
-
   const snippetSubmit = async (snippetData) => {
     try {
       const response = await fetch(`${API_URL}/create_snippet`, {
@@ -405,16 +383,6 @@ export default function Snippets() {
 
   if (loading) return <div className="loading">Loading snippets…, This may take some time if the server is waking up.</div>;
 
-  const copyToClipboard = async (content) => {
-    try {
-      await navigator.clipboard.writeText(content);
-      setAlertMessage("Snippet copied to clipboard!");
-    } catch (error) {
-      console.error("Failed to copy to clipboard:", error);
-      setAlertMessage("Failed to copy to clipboard.");
-    }
-  };
-
   const grabLink = async (snippetId) => {
     try {
       const publicLink = `${window.location.origin}/snippet_view/${snippetId}`;
@@ -544,7 +512,7 @@ export default function Snippets() {
                   checked={selectedLanguages.includes(language)}
                   onChange={(e) => handleLanguageChange(language, e.target.checked)}
                 /> 
-                {language.charAt(0).toUpperCase() + language.slice(1)}
+                {getLanguageDisplayName(language)}
               </label>
             ))}
           </div>
@@ -682,7 +650,7 @@ export default function Snippets() {
                 </SyntaxHighlighter>
                 <div className="card-footer">
                   <div className="card-actions">
-                    <span className="action-icon" title="Copy to clipboard" onClick={() => copyToClipboard(s.content)}>📋</span>
+                    <span className="action-icon" title="Copy to clipboard" onClick={() => copyToClipboard(s.content, setAlertMessage)}>📋</span>
                     {s.is_public && (
                       <span className="action-icon" title="Link" onClick={() => grabLink(s.id)}>🔗</span>
                     )}
