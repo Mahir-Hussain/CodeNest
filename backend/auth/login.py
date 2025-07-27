@@ -58,11 +58,16 @@ class LoginSystem(Database):
             dict: Success status and message or error.
         """
         try:
+            # First, delete all code snippets belonging to the user
+            self.cursor.execute("DELETE FROM code_snippets WHERE user_id = %s", (user_id,))
+            
+            # Then delete the user
             self.cursor.execute("DELETE FROM users WHERE id = %s", (user_id,))
             if self.cursor.rowcount > 0:
                 self.connection.commit()
                 return {"success": True, "message": "User deleted successfully!"}
             else:
+                self.connection.rollback()
                 return {"success": False, "error": "User not found"}
         except psycopg2.Error as error:
             self.connection.rollback()

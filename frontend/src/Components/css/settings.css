@@ -554,6 +554,88 @@
   color: var(--subtext-dark, #8b949e) !important;
 }
 
+/* Danger Zone Section */
+.danger-zone {
+  border: 1px solid #d73a49;
+  border-radius: 6px;
+  background-color: #ffeef0;
+}
+
+.dark-mode .danger-zone {
+  border-color: #f85149;
+  background-color: #0c0d0e;
+}
+
+.danger-zone .section-header {
+  background-color: transparent;
+  border-bottom: 1px solid #d73a49;
+}
+
+.dark-mode .danger-zone .section-header {
+  border-bottom-color: #f85149;
+}
+
+.danger-zone .section-header h2 {
+  color: #d73a49;
+}
+
+.dark-mode .danger-zone .section-header h2 {
+  color: #f85149;
+}
+
+.danger-action {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 16px 0;
+}
+
+.danger-info h3 {
+  margin: 0 0 4px 0;
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text-light, #24292f);
+}
+
+.dark-mode .danger-info h3 {
+  color: var(--text-dark, #f0f6fc);
+}
+
+.danger-info p {
+  margin: 0;
+  font-size: 14px;
+  color: var(--subtext-light, #656d76);
+  line-height: 1.4;
+}
+
+.dark-mode .danger-info p {
+  color: var(--subtext-dark, #8b949e);
+}
+
+.btn-danger {
+  background-color: #d73a49;
+  color: white;
+  border: 1px solid #d73a49;
+  padding: 8px 16px;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  white-space: nowrap;
+}
+
+.btn-danger:hover:not(:disabled) {
+  background-color: #b31d28;
+  border-color: #b31d28;
+}
+
+.btn-danger:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
 /* Responsive Design */
 @media (max-width: 768px) {
   .settings-page {
@@ -584,5 +666,11 @@
   
   .form-actions {
     flex-direction: column;
+  }
+
+  .danger-action {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
   }
 }

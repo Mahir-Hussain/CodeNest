@@ -281,6 +281,61 @@ function Settings() {
     }
   };
 
+  const handleDeleteAccount = async () => {
+    if (!window.confirm("Are you sure you want to delete your account? This action cannot be undone and will permanently delete all your snippets and data.")) {
+      return;
+    }
+
+    if (!window.confirm("This is your final warning! Are you absolutely sure you want to permanently delete your account?")) {
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const token = localStorage.getItem("authToken");
+      const response = await fetch(`${API_URL}/delete_user`, {
+        method: "DELETE",
+        headers: {
+          "Authorization": `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      });
+
+      const result = await response.json();
+
+      if (response.status === 401) {
+        handleTokenExpiry();
+        return;
+      }
+
+      if (response.status === 429) {
+        const retryAfter = result.detail?.retry_after || 60;
+        handleRateLimit(retryAfter, "deleting your account");
+        return;
+      }
+
+      if (response.ok) {
+        // Clear all user data from localStorage
+        localStorage.removeItem("authToken");
+        localStorage.removeItem("userPreferences");
+        
+        // Show success message briefly then redirect
+        setSuccessMessage("✅ Account deleted successfully. You will be redirected to the login page.");
+        
+        setTimeout(() => {
+          navigate("/", { replace: true });
+        }, 2000);
+      } else {
+        setAlertMessage(result.detail || "Failed to delete account. Please try again.");
+      }
+    } catch (error) {
+      console.error("Account deletion error:", error);
+      setAlertMessage("Failed to delete account. Please try again.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <div className="settings-page">
       {/* Header/Navbar */}
@@ -479,6 +534,31 @@ function Settings() {
                   }} className="ai-description">
                     When enabled, AI will help analyze and enhance your code snippets with automatic language detection, tags, and suggestions.
                   </p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Danger Zone Section */}
+          <div className="settings-section danger-zone">
+            <div className="section-header">
+              <h2>Danger Zone</h2>
+              <p>Irreversible and destructive actions.</p>
+            </div>
+            
+            <div className="section-body">
+              <div className="form-row">
+                <div className="danger-action">
+                  <button 
+                    className="btn btn-danger"
+                    onClick={handleDeleteAccount}
+                    disabled={loading || isRateLimited}
+                  >
+                    Delete Account
+                  </button>
+                  <div className="danger-info">
+                    <p>Permanently delete your account and all associated data. This action cannot be undone.</p>
+                  </div>
                 </div>
               </div>
             </div>
