@@ -1,4 +1,4 @@
-# 🪹 CodeNest – A Code-Sharing Platform
+# 🪹 CodeNest – A Code Snippet Manager
 
 **CodeNest** is a web app that lets users securely save, manage, and share their code snippets across devices. Built with **FastAPI** and **React**, it provides user authentication, encryption, and AI-assisted functionality.
 
