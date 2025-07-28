@@ -4,6 +4,9 @@ import javascriptIcon from '../../assets/javascript.svg';
 import htmlIcon from '../../assets/html.svg';
 import cssIcon from '../../assets/css.svg';
 import javaIcon from '../../assets/java.svg';
+import csharpIcon from '../../assets/csharp.svg';
+import cppIcon from '../../assets/cpp.svg';
+import cIcon from '../../assets/c.svg';
 
 /**
  * Maps language names to their corresponding syntax highlighter language identifiers
@@ -16,7 +19,11 @@ export const getLanguage = (language) => {
     'python': 'python',
     'html': 'markup',
     'css': 'css',
-    'java': 'java'
+    'java': 'java',
+    'c++': 'cpp',
+    'c#': 'csharp',
+    'c': 'c',
+    'cpp': 'cpp'
   };
   return languageMap[language?.toLowerCase()] || 'text';
 };
@@ -32,7 +39,10 @@ export const getLanguageIcon = (language) => {
     "javascript": <img src={javascriptIcon} alt="JavaScript" className="language-icon" />,
     "html": <img src={htmlIcon} alt="HTML" className="language-icon" />,
     "css": <img src={cssIcon} alt="CSS" className="language-icon" />,
-    "java": <img src={javaIcon} alt="Java" className="language-icon" />
+    "java": <img src={javaIcon} alt="Java" className="language-icon" />,
+    "c++": <img src={cppIcon} alt="C++" className="language-icon" />,
+    "c#": <img src={csharpIcon} alt="C#" className="language-icon" />,
+    "c": <img src={cIcon} alt="C" className="language-icon" />,
   };
   return iconMap[language?.toLowerCase()] || <span className="text-icon">TXT</span>;
 };
@@ -48,7 +58,11 @@ export const getLanguageDisplayName = (language) => {
     'html': 'HTML', 
     'javascript': 'JavaScript',
     'python': 'Python',
-    'java': 'Java'
+    'java': 'Java',
+    'c++': 'C++',
+    'c#': 'C#',
+    'c': 'C',
+    'cpp': 'C++'
   };
   return displayNames[language?.toLowerCase()] || 
          (language ? language.charAt(0).toUpperCase() + language.slice(1) : '');
@@ -78,5 +92,8 @@ export const LANGUAGE_OPTIONS = [
   { value: "javascript", label: "JavaScript" },
   { value: "html", label: "HTML" },
   { value: "css", label: "CSS" },
-  { value: "java", label: "Java" }
+  { value: "java", label: "Java" },
+  { value: "c", label: "C" },
+  { value: "c++", label: "C++" },
+  { value: "c#", label: "C#" }
 ];
