@@ -24,7 +24,7 @@ body {
 }
 
 .sidebar.collapsed {
-  width: 30px;
+  width: 70px;
   overflow: hidden;
 }
 
