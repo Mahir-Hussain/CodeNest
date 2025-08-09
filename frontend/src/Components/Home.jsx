@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { tomorrow } from 'react-syntax-highlighter/dist/esm/styles/prism';
@@ -8,15 +8,21 @@ const API_URL = import.meta.env.VITE_API_URL;
 
 export default function Home() {
   const navigate = useNavigate();
+  
   // Wake up server function to ensure backend is ready before login/signup
   const wakeUpServer = async () => {
     try {
       await fetch(`${API_URL}/`, { method: 'GET' });
+      console.log('Server wake-up successful');
     } catch (error) {
       console.error('Error waking up server:', error);
     }
   };
-  wakeUpServer();
+
+  // Call wakeUpServer only once when component mounts
+  useEffect(() => {
+    wakeUpServer();
+  }, []);
 
   return (
     <div className="home-page">
