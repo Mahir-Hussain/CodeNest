@@ -258,6 +258,12 @@ export default function Home() {
 
       <footer className="home-footer">
         <p>© {new Date().getFullYear()} CodeNest. <a href="https://github.com/Mahir-Hussain/CodeNest" target="_blank" rel="noopener noreferrer">GitHub Repo</a></p>
+        <div className="footer-links">
+          <span>Developed by: </span>
+          <a href="https://linkedin.com/in/mahirhussainn" target="_blank" rel="noopener noreferrer">Mahir Hussain</a>
+          <span>&</span>
+          <a href="https://www.linkedin.com/in/pandeysamyam/" target="_blank" rel="noopener noreferrer">Samyam</a>
+        </div>
       </footer>
     </div>
   );
