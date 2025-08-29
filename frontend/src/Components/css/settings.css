@@ -1,3 +1,13 @@
+.settings-input {
+  flex: 1;
+  padding: 8px 12px;
+  font-size: 14px;
+  border: 1px solid #d1d9e0;
+  border-radius: 6px;
+  background-color: #ffffff;
+  color: #24292f;
+  transition: all 0.2s ease;
+}
 .settings-page {
   min-height: 100vh;
   background-color: #ffffff;
@@ -168,9 +178,9 @@
 }
 
 /* Input fields */
-.form-row input[type="email"],
+.form-row input[type="username"],
 .form-row input[type="password"],
-.input-group input[type="email"] {
+.input-group input[type="username"] {
   flex: 1;
   padding: 8px 12px;
   font-size: 14px;
