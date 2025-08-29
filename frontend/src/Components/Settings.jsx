@@ -110,7 +110,7 @@ function Settings() {
     setLoading(true);
     try {
       const token = localStorage.getItem("authToken");
-      const response = await fetch(`${API_URL}/change_email`, {
+      const response = await fetch(`${API_URL}/change_username`, {
         method: "PUT",
         headers: {
           "Authorization": `Bearer ${token}`,
