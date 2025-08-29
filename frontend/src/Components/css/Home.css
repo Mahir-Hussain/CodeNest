@@ -192,15 +192,17 @@
 
 .snippet-showcase {
   background-color: var(--input-bg-light);
-  padding: 3rem;
+  padding: 1rem 2rem 1rem 2rem;
   border-radius: 12px;
   border: 1px solid var(--border-light);
+  margin-top: -0.5rem;
 }
 
 .snippet-showcase h3 {
   font-size: 2.5rem;
   font-weight: bold;
-  margin-bottom: 1.5rem;
+  margin-top: 0.7rem;
+  margin-bottom: 1.2rem;
   color: var(--text-primary);
 }
 .app.dark .snippet-showcase {
@@ -211,15 +213,17 @@
 .showcase-container {
   display: grid;
   grid-template-columns: 1fr 1.5fr;
-  gap: 4rem;
+  gap: 5rem;
   align-items: start;
-  margin-top: 2rem;
+  margin-top: 0.5rem;
 }
 
 .showcase-left h4 {
   font-size: 1.5rem;
+  margin-top: 0.2rem;
   margin-bottom: 1.5rem;
   color: var(--text-primary);
+  margin-top: 0.2rem;
 }
 
 .feature-list {
@@ -420,7 +424,7 @@
 
 .feature-icon-large {
   font-size: 3rem;
-  margin-bottom: 1rem;
+  margin-bottom: 0.1rem;
 }
 
 .feature-card h4 {
@@ -447,7 +451,7 @@
 .stats h3 {
   color: white;
   text-align: center;
-  margin-bottom: 2rem;
+  margin-bottom: 1rem;
 }
 
 .stats-grid {
