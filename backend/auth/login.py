@@ -30,7 +30,7 @@ class LoginSystem(Database):
         Create a new user in the database.
 
         Requires:
-            email (str): The user's email address.
+            username (str): The user's username.
             password (str): The user's plain text password.
 
         Returns:
@@ -38,7 +38,7 @@ class LoginSystem(Database):
         """
         try:
             self.cursor.execute(
-                "INSERT INTO users (email, password) VALUES (%s, %s)",
+                "INSERT INTO users (username, password) VALUES (%s, %s)",
                 (username, self.hash_password(password)),
             )
             self.connection.commit()
@@ -115,10 +115,10 @@ class LoginSystem(Database):
 
     def authenticate(self, username, password):
         """
-        Authenticate a user by email and password.
+        Authenticate a user by username and password.
 
         Requires:
-            email (str): The user's email address.
+            username (str): The user's username.
             password (str): The user's plain text password.
 
         Returns:
@@ -126,7 +126,7 @@ class LoginSystem(Database):
         """
         try:
             self.cursor.execute(
-                "SELECT id, password FROM users WHERE email = %s", (username,)
+                "SELECT id, password FROM users WHERE username = %s", (username,)
             )
             result = self.cursor.fetchone()
             if result:
@@ -168,14 +168,14 @@ class LoginSystem(Database):
         if token_result["success"]:
             try:
                 self.cursor.execute(
-                    "SELECT id, email FROM users WHERE id = %s",
+                    "SELECT id, username FROM users WHERE id = %s",
                     (token_result["user_id"],),
                 )
                 user_data = self.cursor.fetchone()
                 if user_data:
                     return {
                         "success": True,
-                        "user": {"id": user_data[0], "email": user_data[1]},
+                        "user": {"id": user_data[0], "username": user_data[1]},
                     }
                 else:
                     return {"success": False, "error": "User not found"}
@@ -192,7 +192,7 @@ class LoginSystem(Database):
 
         Requires:
             user_id (int): The user's ID.
-            email (str, optional): The new email address.
+            username (str, optional): The new username.
             password (str, optional): The new plain text password (will be hashed).
             dark_mode (bool, optional): The dark mode preference.
             use_ai (bool, optional): The AI usage status.
@@ -205,7 +205,7 @@ class LoginSystem(Database):
             values = []
 
             if username is not None:
-                updates.append("email = %s")
+                updates.append("username = %s")
                 values.append(username)
             if password is not None:
                 updates.append("password = %s")
@@ -252,16 +252,16 @@ class LoginSystem(Database):
             dict: Success status and message or error.
         """
         try:
-            # First get the user's email to verify current password
+            # First get the user's username to verify current password
             self.cursor.execute(
-                "SELECT email, password FROM users WHERE id = %s", (user_id,)
+                "SELECT username, password FROM users WHERE id = %s", (user_id,)
             )
             result = self.cursor.fetchone()
 
             if not result:
                 return {"success": False, "error": "User not found"}
 
-            user_email, stored_password = result
+            user_username, stored_password = result
 
             # Verify current password
             if stored_password != self.hash_password(current_password):
