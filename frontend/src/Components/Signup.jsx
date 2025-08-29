@@ -101,7 +101,6 @@ function SignUp() {
       <div className="signupContainer">
         <h1>Sign Up</h1>
         <form className="form" onSubmit={signUp}>
-          <input type="email" placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} required />
          <input type="text" placeholder="Username" value={username} onChange={(e) => setUsername(e.target.value)} required />
           
           <div style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
