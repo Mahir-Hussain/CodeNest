@@ -9,7 +9,7 @@ function Settings() {
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const [email, setEmail] = useState("");
+  const [username, setUsername] = useState("");
   const [aiUse, setAiUse] = useState(false);
   const [alertMessage, setAlertMessage] = useState("");
   const [loading, setLoading] = useState(false);
@@ -100,23 +100,23 @@ function Settings() {
     }
   };
 
-  const handleUpdateEmail = async (e) => {
+  const handleUpdateUsername = async (e) => {
     e.preventDefault();
-    if (!email.trim()) {
-      setAlertMessage("Email cannot be empty");
+    if (!username.trim()) {
+      setAlertMessage("Username cannot be empty");
       return;
     }
     
     setLoading(true);
     try {
       const token = localStorage.getItem("authToken");
-      const response = await fetch(`${API_URL}/change_email`, {
+      const response = await fetch(`${API_URL}/change_username`, {
         method: "PUT",
         headers: {
           "Authorization": `Bearer ${token}`,
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ new_email: email }),
+        body: JSON.stringify({ new_username: username }),
       });
 
       const result = await response.json();
@@ -128,19 +128,19 @@ function Settings() {
 
       if (response.status === 429) {
         const retryAfter = result.detail?.retry_after || 60;
-        handleRateLimit(retryAfter, "updating your email");
+        handleRateLimit(retryAfter, "updating your username");
         return;
       }
 
       if (response.ok) {
-        setSuccessMessage("✅ Email updated successfully!");
-        setEmail("");
+        setSuccessMessage("✅ Username updated successfully!");
+        setUsername("");
       } else {
-        setAlertMessage(result.detail || "Failed to update email. Please try again.");
+        setAlertMessage(result.detail || "Failed to update username. Please try again.");
       }
     } catch (error) {
-      console.error("Email update error:", error);
-      setAlertMessage("Failed to update email. Please try again.");
+      console.error("Username update error:", error);
+      setAlertMessage("Failed to update username. Please try again.");
     } finally {
       setLoading(false);
     }
@@ -373,27 +373,28 @@ function Settings() {
           <div className="settings-section">
             <div className="section-header">
               <h2>Account settings</h2>
-              <p>Manage your email and password. Currently there is no way to reset your password if you forget it.</p>
+              <p>Manage your username and password. Currently there is no way to reset your password if you forget it.</p>
             </div>
             
             <div className="section-body">
-              {/* Email Update Form */}
-              <form onSubmit={handleUpdateEmail} className="settings-form">
+              {/* Username Update Form */}
+              <form onSubmit={handleUpdateUsername} className="settings-form">
                 <div className="form-row">
-                  <label htmlFor="email">Email</label>
+                  <label htmlFor="username">Username</label>
                   <div className="input-group">
-                    <input
-                      type="email"
-                      id="email"
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
-                      placeholder="Enter your email address"
-                      disabled={loading || isRateLimited}
+                      <input
+                        type="text"
+                        id="username"
+                        className="settings-input"
+                        value={username}
+                        onChange={(e) => setUsername(e.target.value)}
+                        placeholder="Enter your new username"
+                        disabled={loading || isRateLimited}
                     />
                     <button 
                       type="submit" 
                       className="btn btn-sm"
-                      disabled={loading || isRateLimited || !email.trim()}
+                      disabled={loading || isRateLimited || !username.trim()}
                     >
                       {loading ? 'Updating...' : 'Update'}
                     </button>
@@ -410,37 +411,40 @@ function Settings() {
                 
                 <div className="form-row">
                   <label htmlFor="current-password">Current password</label>
-                  <input
-                    type="password"
-                    id="current-password"
-                    value={currentPassword}
-                    onChange={(e) => setCurrentPassword(e.target.value)}
-                    placeholder="Enter your current password"
-                    disabled={loading || isRateLimited}
+                    <input
+                      type="password"
+                      id="current-password"
+                      className="settings-input"
+                      value={currentPassword}
+                      onChange={(e) => setCurrentPassword(e.target.value)}
+                      placeholder="Enter your current password"
+                      disabled={loading || isRateLimited}
                   />
                 </div>
                 
                 <div className="form-row">
                   <label htmlFor="new-password">New password</label>
-                  <input
-                    type="password"
-                    id="new-password"
-                    value={newPassword}
-                    onChange={(e) => setNewPassword(e.target.value)}
-                    placeholder="Enter your new password"
-                    disabled={loading || isRateLimited}
+                    <input
+                      type="password"
+                      id="new-password"
+                      className="settings-input"
+                      value={newPassword}
+                      onChange={(e) => setNewPassword(e.target.value)}
+                      placeholder="Enter your new password"
+                      disabled={loading || isRateLimited}
                   />
                 </div>
                 
                 <div className="form-row">
                   <label htmlFor="confirm-password">Confirm new password</label>
-                  <input
-                    type="password"
-                    id="confirm-password"
-                    value={confirmPassword}
-                    onChange={(e) => setConfirmPassword(e.target.value)}
-                    placeholder="Confirm your new password"
-                    disabled={loading || isRateLimited}
+                    <input
+                      type="password"
+                      id="confirm-password"
+                      className="settings-input"
+                      value={confirmPassword}
+                      onChange={(e) => setConfirmPassword(e.target.value)}
+                      placeholder="Confirm your new password"
+                      disabled={loading || isRateLimited}
                   />
                 </div>
                 

@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import Alert from './services/Alert';
 
 function Login(){
-  const [email, setEmail] = useState("");
+  const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [alertMessage, setAlertMessage] = useState("");
@@ -30,7 +30,7 @@ async function submitDetails(e) {
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ email: email.trim(), password: password.trim() }),
+  body: JSON.stringify({ username: username.trim(), password: password.trim() }),
     });
 
     const result = await response.json();
@@ -104,10 +104,10 @@ return (
 
     <form className="form" onSubmit={submitDetails}>
       <input
-        type="email"
-        placeholder="Email"
-        value={email}
-        onChange={(e) => setEmail(e.target.value)}
+  type="text"
+  placeholder="Username"
+  value={username}
+  onChange={(e) => setUsername(e.target.value)}
         required
       />
 

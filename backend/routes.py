@@ -13,7 +13,7 @@ from dotenv import load_dotenv
 
 # Models for request bodies
 class LoginData(BaseModel):
-    email: str
+    username: str
     password: str
 
 
@@ -40,8 +40,8 @@ class ChangePasswordData(BaseModel):
     new_password: str
 
 
-class ChangeEmailData(BaseModel):
-    new_email: str
+class ChangeUsernameData(BaseModel):
+    new_username: str
 
 
 class ChangeDarkModeData(BaseModel):
@@ -110,12 +110,12 @@ async def login(request: Request, credentials: LoginData):
     Authenticate a user and return a JWT token if successful.
 
     Requires:
-        credentials (LoginData): The user's email and password.
+        credentials (LoginData): The user's username and password.
 
     Returns:
         dict: Authentication result, JWT token, and user ID if successful.
     """
-    result = login_system.authenticate(credentials.email, credentials.password)
+    result = login_system.authenticate(credentials.username, credentials.password)
     if result.get("success"):
         return result
     else:
@@ -131,12 +131,12 @@ async def create_user(request: Request, credentials: LoginData):
     Create a new user account.
 
     Requires:
-        credentials (LoginData): The user's email and password.
+        credentials (LoginData): The user's username and password.
 
     Returns:
         dict: Success message if user is created, otherwise raises HTTPException.
     """
-    result = login_system.create_user(credentials.email, credentials.password)
+    result = login_system.create_user(credentials.username, credentials.password)
     if result.get("success"):
         return {"message": "User created successfully"}
     else:
@@ -224,10 +224,10 @@ async def get_ai_use(user_id: int = Depends(get_current_user_id)):
 @rate_limit(requests_per_minute=5)  # Strict limit for account deletion
 async def delete_user(user_id: int = Depends(get_current_user_id)):
     """
-    Delete a user account by email.
+    Delete a user account by username.
 
     Requires:
-        email (str): The email address of the user to delete.
+        username (str): The username of the user to delete.
         user_id (int): Authenticated user ID.
 
     Returns:
@@ -268,27 +268,27 @@ async def change_password(
         )
 
 
-@app.put("/change_email")
-@rate_limit(requests_per_minute=10)  # Moderate limit for email changes
-async def change_email(
-    data: ChangeEmailData, user_id: int = Depends(get_current_user_id)
+@app.put("/change_username")
+@rate_limit(requests_per_minute=10)  # Moderate limit for username changes
+async def change_username(
+    data: ChangeUsernameData, user_id: int = Depends(get_current_user_id)
 ):
     """
-    Change the email for the authenticated user.
+    Change the username for the authenticated user.
 
     Requires:
-        data (ChangeEmailData): New email address.
+        data (ChangeUsernameData): New username.
         user_id (int): Obtained from the JWT token.
 
     Returns:
-        dict: Success message if email is changed, otherwise raises HTTPException.
+        dict: Success message if username is changed, otherwise raises HTTPException.
     """
-    result = login_system.update_user(user_id, email=data.new_email)
+    result = login_system.update_user(user_id, username=data.new_username)
     if result.get("success"):
-        return {"message": "Email changed successfully"}
+        return {"message": "Username changed successfully"}
     else:
         raise HTTPException(
-            status_code=400, detail=result.get("error", "Failed to change email")
+            status_code=400, detail=result.get("error", "Failed to change username")
         )
 
 

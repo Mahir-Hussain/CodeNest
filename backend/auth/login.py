@@ -25,12 +25,12 @@ class LoginSystem(Database):
         """
         return hashlib.sha256(password.encode()).hexdigest()
 
-    def create_user(self, email, password):
+    def create_user(self, username, password):
         """
         Create a new user in the database.
 
         Requires:
-            email (str): The user's email address.
+            username (str): The user's username.
             password (str): The user's plain text password.
 
         Returns:
@@ -38,13 +38,15 @@ class LoginSystem(Database):
         """
         try:
             self.cursor.execute(
-                "INSERT INTO users (email, password) VALUES (%s, %s)",
-                (email, self.hash_password(password)),
+                "INSERT INTO users (username, password) VALUES (%s, %s)",
+                (username, self.hash_password(password)),
             )
             self.connection.commit()
             return {"success": True, "message": "User created successfully!"}
         except psycopg2.IntegrityError as error:
             self.connection.rollback()
+            if "users_username_key" in str(error):
+                return {"success": False, "error": "Username already exists"}
             return {"success": False, "error": str(error)}
 
     def delete_user(self, user_id):
@@ -113,12 +115,12 @@ class LoginSystem(Database):
         except psycopg2.Error as error:
             return {"success": False, "error": f"Database error: {str(error)}"}
 
-    def authenticate(self, email, password):
+    def authenticate(self, username, password):
         """
-        Authenticate a user by email and password.
+        Authenticate a user by username and password.
 
         Requires:
-            email (str): The user's email address.
+            username (str): The user's username.
             password (str): The user's plain text password.
 
         Returns:
@@ -126,7 +128,7 @@ class LoginSystem(Database):
         """
         try:
             self.cursor.execute(
-                "SELECT id, password FROM users WHERE email = %s", (email,)
+                "SELECT id, password FROM users WHERE username = %s", (username,)
             )
             result = self.cursor.fetchone()
             if result:
@@ -168,14 +170,14 @@ class LoginSystem(Database):
         if token_result["success"]:
             try:
                 self.cursor.execute(
-                    "SELECT id, email FROM users WHERE id = %s",
+                    "SELECT id, username FROM users WHERE id = %s",
                     (token_result["user_id"],),
                 )
                 user_data = self.cursor.fetchone()
                 if user_data:
                     return {
                         "success": True,
-                        "user": {"id": user_data[0], "email": user_data[1]},
+                        "user": {"id": user_data[0], "username": user_data[1]},
                     }
                 else:
                     return {"success": False, "error": "User not found"}
@@ -185,14 +187,14 @@ class LoginSystem(Database):
             return token_result
 
     def update_user(
-        self, user_id, email=None, password=None, dark_mode=None, use_ai=None
+        self, user_id, username=None, password=None, dark_mode=None, use_ai=None
     ):
         """
         Update user information in the database using a single SQL statement.
 
         Requires:
             user_id (int): The user's ID.
-            email (str, optional): The new email address.
+            username (str, optional): The new username.
             password (str, optional): The new plain text password (will be hashed).
             dark_mode (bool, optional): The dark mode preference.
             use_ai (bool, optional): The AI usage status.
@@ -204,9 +206,9 @@ class LoginSystem(Database):
             updates = []
             values = []
 
-            if email is not None:
-                updates.append("email = %s")
-                values.append(email)
+            if username is not None:
+                updates.append("username = %s")
+                values.append(username)
             if password is not None:
                 updates.append("password = %s")
                 values.append(self.hash_password(password))
@@ -231,6 +233,8 @@ class LoginSystem(Database):
                 return {"success": False, "error": "User not found"}
         except psycopg2.IntegrityError as error:
             self.connection.rollback()
+            if "users_username_key" in str(error):
+                return {"success": False, "error": "Username already exists"}
             return {
                 "success": False,
                 "error": f"Database constraint error: {str(error)}",
@@ -252,16 +256,16 @@ class LoginSystem(Database):
             dict: Success status and message or error.
         """
         try:
-            # First get the user's email to verify current password
+            # First get the user's username to verify current password
             self.cursor.execute(
-                "SELECT email, password FROM users WHERE id = %s", (user_id,)
+                "SELECT username, password FROM users WHERE id = %s", (user_id,)
             )
             result = self.cursor.fetchone()
 
             if not result:
                 return {"success": False, "error": "User not found"}
 
-            user_email, stored_password = result
+            user_username, stored_password = result
 
             # Verify current password
             if stored_password != self.hash_password(current_password):
