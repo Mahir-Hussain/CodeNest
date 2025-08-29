@@ -13,7 +13,7 @@ from dotenv import load_dotenv
 
 # Models for request bodies
 class LoginData(BaseModel):
-    email: str
+    username: str
     password: str
 
 
@@ -115,7 +115,7 @@ async def login(request: Request, credentials: LoginData):
     Returns:
         dict: Authentication result, JWT token, and user ID if successful.
     """
-    result = login_system.authenticate(credentials.email, credentials.password)
+    result = login_system.authenticate(credentials.username, credentials.password)
     if result.get("success"):
         return result
     else:
@@ -136,7 +136,7 @@ async def create_user(request: Request, credentials: LoginData):
     Returns:
         dict: Success message if user is created, otherwise raises HTTPException.
     """
-    result = login_system.create_user(credentials.email, credentials.password)
+    result = login_system.create_user(credentials.username, credentials.password)
     if result.get("success"):
         return {"message": "User created successfully"}
     else:
