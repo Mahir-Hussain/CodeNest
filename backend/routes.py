@@ -40,8 +40,8 @@ class ChangePasswordData(BaseModel):
     new_password: str
 
 
-class ChangeEmailData(BaseModel):
-    new_email: str
+class ChangeUsernameData(BaseModel):
+    new_username: str
 
 
 class ChangeDarkModeData(BaseModel):
@@ -268,27 +268,27 @@ async def change_password(
         )
 
 
-@app.put("/change_email")
-@rate_limit(requests_per_minute=10)  # Moderate limit for email changes
-async def change_email(
-    data: ChangeEmailData, user_id: int = Depends(get_current_user_id)
+@app.put("/change_username")
+@rate_limit(requests_per_minute=10)  # Moderate limit for username changes
+async def change_username(
+    data: ChangeUsernameData, user_id: int = Depends(get_current_user_id)
 ):
     """
-    Change the email for the authenticated user.
+    Change the username for the authenticated user.
 
     Requires:
-        data (ChangeEmailData): New email address.
+        data (ChangeUsernameData): New username.
         user_id (int): Obtained from the JWT token.
 
     Returns:
-        dict: Success message if email is changed, otherwise raises HTTPException.
+        dict: Success message if username is changed, otherwise raises HTTPException.
     """
-    result = login_system.update_user(user_id, email=data.new_email)
+    result = login_system.update_user(user_id, username=data.new_username)
     if result.get("success"):
-        return {"message": "Email changed successfully"}
+        return {"message": "Username changed successfully"}
     else:
         raise HTTPException(
-            status_code=400, detail=result.get("error", "Failed to change email")
+            status_code=400, detail=result.get("error", "Failed to change username")
         )
 
 

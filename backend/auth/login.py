@@ -185,7 +185,7 @@ class LoginSystem(Database):
             return token_result
 
     def update_user(
-        self, user_id, email=None, password=None, dark_mode=None, use_ai=None
+        self, user_id, username=None, password=None, dark_mode=None, use_ai=None
     ):
         """
         Update user information in the database using a single SQL statement.
@@ -204,9 +204,9 @@ class LoginSystem(Database):
             updates = []
             values = []
 
-            if email is not None:
+            if username is not None:
                 updates.append("email = %s")
-                values.append(email)
+                values.append(username)
             if password is not None:
                 updates.append("password = %s")
                 values.append(self.hash_password(password))
