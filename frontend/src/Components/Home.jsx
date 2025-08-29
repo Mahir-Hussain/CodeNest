@@ -268,7 +268,7 @@ export default function Home() {
           <span>Developed by: </span>
           <a href="https://linkedin.com/in/mahirhussainn" target="_blank" rel="noopener noreferrer">Mahir Hussain </a>
           <span>&</span>
-          <a href="https://www.linkedin.com/in/pandeysamyam/" target="_blank" rel="noopener noreferrer"> Samyam</a>
+          <a href="https://www.linkedin.com/in/pandeysamyam/" target="_blank" rel="noopener noreferrer"> Samyam Pandey</a>
         </div>
       </footer>
     </div>
