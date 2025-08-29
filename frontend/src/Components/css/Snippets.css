@@ -346,6 +346,32 @@ body {
   align-items: center;
 }
 
+.demo-badge {
+  background: linear-gradient(135deg, #d4af37, #f4d03f);
+  color: white;
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  box-shadow: 0 2px 8px rgba(212, 175, 55, 0.3);
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0% {
+    box-shadow: 0 2px 8px rgba(212, 175, 55, 0.3);
+  }
+  50% {
+    box-shadow: 0 4px 16px rgba(212, 175, 55, 0.6);
+  }
+  100% {
+    box-shadow: 0 2px 8px rgba(212, 175, 55, 0.3);
+  }
+}
+
 .profile-menu {
   position: absolute;
   top: 40px;

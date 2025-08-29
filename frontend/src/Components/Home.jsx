@@ -31,7 +31,10 @@ export default function Home() {
           <img src="/CodeNest.png" alt="CodeNest" className="logo-image" />
           <h1 className="logo">CodeNest</h1>
         </div>
-        <button className="login-button" onClick={() => navigate('/login')}>Login</button>
+        <div className="header-buttons">
+          <button className="demo-button" onClick={() => navigate('/demo')}>Demo</button>
+          <button className="login-button" onClick={() => navigate('/login')}>Login</button>
+        </div>
       </header>
 
       <section className="hero">
@@ -229,6 +232,9 @@ export default function Home() {
               <button className="cta-button primary" onClick={() => navigate('/signup')}>
                 Get Started
               </button>
+              <button className="cta-button demo" onClick={() => navigate('/demo')}>
+                Try Demo
+              </button>
               <button className="cta-button secondary" onClick={() => navigate('/login')}>
                 Sign In
               </button>
@@ -260,9 +266,9 @@ export default function Home() {
         <p>© {new Date().getFullYear()} CodeNest. <a href="https://github.com/Mahir-Hussain/CodeNest" target="_blank" rel="noopener noreferrer">GitHub Repo</a></p>
         <div className="footer-links">
           <span>Developed by: </span>
-          <a href="https://linkedin.com/in/mahirhussainn" target="_blank" rel="noopener noreferrer">Mahir Hussain</a>
+          <a href="https://linkedin.com/in/mahirhussainn" target="_blank" rel="noopener noreferrer">Mahir Hussain </a>
           <span>&</span>
-          <a href="https://www.linkedin.com/in/pandeysamyam/" target="_blank" rel="noopener noreferrer">Samyam</a>
+          <a href="https://www.linkedin.com/in/pandeysamyam/" target="_blank" rel="noopener noreferrer"> Samyam</a>
         </div>
       </footer>
     </div>
