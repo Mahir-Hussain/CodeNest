@@ -45,6 +45,8 @@ class LoginSystem(Database):
             return {"success": True, "message": "User created successfully!"}
         except psycopg2.IntegrityError as error:
             self.connection.rollback()
+            if "users_username_key" in str(error):
+                return {"success": False, "error": "Username already exists"}
             return {"success": False, "error": str(error)}
 
     def delete_user(self, user_id):
@@ -231,6 +233,8 @@ class LoginSystem(Database):
                 return {"success": False, "error": "User not found"}
         except psycopg2.IntegrityError as error:
             self.connection.rollback()
+            if "users_username_key" in str(error):
+                return {"success": False, "error": "Username already exists"}
             return {
                 "success": False,
                 "error": f"Database constraint error: {str(error)}",
