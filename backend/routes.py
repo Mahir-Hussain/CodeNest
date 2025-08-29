@@ -110,7 +110,7 @@ async def login(request: Request, credentials: LoginData):
     Authenticate a user and return a JWT token if successful.
 
     Requires:
-        credentials (LoginData): The user's email and password.
+        credentials (LoginData): The user's username and password.
 
     Returns:
         dict: Authentication result, JWT token, and user ID if successful.
@@ -131,7 +131,7 @@ async def create_user(request: Request, credentials: LoginData):
     Create a new user account.
 
     Requires:
-        credentials (LoginData): The user's email and password.
+        credentials (LoginData): The user's username and password.
 
     Returns:
         dict: Success message if user is created, otherwise raises HTTPException.
@@ -224,10 +224,10 @@ async def get_ai_use(user_id: int = Depends(get_current_user_id)):
 @rate_limit(requests_per_minute=5)  # Strict limit for account deletion
 async def delete_user(user_id: int = Depends(get_current_user_id)):
     """
-    Delete a user account by email.
+    Delete a user account by username.
 
     Requires:
-        email (str): The email address of the user to delete.
+        username (str): The username of the user to delete.
         user_id (int): Authenticated user ID.
 
     Returns:

@@ -388,7 +388,7 @@ function Settings() {
                         className="settings-input"
                         value={username}
                         onChange={(e) => setUsername(e.target.value)}
-                        placeholder="Enter your username"
+                        placeholder="Enter your new username"
                         disabled={loading || isRateLimited}
                     />
                     <button 
