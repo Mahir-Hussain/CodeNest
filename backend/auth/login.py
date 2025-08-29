@@ -38,7 +38,7 @@ class LoginSystem(Database):
         """
         try:
             self.cursor.execute(
-                "INSERT INTO users (username, password) VALUES (%s, %s)",
+                "INSERT INTO users (email, password) VALUES (%s, %s)",
                 (username, self.hash_password(password)),
             )
             self.connection.commit()
@@ -126,7 +126,7 @@ class LoginSystem(Database):
         """
         try:
             self.cursor.execute(
-                "SELECT id, password FROM users WHERE username = %s", (username,)
+                "SELECT id, password FROM users WHERE email = %s", (username,)
             )
             result = self.cursor.fetchone()
             if result:
