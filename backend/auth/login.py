@@ -25,7 +25,7 @@ class LoginSystem(Database):
         """
         return hashlib.sha256(password.encode()).hexdigest()
 
-    def create_user(self, email, password):
+    def create_user(self, username, password):
         """
         Create a new user in the database.
 
@@ -38,8 +38,8 @@ class LoginSystem(Database):
         """
         try:
             self.cursor.execute(
-                "INSERT INTO users (email, password) VALUES (%s, %s)",
-                (email, self.hash_password(password)),
+                "INSERT INTO users (username, password) VALUES (%s, %s)",
+                (username, self.hash_password(password)),
             )
             self.connection.commit()
             return {"success": True, "message": "User created successfully!"}
@@ -113,7 +113,7 @@ class LoginSystem(Database):
         except psycopg2.Error as error:
             return {"success": False, "error": f"Database error: {str(error)}"}
 
-    def authenticate(self, email, password):
+    def authenticate(self, username, password):
         """
         Authenticate a user by email and password.
 
@@ -126,7 +126,7 @@ class LoginSystem(Database):
         """
         try:
             self.cursor.execute(
-                "SELECT id, password FROM users WHERE email = %s", (email,)
+                "SELECT id, password FROM users WHERE username = %s", (username,)
             )
             result = self.cursor.fetchone()
             if result:
